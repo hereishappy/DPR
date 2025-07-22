@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scaffolding Work Progress Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+    <div class="max-w-6xl mx-auto">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold text-gray-800 mb-2">Scaffolding Work Progress Tracker</h1>
+            <p class="text-gray-600">Online reporting system for supervisors - Track manpower, overtime, volume & productivity</p>
+        </div>
+
+        <!-- Supervisor Info Panel -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Supervisor Information</h2>
+            <div class="grid md:grid-cols-3 gap-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Supervisor Name</label>
+                    <input type="text" id="supervisorName" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Enter your name">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Work Location</label>
+                    <input type="text" id="workLocation" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                           placeholder="Enter work location">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Work Date</label>
+                    <input type="date" id="workDate" 
+                           class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Dashboard -->
+        <div class="grid md:grid-cols-4 gap-4 mb-6">
+            <div class="bg-blue-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-blue-600" id="totalEntries">0</div>
+                <div class="text-sm text-blue-700">Total Entries</div>
+            </div>
+            <div class="bg-green-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-green-600" id="totalVolume">0.000</div>
+                <div class="text-sm text-green-700">Total Volume (m³)</div>
+            </div>
+            <div class="bg-purple-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-purple-600" id="totalWorkers">0</div>
+                <div class="text-sm text-purple-700">Total Workers</div>
+            </div>
+            <div class="bg-orange-50 p-4 rounded-lg text-center">
+                <div class="text-2xl font-bold text-orange-600" id="totalOvertime">0</div>
+                <div class="text-sm text-orange-700">Total Hours</div>
+            </div>
+        </div>
+
+        <!-- Work Entry Form -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Work Entry Form</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Left Column - Work Details -->
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Work Type</label>
+                        <select id="workType" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select work type</option>
+                            <option value="Erection">Scaffolding Erection</option>
+                            <option value="Dismantling">Scaffolding Dismantling</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Number of Workers</label>
+                        <input type="number" id="numWorkers" min="1" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Enter number of workers">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Hours</label>
+                        <input type="number" id="overtimeHours" min="0" step="0.5" 
+                               class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                               placeholder="Enter total hours">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Work Description</label>
+                        <textarea id="workDescription" rows="3"
+                                  class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                  placeholder="Brief description of work done"></textarea>
+                    </div>
+                </div>
+
+                <!-- Right Column - Volume Calculator -->
+                <div class="space-y-4">
+                    <h3 class="font-semibold text-gray-800">Volume Calculator</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Scaffolding Type</label>
+                        <select id="scaffoldingType" onchange="toggleCalculator()" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select type</option>
+                            <option value="rectangular">Rectangular</option>
+                            <option value="cylindrical">Cylindrical</option>
+                        </select>
+                    </div>
+
+                    <!-- Rectangular Calculator -->
+                    <div id="rectangularInputs" class="hidden space-y-3">
+                        <div class="grid grid-cols-3 gap-2">
+                            <input type="number" id="rectLength" step="0.01" placeholder="Length (m)" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="number" id="rectWidth" step="0.01" placeholder="Width (m)" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                            <input type="number" id="rectHeight" step="0.01" placeholder="Height (m)" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                        </div>
+                        <input type="number" id="rectQuantity" min="1" value="1" placeholder="Quantity" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500">
+                    </div>
+
+                    <!-- Cylindrical Calculator -->
+                    <div id="cylindricalInputs" class="hidden space-y-3">
+                        <div class="grid grid-cols-2 gap-2">
+                            <input type="number" id="cylDiameter" step="0.01" placeholder="Diameter (m)" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500">
+                            <input type="number" id="cylHeight" step="0.01" placeholder="Height (m)" 
+                                   class="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500">
+                        </div>
+                        <input type="number" id="cylQuantity" min="1" value="1" placeholder="Quantity" 
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500">
+                    </div>
+
+                    <button onclick="calculateVolume()" 
+                            class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition duration-200">
+                        Calculate Volume
+                    </button>
+
+                    <div id="volumeResult" class="hidden p-3 bg-blue-50 rounded-lg">
+                        <div class="text-sm text-blue-700">Calculated Volume:</div>
+                        <div id="volumeDisplay" class="text-lg font-bold text-blue-800"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex justify-end">
+                <button onclick="submitWorkEntry()" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg transition duration-200">
+                    Submit Work Entry
+                </button>
+            </div>
+        </div>
+
+        <!-- Work Entries List -->
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Today's Work Entries</h2>
+                <div class="flex space-x-3">
+                    <button onclick="downloadReport()" 
+                            class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg text-sm transition duration-200">
+                        Download Report
+                    </button>
+                    <button onclick="sendReportToManager()" 
+                            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm transition duration-200">
+                        Email Report to Manager
+                    </button>
+                    <button onclick="clearAllEntries()" 
+                            class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm transition duration-200">
+                        Clear All
+                    </button>
+                </div>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-gray-300 bg-gray-50">
+                            <th class="text-left py-3 px-3">Time</th>
+                            <th class="text-left py-3 px-3">Supervisor</th>
+                            <th class="text-left py-3 px-3">Work Type</th>
+                            <th class="text-left py-3 px-3">Workers</th>
+                            <th class="text-left py-3 px-3">Hours</th>
+                            <th class="text-left py-3 px-3">Volume (m³)</th>
+                            <th class="text-left py-3 px-3">Productivity</th>
+                            <th class="text-left py-3 px-3">Efficiency</th>
+                            <th class="text-left py-3 px-3">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody id="entriesTableBody">
+                        <tr>
+                            <td colspan="9" class="text-center py-8 text-gray-500">No entries yet. Submit your first work entry above.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Productivity Analysis -->
+        <div class="bg-white rounded-xl shadow-lg p-6">
+            <h2 class="text-xl font-bold text-gray-800 mb-4">Productivity Analysis</h2>
+            
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-green-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-green-800 mb-2">Erection Work</h3>
+                    <div class="space-y-1 text-sm text-green-700">
+                        <div>Entries: <span id="erectionEntries" class="font-semibold">0</span></div>
+                        <div>Volume: <span id="erectionVolume" class="font-semibold">0.000 m³</span></div>
+                        <div>Avg Productivity: <span id="erectionProductivity" class="font-semibold">0.000 m³/worker</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-red-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-red-800 mb-2">Dismantling Work</h3>
+                    <div class="space-y-1 text-sm text-red-700">
+                        <div>Entries: <span id="dismantlingEntries" class="font-semibold">0</span></div>
+                        <div>Volume: <span id="dismantlingVolume" class="font-semibold">0.000 m³</span></div>
+                        <div>Avg Productivity: <span id="dismantlingProductivity" class="font-semibold">0.000 m³/worker</span></div>
+                    </div>
+                </div>
+
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h3 class="font-semibold text-blue-800 mb-2">Overall Performance</h3>
+                    <div class="space-y-1 text-sm text-blue-700">
+                        <div>Total Productivity: <span id="overallProductivity" class="font-semibold">0.000 m³/worker</span></div>
+                        <div>Overtime Usage: <span id="overtimePercentage" class="font-semibold">0%</span></div>
+                        <div>Efficiency Rating: <span id="efficiencyRating" class="font-semibold">-</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let workEntries = [];
+        let entryCounter = 1;
+        let calculatedVolume = 0;
+
+        // Initialize date to today
+        document.getElementById('workDate').valueAsDate = new Date();
+
+        function toggleCalculator() {
+            const type = document.getElementById('scaffoldingType').value;
+            const rectInputs = document.getElementById('rectangularInputs');
+            const cylInputs = document.getElementById('cylindricalInputs');
+            
+            rectInputs.classList.add('hidden');
+            cylInputs.classList.add('hidden');
+            
+            if (type === 'rectangular') {
+                rectInputs.classList.remove('hidden');
+            } else if (type === 'cylindrical') {
+                cylInputs.classList.remove('hidden');
+            }
+            
+            // Clear volume result
+            document.getElementById('volumeResult').classList.add('hidden');
+            calculatedVolume = 0;
+        }
+
+        function calculateVolume() {
+            const type = document.getElementById('scaffoldingType').value;
+            let volume = 0;
+            
+            if (type === 'rectangular') {
+                const length = parseFloat(document.getElementById('rectLength').value);
+                const width = parseFloat(document.getElementById('rectWidth').value);
+                const height = parseFloat(document.getElementById('rectHeight').value);
+                const quantity = parseInt(document.getElementById('rectQuantity').value) || 1;
+                
+                if (!length || !width || !height || length <= 0 || width <= 0 || height <= 0) {
+                    alert('Please enter valid positive values for length, width, and height.');
+                    return;
+                }
+                
+                volume = length * width * height * quantity;
+                
+            } else if (type === 'cylindrical') {
+                const diameter = parseFloat(document.getElementById('cylDiameter').value);
+                const height = parseFloat(document.getElementById('cylHeight').value);
+                const quantity = parseInt(document.getElementById('cylQuantity').value) || 1;
+                
+                if (!diameter || !height || diameter <= 0 || height <= 0) {
+                    alert('Please enter valid positive values for diameter and height.');
+                    return;
+                }
+                
+                const radius = diameter / 2;
+                volume = Math.PI * radius * radius * height * quantity;
+                
+            } else {
+                alert('Please select a scaffolding type first.');
+                return;
+            }
+            
+            calculatedVolume = volume;
+            document.getElementById('volumeDisplay').textContent = volume.toFixed(3) + ' m³';
+            document.getElementById('volumeResult').classList.remove('hidden');
+        }
+
+        function submitWorkEntry() {
+            // Validate required fields
+            const supervisorName = document.getElementById('supervisorName').value.trim();
+            const workLocation = document.getElementById('workLocation').value.trim();
+            const workDate = document.getElementById('workDate').value;
+            const workType = document.getElementById('workType').value;
+            const numWorkers = parseInt(document.getElementById('numWorkers').value);
+            const overtimeHours = parseFloat(document.getElementById('overtimeHours').value) || 0;
+            const workDescription = document.getElementById('workDescription').value.trim();
+
+            if (!supervisorName || !workLocation || !workDate || !workType || !numWorkers || calculatedVolume === 0) {
+                alert('Please fill in all required fields and calculate volume before submitting.');
+                return;
+            }
+
+            if (numWorkers <= 0) {
+                alert('Number of workers must be greater than 0.');
+                return;
+            }
+
+            // Calculate productivity metrics
+            let productivity = calculatedVolume / numWorkers;
+            if (workType === 'Dismantling') {
+                productivity = productivity / 2; // Dismantling productivity is divided by 2
+            }
+            const standardRate = workType === 'Erection' ? 8 : 12; // m³ per worker per day
+            const efficiency = (productivity / standardRate) * 100;
+
+            // Create work entry
+            const entry = {
+                id: entryCounter++,
+                timestamp: new Date().toLocaleTimeString(),
+                supervisorName,
+                workLocation,
+                workDate,
+                workType,
+                numWorkers,
+                overtimeHours,
+                volume: calculatedVolume,
+                productivity: productivity,
+                efficiency: efficiency,
+                workDescription,
+                scaffoldingType: document.getElementById('scaffoldingType').value
+            };
+
+            workEntries.push(entry);
+            updateDashboard();
+            updateEntriesTable();
+            updateProductivityAnalysis();
+            clearForm();
+            
+            alert(`Work entry submitted successfully! Productivity: ${productivity.toFixed(2)} m³/worker`);
+        }
+
+        function clearForm() {
+            document.getElementById('workType').value = '';
+            document.getElementById('numWorkers').value = '';
+            document.getElementById('overtimeHours').value = '';
+            document.getElementById('workDescription').value = '';
+            document.getElementById('scaffoldingType').value = '';
+            document.getElementById('rectangularInputs').classList.add('hidden');
+            document.getElementById('cylindricalInputs').classList.add('hidden');
+            document.getElementById('volumeResult').classList.add('hidden');
+            
+            // Clear all input fields
+            ['rectLength', 'rectWidth', 'rectHeight', 'rectQuantity', 'cylDiameter', 'cylHeight', 'cylQuantity'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            calculatedVolume = 0;
+        }
+
+        function updateDashboard() {
+            const totalEntries = workEntries.length;
+            const totalVolume = workEntries.reduce((sum, entry) => sum + entry.volume, 0);
+            const totalWorkers = workEntries.reduce((sum, entry) => sum + entry.numWorkers, 0);
+            const totalOvertime = workEntries.reduce((sum, entry) => sum + entry.overtimeHours, 0);
+
+            document.getElementById('totalEntries').textContent = totalEntries;
+            document.getElementById('totalVolume').textContent = totalVolume.toFixed(3);
+            document.getElementById('totalWorkers').textContent = totalWorkers;
+            document.getElementById('totalOvertime').textContent = totalOvertime.toFixed(1);
+        }
+
+        function updateEntriesTable() {
+            const tableBody = document.getElementById('entriesTableBody');
+            
+            if (workEntries.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="9" class="text-center py-8 text-gray-500">No entries yet. Submit your first work entry above.</td></tr>';
+                return;
+            }
+
+            tableBody.innerHTML = '';
+            workEntries.forEach(entry => {
+                const row = document.createElement('tr');
+                row.className = 'border-b border-gray-200 hover:bg-gray-50';
+                
+                const efficiencyColor = entry.efficiency >= 80 ? 'text-green-600' : entry.efficiency >= 60 ? 'text-yellow-600' : 'text-red-600';
+                
+                row.innerHTML = `
+                    <td class="py-3 px-3">${entry.timestamp}</td>
+                    <td class="py-3 px-3">${entry.supervisorName}</td>
+                    <td class="py-3 px-3">
+                        <span class="px-2 py-1 rounded text-xs ${entry.workType === 'Erection' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${entry.workType}
+                        </span>
+                    </td>
+                    <td class="py-3 px-3">${entry.numWorkers}</td>
+                    <td class="py-3 px-3">${entry.overtimeHours}</td>
+                    <td class="py-3 px-3">${entry.volume.toFixed(3)}</td>
+                    <td class="py-3 px-3">${entry.productivity.toFixed(2)} m³/worker</td>
+                    <td class="py-3 px-3 ${efficiencyColor}">${entry.efficiency.toFixed(1)}%</td>
+                    <td class="py-3 px-3">
+                        <button onclick="removeEntry(${entry.id})" 
+                                class="text-red-600 hover:text-red-800 text-sm">
+                            Remove
+                        </button>
+                    </td>
+                `;
+                tableBody.appendChild(row);
+            });
+        }
+
+        function updateProductivityAnalysis() {
+            const erectionEntries = workEntries.filter(e => e.workType === 'Erection');
+            const dismantlingEntries = workEntries.filter(e => e.workType === 'Dismantling');
+            
+            // Erection analysis
+            const erectionVolume = erectionEntries.reduce((sum, e) => sum + e.volume, 0);
+            const erectionWorkers = erectionEntries.reduce((sum, e) => sum + e.numWorkers, 0);
+            const erectionProductivity = erectionWorkers > 0 ? erectionVolume / erectionWorkers : 0;
+            
+            document.getElementById('erectionEntries').textContent = erectionEntries.length;
+            document.getElementById('erectionVolume').textContent = erectionVolume.toFixed(3) + ' m³';
+            document.getElementById('erectionProductivity').textContent = erectionProductivity.toFixed(3) + ' m³/worker';
+            
+            // Dismantling analysis
+            const dismantlingVolume = dismantlingEntries.reduce((sum, e) => sum + e.volume, 0);
+            const dismantlingWorkers = dismantlingEntries.reduce((sum, e) => sum + e.numWorkers, 0);
+            const dismantlingProductivity = dismantlingWorkers > 0 ? (dismantlingVolume / dismantlingWorkers) / 2 : 0;
+            
+            document.getElementById('dismantlingEntries').textContent = dismantlingEntries.length;
+            document.getElementById('dismantlingVolume').textContent = dismantlingVolume.toFixed(3) + ' m³';
+            document.getElementById('dismantlingProductivity').textContent = dismantlingProductivity.toFixed(3) + ' m³/worker';
+            
+            // Overall analysis
+            const totalVolume = workEntries.reduce((sum, e) => sum + e.volume, 0);
+            const totalWorkers = workEntries.reduce((sum, e) => sum + e.numWorkers, 0);
+            const totalOvertime = workEntries.reduce((sum, e) => sum + e.overtimeHours, 0);
+            const overallProductivity = totalWorkers > 0 ? totalVolume / totalWorkers : 0;
+            const overtimePercentage = totalWorkers > 0 ? (totalOvertime / (totalWorkers * 8)) * 100 : 0;
+            
+            document.getElementById('overallProductivity').textContent = overallProductivity.toFixed(3) + ' m³/worker';
+            document.getElementById('overtimePercentage').textContent = overtimePercentage.toFixed(1) + '%';
+            
+            // Efficiency rating
+            const avgEfficiency = workEntries.length > 0 ? workEntries.reduce((sum, e) => sum + e.efficiency, 0) / workEntries.length : 0;
+            let rating = 'Poor';
+            if (avgEfficiency >= 80) rating = 'Excellent';
+            else if (avgEfficiency >= 70) rating = 'Good';
+            else if (avgEfficiency >= 60) rating = 'Average';
+            
+            document.getElementById('efficiencyRating').textContent = rating;
+        }
+
+        function removeEntry(id) {
+            workEntries = workEntries.filter(entry => entry.id !== id);
+            updateDashboard();
+            updateEntriesTable();
+            updateProductivityAnalysis();
+        }
+
+        function clearAllEntries() {
+            if (confirm('Are you sure you want to clear all entries?')) {
+                workEntries = [];
+                entryCounter = 1;
+                updateDashboard();
+                updateEntriesTable();
+                updateProductivityAnalysis();
+            }
+        }
+
+        function downloadReport() {
+            if (workEntries.length === 0) {
+                alert('No entries to download. Please submit some work entries first.');
+                return;
+            }
+
+            const supervisorName = document.getElementById('supervisorName').value || 'Unknown';
+            const workLocation = document.getElementById('workLocation').value || 'Unknown';
+            const workDate = document.getElementById('workDate').value || new Date().toISOString().split('T')[0];
+            
+            let reportContent = `SCAFFOLDING WORK PROGRESS REPORT\n`;
+            reportContent += `${'='.repeat(60)}\n\n`;
+            reportContent += `Supervisor: ${supervisorName}\n`;
+            reportContent += `Location: ${workLocation}\n`;
+            reportContent += `Date: ${workDate}\n`;
+            reportContent += `Report Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            // Summary
+            const totalVolume = workEntries.reduce((sum, e) => sum + e.volume, 0);
+            const totalWorkers = workEntries.reduce((sum, e) => sum + e.numWorkers, 0);
+            const totalOvertime = workEntries.reduce((sum, e) => sum + e.overtimeHours, 0);
+            const overallProductivity = totalWorkers > 0 ? totalVolume / totalWorkers : 0;
+            
+            reportContent += `SUMMARY:\n`;
+            reportContent += `Total Entries: ${workEntries.length}\n`;
+            reportContent += `Total Volume: ${totalVolume.toFixed(3)} m³\n`;
+            reportContent += `Total Workers: ${totalWorkers}\n`;
+            reportContent += `Total Hours: ${totalOvertime.toFixed(1)} hours\n`;
+            reportContent += `Overall Productivity: ${overallProductivity.toFixed(3)} m³/worker\n\n`;
+            
+            // Detailed entries
+            reportContent += `DETAILED WORK ENTRIES:\n`;
+            reportContent += `${'='.repeat(60)}\n`;
+            
+            workEntries.forEach((entry, index) => {
+                reportContent += `\n${index + 1}. ${entry.workType} Work - ${entry.timestamp}\n`;
+                reportContent += `   Workers: ${entry.numWorkers}\n`;
+                reportContent += `   Hours: ${entry.overtimeHours} hours\n`;
+                reportContent += `   Volume: ${entry.volume.toFixed(3)} m³\n`;
+                reportContent += `   Productivity: ${entry.productivity.toFixed(2)} m³/worker\n`;
+                reportContent += `   Efficiency: ${entry.efficiency.toFixed(1)}%\n`;
+                if (entry.workDescription) {
+                    reportContent += `   Description: ${entry.workDescription}\n`;
+                }
+                reportContent += `   ${'-'.repeat(50)}\n`;
+            });
+            
+            // Productivity analysis
+            const erectionEntries = workEntries.filter(e => e.workType === 'Erection');
+            const dismantlingEntries = workEntries.filter(e => e.workType === 'Dismantling');
+            
+            reportContent += `\nPRODUCTIVITY ANALYSIS:\n`;
+            reportContent += `${'='.repeat(60)}\n`;
+            reportContent += `Erection Work: ${erectionEntries.length} entries\n`;
+            reportContent += `Dismantling Work: ${dismantlingEntries.length} entries\n`;
+            
+            const avgEfficiency = workEntries.reduce((sum, e) => sum + e.efficiency, 0) / workEntries.length;
+            reportContent += `Average Efficiency: ${avgEfficiency.toFixed(1)}%\n`;
+            reportContent += `Overtime Usage: ${((totalOvertime / (totalWorkers * 8)) * 100).toFixed(1)}%\n\n`;
+            
+            reportContent += `STANDARDS:\n`;
+            reportContent += `Erection: 8 m³/worker/day (standard)\n`;
+            reportContent += `Dismantling: 12 m³/worker/day (standard)\n\n`;
+            
+            reportContent += `Report generated by Scaffolding Work Progress Tracker\n`;
+
+            // Download file
+            try {
+                const blob = new Blob([reportContent], { type: 'text/plain;charset=utf-8' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Scaffolding_Progress_${supervisorName.replace(/\s+/g, '_')}_${workDate}.txt`;
+                a.style.display = 'none';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+                
+                alert('Progress report downloaded successfully!');
+            } catch (error) {
+                alert('Error downloading report. Please try again.');
+                console.error('Download error:', error);
+            }
+        }
+
+        function sendReportToManager() {
+            if (workEntries.length === 0) {
+                alert('No entries to send. Please submit some work entries first.');
+                return;
+            }
+
+            const supervisorName = document.getElementById('supervisorName').value || 'Unknown';
+            const workLocation = document.getElementById('workLocation').value || 'Unknown';
+            const workDate = document.getElementById('workDate').value || new Date().toISOString().split('T')[0];
+            
+            // Create email content
+            const subject = `Scaffolding Work Progress Report - ${supervisorName} - ${workDate}`;
+            
+            let emailBody = `SCAFFOLDING WORK PROGRESS REPORT\n\n`;
+            emailBody += `Supervisor: ${supervisorName}\n`;
+            emailBody += `Location: ${workLocation}\n`;
+            emailBody += `Date: ${workDate}\n`;
+            emailBody += `Report Generated: ${new Date().toLocaleString()}\n\n`;
+            
+            // Summary
+            const totalVolume = workEntries.reduce((sum, e) => sum + e.volume, 0);
+            const totalWorkers = workEntries.reduce((sum, e) => sum + e.numWorkers, 0);
+            const totalHours = workEntries.reduce((sum, e) => sum + e.overtimeHours, 0);
+            const overallProductivity = totalWorkers > 0 ? totalVolume / totalWorkers : 0;
+            
+            emailBody += `SUMMARY:\n`;
+            emailBody += `Total Entries: ${workEntries.length}\n`;
+            emailBody += `Total Volume: ${totalVolume.toFixed(3)} m³\n`;
+            emailBody += `Total Workers: ${totalWorkers}\n`;
+            emailBody += `Total Hours: ${totalHours.toFixed(1)} hours\n`;
+            emailBody += `Overall Productivity: ${overallProductivity.toFixed(3)} m³/worker\n\n`;
+            
+            // Work entries
+            emailBody += `DETAILED WORK ENTRIES:\n`;
+            emailBody += `${'='.repeat(50)}\n`;
+            workEntries.forEach((entry, index) => {
+                emailBody += `\n${index + 1}. ${entry.workType} Work - ${entry.timestamp}\n`;
+                emailBody += `   Workers: ${entry.numWorkers}\n`;
+                emailBody += `   Hours: ${entry.overtimeHours} hours\n`;
+                emailBody += `   Volume: ${entry.volume.toFixed(3)} m³\n`;
+                emailBody += `   Productivity: ${entry.productivity.toFixed(2)} m³/worker\n`;
+                emailBody += `   Efficiency: ${entry.efficiency.toFixed(1)}%\n`;
+                if (entry.workDescription) {
+                    emailBody += `   Description: ${entry.workDescription}\n`;
+                }
+                emailBody += `   ${'-'.repeat(40)}\n`;
+            });
+            
+            // Productivity analysis
+            const erectionEntries = workEntries.filter(e => e.workType === 'Erection');
+            const dismantlingEntries = workEntries.filter(e => e.workType === 'Dismantling');
+            
+            emailBody += `\nPRODUCTIVITY ANALYSIS:\n`;
+            emailBody += `${'='.repeat(50)}\n`;
+            emailBody += `Erection Work: ${erectionEntries.length} entries\n`;
+            emailBody += `Dismantling Work: ${dismantlingEntries.length} entries\n`;
+            
+            const avgEfficiency = workEntries.reduce((sum, e) => sum + e.efficiency, 0) / workEntries.length;
+            emailBody += `Average Efficiency: ${avgEfficiency.toFixed(1)}%\n`;
+            emailBody += `Hours Usage: ${((totalHours / (totalWorkers * 8)) * 100).toFixed(1)}%\n\n`;
+            
+            emailBody += `STANDARDS:\n`;
+            emailBody += `Erection: 8 m³/worker/day (standard)\n`;
+            emailBody += `Dismantling: 12 m³/worker/day (standard)\n\n`;
+            
+            emailBody += `Report generated by Scaffolding Work Progress Tracker`;
+            
+            // Create mailto link
+            const managerEmail = 'okgurwindersingh@gmail.com';
+            const encodedSubject = encodeURIComponent(subject);
+            const encodedBody = encodeURIComponent(emailBody);
+            const mailtoURL = `mailto:${managerEmail}?subject=${encodedSubject}&body=${encodedBody}`;
+            
+            // Open email client
+            window.location.href = mailtoURL;
+            
+            alert('Email client opened with report. Please send the email to complete the submission.');
+        }
+
+        // Initialize dashboard
+        updateDashboard();
+        updateProductivityAnalysis();
+    </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963284446754a7a6',t:'MTc1MzE4Mjg5MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
