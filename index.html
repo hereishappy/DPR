@@ -6,700 +6,849 @@
     <title>Scaffolding Work Progress Tracker</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-2 sm:p-4">
-    <div class="max-w-6xl mx-auto">
+    <div class="max-w-md mx-auto">
         <!-- Header -->
-        <div class="text-center mb-4 sm:mb-8">
-            <h1 class="text-2xl sm:text-4xl font-bold text-gray-800 mb-2">Scaffolding Work Progress Tracker</h1>
-            <p class="text-sm sm:text-base text-gray-600">Online reporting system for supervisors - Track manpower, overtime, volume & productivity</p>
+        <div class="text-center mb-4">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">Scaffolding Work Progress</h1>
+            <p class="text-sm text-gray-600">Daily Reporting System</p>
         </div>
 
         <!-- Supervisor Info Panel -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Supervisor Information</h2>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+        <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+            <h2 class="text-lg font-bold text-gray-800 mb-3">Supervisor Information</h2>
+            <div class="space-y-3">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Supervisor Name</label>
-                    <input type="text" id="supervisorName" 
-                           class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Enter your name">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name*</label>
+                    <select id="supervisorName" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select Supervisor</option>
+                        <option value="Mahendra Kumar">Mahendra Kumar</option>
+                        <option value="Pintu Sah">Pintu Sah</option>
+                        <option value="Harkirat Singh">Harkirat Singh</option>
+                        <option value="Sunil Chahuan">Sunil Chahuan</option>
+                        <option value="Vijay Chauhan">Vijay Chauhan</option>
+                        <option value="OTHER1">OTHER1</option>
+                        <option value="OTHER2">OTHER2</option>
+                        <option value="OTHER3">OTHER3</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Work Location</label>
-                    <input type="text" id="workLocation" 
-                           class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="Enter work location">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Plant*</label>
+                    <select id="plant" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select Plant</option>
+                        <option value="Pulp Mill">Pulp Mill</option>
+                        <option value="SRP">SRP</option>
+                        <option value="Utility">Utility</option>
+                        <option value="PM">PM</option>
+                        <option value="SFS">SFS</option>
+                    </select>
                 </div>
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Work Date</label>
-                    <input type="date" id="workDate" 
-                           class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Work Date*</label>
+                    <input type="date" id="workDate" required
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                 </div>
-            </div>
-        </div>
-
-        <!-- Summary Dashboard -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 mb-4 sm:mb-6">
-            <div class="bg-blue-50 p-3 sm:p-4 rounded-lg text-center shadow">
-                <div class="text-xl sm:text-2xl font-bold text-blue-600" id="totalEntries">0</div>
-                <div class="text-xs sm:text-sm text-blue-700">Total Entries</div>
-            </div>
-            <div class="bg-green-50 p-3 sm:p-4 rounded-lg text-center shadow">
-                <div class="text-xl sm:text-2xl font-bold text-green-600" id="totalVolume">0.000</div>
-                <div class="text-xs sm:text-sm text-green-700">Total Volume (m³)</div>
-            </div>
-            <div class="bg-purple-50 p-3 sm:p-4 rounded-lg text-center shadow">
-                <div class="text-xl sm:text-2xl font-bold text-purple-600" id="totalWorkers">0</div>
-                <div class="text-xs sm:text-sm text-purple-700">Total Workers</div>
-            </div>
-            <div class="bg-orange-50 p-3 sm:p-4 rounded-lg text-center shadow">
-                <div class="text-xl sm:text-2xl font-bold text-orange-600" id="totalHours">0</div>
-                <div class="text-xs sm:text-sm text-orange-700">Total Hours</div>
-            </div>
-        </div>
-
-        <!-- Work Entry Form -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Work Entry Form</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-                <!-- Left Column - Work Details -->
-                <div class="space-y-3 sm:space-y-4">
+                
+                <!-- Manpower and OT Hours fields moved here -->
+                <div class="grid grid-cols-3 gap-2">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Work Type</label>
-                        <select id="workType" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Select work type</option>
-                            <option value="Erection">Scaffolding Erection</option>
-                            <option value="Dismantling">Scaffolding Dismantling</option>
-                            <option value="Modification">Scaffolding Modification</option>
-                            <option value="Inspection">Safety Inspection</option>
-                            <option value="Maintenance">Maintenance</option>
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Manpower*</label>
+                        <input type="number" id="manpower" min="0" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                               placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Scaffold Type</label>
-                        <select id="scaffoldType" class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                            <option value="">Select scaffold type</option>
-                            <option value="Tube and Coupler">Tube and Coupler</option>
-                            <option value="Frame Scaffold">Frame Scaffold</option>
-                            <option value="System Scaffold">System Scaffold</option>
-                            <option value="Mobile Scaffold">Mobile Scaffold</option>
-                            <option value="Suspended Scaffold">Suspended Scaffold</option>
-                        </select>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Regular Hours</label>
+                        <input type="number" id="regularHours" min="0" readonly
+                               class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg" 
+                               placeholder="0">
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Location Details</label>
-                        <input type="text" id="locationDetails" 
-                               class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               placeholder="Specific area or zone">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Dimensions (m)</label>
-                        <div class="grid grid-cols-3 gap-2">
-                            <div>
-                                <input type="number" id="length" step="0.01" min="0"
-                                       class="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Length">
-                            </div>
-                            <div>
-                                <input type="number" id="width" step="0.01" min="0"
-                                       class="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Width">
-                            </div>
-                            <div>
-                                <input type="number" id="height" step="0.01" min="0"
-                                       class="w-full px-2 sm:px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                       placeholder="Height">
-                            </div>
-                        </div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">OT Hours</label>
+                        <input type="number" id="otHours" min="0" step="0.5"
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                               placeholder="0">
                     </div>
                 </div>
                 
-                <!-- Right Column - Labor Details -->
-                <div class="space-y-3 sm:space-y-4">
+                <button id="startReportBtn" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                    Start Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Work Entry Form - Initially Hidden -->
+        <div id="workEntrySection" class="hidden">
+            <!-- Summary Dashboard -->
+            <div class="grid grid-cols-2 gap-2 mb-4">
+                <div class="bg-blue-50 p-3 rounded-lg text-center shadow">
+                    <div class="text-xl font-bold text-blue-600" id="totalCubicMeters">0.00</div>
+                    <div class="text-xs text-blue-700">Total Cubic Meters</div>
+                </div>
+                <div class="bg-green-50 p-3 rounded-lg text-center shadow">
+                    <div class="text-xl font-bold text-green-600" id="totalProductivity">0.00</div>
+                    <div class="text-xs text-green-700">Productivity (m³/hr)</div>
+                </div>
+            </div>
+
+            <!-- Manpower Summary -->
+            <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+                <h2 class="text-lg font-bold text-gray-800 mb-2">Manpower Summary</h2>
+                <div class="grid grid-cols-3 gap-2">
+                    <div class="bg-blue-50 p-2 rounded-lg text-center">
+                        <div class="text-lg font-bold text-blue-600" id="summaryManpower">0</div>
+                        <div class="text-xs text-blue-700">Manpower</div>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded-lg text-center">
+                        <div class="text-lg font-bold text-blue-600" id="summaryRegularHours">0</div>
+                        <div class="text-xs text-blue-700">Regular Hours</div>
+                    </div>
+                    <div class="bg-blue-50 p-2 rounded-lg text-center">
+                        <div class="text-lg font-bold text-blue-600" id="summaryOTHours">0</div>
+                        <div class="text-xs text-blue-700">OT Hours</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Work Entry Form -->
+            <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+                <h2 class="text-lg font-bold text-gray-800 mb-3">Add Work Entry</h2>
+                
+                <div class="space-y-3">
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Number of Workers</label>
-                        <input type="number" id="numWorkers" min="1"
-                               class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               placeholder="Number of workers">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Work Type*</label>
+                        <select id="workType" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select work type</option>
+                            <option value="Erection">Erection</option>
+                            <option value="Dismantling">Dismantling</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Area/Zone*</label>
+                        <input type="text" id="workArea" required
+                               class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                               placeholder="Enter area or zone">
+                    </div>
+                    
+                    <div class="grid grid-cols-3 gap-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)*</label>
+                            <input type="number" id="length" step="0.01" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                   placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)*</label>
+                            <input type="number" id="width" step="0.01" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                   placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)*</label>
+                            <input type="number" id="height" step="0.01" min="0" required
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                   placeholder="0.00">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-2">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Cubic Meters (m³)</label>
+                            <input type="number" id="cubicMeters" step="0.01" min="0" readonly
+                                   class="w-full px-3 py-2 bg-gray-50 border border-gray-300 rounded-lg" 
+                                   placeholder="0.00">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity*</label>
+                            <input type="number" id="quantity" min="1" required value="1"
+                                   class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                   placeholder="1">
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Notes</label>
+                        <textarea id="workNotes" rows="2" 
+                                  class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" 
+                                  placeholder="Add any additional notes here"></textarea>
+                    </div>
+                    
+                    <button id="addEntryBtn" class="w-full px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors">
+                        Add Entry
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Work Entries Table -->
+            <div class="bg-white rounded-xl shadow-lg p-4 mb-4">
+                <h2 class="text-lg font-bold text-gray-800 mb-3">Work Entries</h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Area</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Size</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">m³</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                                <th scope="col" class="px-2 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Act</th>
+                            </tr>
+                        </thead>
+                        <tbody id="entriesTableBody" class="bg-white divide-y divide-gray-200">
+                            <!-- Entries will be added here dynamically -->
+                            <tr class="text-center text-sm text-gray-500">
+                                <td colspan="6" class="px-2 py-3">No entries added yet</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <!-- Report Actions -->
+            <div class="grid grid-cols-2 gap-3 mb-4">
+                <button id="downloadReportBtn" class="px-4 py-3 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-colors flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                    </svg>
+                    Download Report
+                </button>
+                <button id="sendReportBtn" class="px-4 py-3 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    Send Report
+                </button>
+            </div>
+        </div>
+        
+        <!-- Report Preview Section - For generating image -->
+        <div id="reportPreview" class="hidden bg-white p-6 rounded-xl">
+            <div class="text-center mb-4">
+                <h2 class="text-xl font-bold text-gray-800">Scaffolding Work Report</h2>
+                <p id="reportDate" class="text-sm text-gray-600"></p>
+            </div>
+            
+            <div class="mb-4">
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Supervisor:</p>
+                        <p id="previewSupervisor" class="text-sm text-gray-800"></p>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Regular Hours</label>
-                        <input type="number" id="regularHours" step="0.5" min="0"
-                               class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               placeholder="Regular hours worked">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Overtime Hours</label>
-                        <input type="number" id="overtimeHours" step="0.5" min="0"
-                               class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                               placeholder="Overtime hours worked">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Notes</label>
-                        <textarea id="notes" rows="2"
-                                  class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                  placeholder="Additional notes or comments"></textarea>
+                        <p class="text-sm font-medium text-gray-700">Plant:</p>
+                        <p id="previewPlant" class="text-sm text-gray-800"></p>
                     </div>
                 </div>
             </div>
             
-            <div class="mt-4 sm:mt-6 flex justify-end">
-                <button id="addEntryBtn" class="w-full sm:w-auto px-4 sm:px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
-                    Add Entry
-                </button>
+            <div class="mb-4">
+                <div class="grid grid-cols-3 gap-2">
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Manpower:</p>
+                        <p id="previewManpower" class="text-sm text-gray-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">Regular Hours:</p>
+                        <p id="previewRegularHours" class="text-sm text-gray-800"></p>
+                    </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-700">OT Hours:</p>
+                        <p id="previewOTHours" class="text-sm text-gray-800"></p>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Work Entries Table -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6 overflow-x-auto">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Work Entries</h2>
             
-            <div class="overflow-x-auto -mx-4 sm:mx-0">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
+            <div class="mb-4">
+                <table class="min-w-full border border-gray-200">
+                    <thead class="bg-gray-100">
                         <tr>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Work Type</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Scaffold Type</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Volume (m³)</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Workers</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Hours</th>
-                            <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">No.</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">Type</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">Area</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">Size (L×W×H)</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">m³</th>
+                            <th class="border border-gray-200 px-2 py-1 text-xs text-gray-700">Qty</th>
                         </tr>
                     </thead>
-                    <tbody id="entriesTableBody" class="bg-white divide-y divide-gray-200">
-                        <!-- Entries will be added here dynamically -->
-                        <tr class="text-gray-500 text-center">
-                            <td colspan="7" class="px-3 sm:px-6 py-3 sm:py-4">No entries yet. Add your first work entry above.</td>
-                        </tr>
+                    <tbody id="previewTableBody">
+                        <!-- Preview entries will be added here -->
                     </tbody>
                 </table>
             </div>
-        </div>
-
-        <!-- Export Section -->
-        <div class="bg-white rounded-xl shadow-lg p-4 sm:p-6 mb-4 sm:mb-6">
-            <h2 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Export Report</h2>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
-                <button id="exportExcelBtn" class="px-4 sm:px-6 py-2 bg-green-600 text-white font-medium rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 transition-all flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                    </svg>
-                    Export to Excel
-                </button>
-                <button id="emailReportBtn" class="px-4 sm:px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                    </svg>
-                    Email Report
-                </button>
-                <button id="printReportBtn" class="px-4 sm:px-6 py-2 bg-purple-600 text-white font-medium rounded-lg hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 transition-all flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                    </svg>
-                    Print Report
-                </button>
-                <button id="clearAllBtn" class="px-4 sm:px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                    </svg>
-                    Clear All Data
-                </button>
+            
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <div class="border border-gray-200 p-2 rounded">
+                    <p class="text-xs font-medium text-gray-700">Total Cubic Meters:</p>
+                    <p id="previewTotalCubicMeters" class="text-sm font-bold text-gray-800"></p>
+                </div>
+                <div class="border border-gray-200 p-2 rounded">
+                    <p class="text-xs font-medium text-gray-700">Total Man-hours:</p>
+                    <p id="previewTotalManHours" class="text-sm font-bold text-gray-800"></p>
+                </div>
+                <div class="border border-gray-200 p-2 rounded">
+                    <p class="text-xs font-medium text-gray-700">Productivity:</p>
+                    <p id="previewProductivity" class="text-sm font-bold text-gray-800"></p>
+                </div>
+            </div>
+            
+            <div class="text-xs text-gray-500 text-center">
+                <p>Generated on <span id="previewGeneratedDate"></span></p>
             </div>
         </div>
     </div>
 
     <!-- Confirmation Modal -->
     <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-4 sm:p-6 max-w-md w-full mx-4">
-            <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Confirm Action</h3>
-            <p id="confirmationMessage" class="text-gray-600 mb-4 sm:mb-6">Are you sure you want to proceed with this action?</p>
-            <div class="flex justify-end space-x-3 sm:space-x-4">
-                <button id="cancelAction" class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all">
+        <div class="bg-white rounded-lg p-6 max-w-xs w-full mx-4">
+            <h3 class="text-lg font-bold text-gray-800 mb-4">Confirm Action</h3>
+            <p id="confirmationMessage" class="text-gray-600 mb-6">Are you sure you want to proceed?</p>
+            <div class="flex justify-end space-x-3">
+                <button id="cancelAction" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors">
                     Cancel
                 </button>
-                <button id="confirmAction" class="px-3 sm:px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 transition-all">
+                <button id="confirmAction" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors">
                     Confirm
                 </button>
             </div>
         </div>
     </div>
-
-    <!-- Email Modal -->
-    <div id="emailModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-        <div class="bg-white rounded-lg p-4 sm:p-6 max-w-lg w-full mx-4">
-            <h3 class="text-lg sm:text-xl font-bold text-gray-800 mb-3 sm:mb-4">Send Report by Email</h3>
-            
-            <div class="space-y-3 sm:space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">To Email Address</label>
-                    <input type="email" id="toEmail" 
-                           class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           placeholder="recipient@example.com">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Subject</label>
-                    <input type="text" id="emailSubject" 
-                           class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                           value="Daily Scaffolding Progress Report">
-                </div>
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1 sm:mb-2">Message</label>
-                    <textarea id="emailMessage" rows="4"
-                              class="w-full px-3 sm:px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">Dear Sir,
-
-Please find attached today's daily progress report.
-
-Regards,</textarea>
-                </div>
-                <div class="text-sm text-gray-500">
-                    <p>Note: The Excel report will be automatically attached to this email.</p>
-                </div>
+    
+    <!-- Success Modal -->
+    <div id="successModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-xs w-full mx-4">
+            <div class="text-center mb-4">
+                <svg class="mx-auto h-12 w-12 text-green-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                </svg>
+                <h3 class="text-lg font-bold text-gray-800 mt-2">Success!</h3>
             </div>
-            
-            <div class="mt-4 sm:mt-6 flex justify-end space-x-3 sm:space-x-4">
-                <button id="cancelEmail" class="px-3 sm:px-4 py-2 bg-gray-200 text-gray-800 font-medium rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 focus:ring-offset-2 transition-all">
-                    Cancel
-                </button>
-                <button id="sendEmail" class="px-3 sm:px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all">
-                    Prepare Email
+            <p id="successMessage" class="text-gray-600 mb-6 text-center">Your report has been sent successfully.</p>
+            <div class="flex justify-center">
+                <button id="closeSuccessModal" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    OK
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Print Template (hidden) -->
-    <div id="printTemplate" class="hidden">
-        <div id="printContent"></div>
-    </div>
-
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Set default date to today
-            document.getElementById('workDate').valueAsDate = new Date();
-            
-            // Initialize entries array from localStorage or empty array
-            let entries = JSON.parse(localStorage.getItem('scaffoldingEntries')) || [];
-            
-            // Initialize action type for confirmation modal
-            let currentAction = '';
-            let entryToDelete = null;
-            
-            // Update the UI with stored entries
-            updateEntriesTable();
-            updateSummary();
-            
-            // Add Entry Button Click Handler
-            document.getElementById('addEntryBtn').addEventListener('click', function() {
-                addNewEntry();
-            });
-            
-            // Export Excel Button Click Handler
-            document.getElementById('exportExcelBtn').addEventListener('click', function() {
-                exportToExcel();
-            });
-            
-            // Email Report Button Click Handler
-            document.getElementById('emailReportBtn').addEventListener('click', function() {
-                if (entries.length === 0) {
-                    alert('No data to email. Please add entries first.');
-                    return;
-                }
-                document.getElementById('emailModal').classList.remove('hidden');
-            });
-            
-            // Print Report Button Click Handler
-            document.getElementById('printReportBtn').addEventListener('click', function() {
-                printReport();
-            });
-            
-            // Clear All Button Click Handler
-            document.getElementById('clearAllBtn').addEventListener('click', function() {
-                if (entries.length === 0) {
-                    alert('No data to clear.');
-                    return;
-                }
-                
-                currentAction = 'clearAll';
-                document.getElementById('confirmationMessage').textContent = 'Are you sure you want to clear all entries? This action cannot be undone.';
-                document.getElementById('confirmationModal').classList.remove('hidden');
-            });
-            
-            // Confirmation Modal Handlers
-            document.getElementById('cancelAction').addEventListener('click', function() {
-                document.getElementById('confirmationModal').classList.add('hidden');
-            });
-            
-            document.getElementById('confirmAction').addEventListener('click', function() {
-                if (currentAction === 'clearAll') {
-                    entries = [];
-                    localStorage.setItem('scaffoldingEntries', JSON.stringify(entries));
-                    updateEntriesTable();
-                    updateSummary();
-                } else if (currentAction === 'deleteEntry' && entryToDelete !== null) {
-                    entries.splice(entryToDelete, 1);
-                    localStorage.setItem('scaffoldingEntries', JSON.stringify(entries));
-                    updateEntriesTable();
-                    updateSummary();
-                }
-                
-                document.getElementById('confirmationModal').classList.add('hidden');
-            });
-            
-            // Email Modal Handlers
-            document.getElementById('cancelEmail').addEventListener('click', function() {
-                document.getElementById('emailModal').classList.add('hidden');
-            });
-            
-            document.getElementById('sendEmail').addEventListener('click', function() {
-                const toEmail = document.getElementById('toEmail').value;
-                const subject = document.getElementById('emailSubject').value;
-                const message = document.getElementById('emailMessage').value;
-                
-                if (!toEmail) {
-                    alert('Please enter a recipient email address.');
-                    return;
-                }
-                
-                // Generate Excel file
-                const excelData = generateExcelData();
-                const fileName = `scaffolding_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-                
-                // Create a mailto link with the email details
-                const mailtoLink = `mailto:${encodeURIComponent(toEmail)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(message)}`;
-                
-                // Open the email client
-                window.location.href = mailtoLink;
-                
-                // Also trigger the Excel download
-                exportToExcel();
-                
-                // Close the modal
-                document.getElementById('emailModal').classList.add('hidden');
-                
-                // Show instructions
-                setTimeout(() => {
-                    alert('Your email client has been opened. Please attach the Excel file that was just downloaded to complete your email.');
-                }, 1000);
-            });
-            
-            // Function to add a new entry
-            function addNewEntry() {
-                // Get form values
-                const workType = document.getElementById('workType').value;
-                const scaffoldType = document.getElementById('scaffoldType').value;
-                const locationDetails = document.getElementById('locationDetails').value;
-                const length = parseFloat(document.getElementById('length').value) || 0;
-                const width = parseFloat(document.getElementById('width').value) || 0;
-                const height = parseFloat(document.getElementById('height').value) || 0;
-                const numWorkers = parseInt(document.getElementById('numWorkers').value) || 0;
-                const regularHours = parseFloat(document.getElementById('regularHours').value) || 0;
-                const overtimeHours = parseFloat(document.getElementById('overtimeHours').value) || 0;
-                const notes = document.getElementById('notes').value;
-                const supervisorName = document.getElementById('supervisorName').value;
-                const workLocation = document.getElementById('workLocation').value;
-                const workDate = document.getElementById('workDate').value;
-                
-                // Validate required fields
-                if (!workType || !scaffoldType || !locationDetails || length <= 0 || width <= 0 || height <= 0 || numWorkers <= 0 || (regularHours <= 0 && overtimeHours <= 0)) {
-                    alert('Please fill in all required fields with valid values.');
-                    return;
-                }
-                
-                // Calculate volume
-                const volume = length * width * height;
-                const totalHours = regularHours + overtimeHours;
-                
-                // Create entry object
-                const entry = {
-                    workType,
-                    scaffoldType,
-                    locationDetails,
-                    dimensions: { length, width, height },
-                    volume: parseFloat(volume.toFixed(3)),
-                    numWorkers,
-                    regularHours,
-                    overtimeHours,
-                    totalHours,
-                    notes,
-                    supervisorName,
-                    workLocation,
-                    workDate,
-                    timestamp: new Date().toISOString()
-                };
-                
-                // Add to entries array
-                entries.push(entry);
-                
-                // Save to localStorage
-                localStorage.setItem('scaffoldingEntries', JSON.stringify(entries));
-                
-                // Update UI
-                updateEntriesTable();
-                updateSummary();
-                
-                // Clear form fields
-                document.getElementById('workType').value = '';
-                document.getElementById('scaffoldType').value = '';
-                document.getElementById('locationDetails').value = '';
-                document.getElementById('length').value = '';
-                document.getElementById('width').value = '';
-                document.getElementById('height').value = '';
-                document.getElementById('numWorkers').value = '';
-                document.getElementById('regularHours').value = '';
-                document.getElementById('overtimeHours').value = '';
-                document.getElementById('notes').value = '';
+        // Initialize data storage
+        let workEntries = [];
+        let currentEditIndex = -1;
+        let supervisorInfo = {
+            name: '',
+            plant: '',
+            date: '',
+            manpower: 0,
+            regularHours: 0,
+            otHours: 0
+        };
+        
+        // DOM Elements
+        const supervisorNameSelect = document.getElementById('supervisorName');
+        const plantSelect = document.getElementById('plant');
+        const workDateInput = document.getElementById('workDate');
+        const manpowerInput = document.getElementById('manpower');
+        const regularHoursInput = document.getElementById('regularHours');
+        const otHoursInput = document.getElementById('otHours');
+        const startReportBtn = document.getElementById('startReportBtn');
+        const workEntrySection = document.getElementById('workEntrySection');
+        
+        const workTypeSelect = document.getElementById('workType');
+        const workAreaInput = document.getElementById('workArea');
+        const lengthInput = document.getElementById('length');
+        const widthInput = document.getElementById('width');
+        const heightInput = document.getElementById('height');
+        const cubicMetersInput = document.getElementById('cubicMeters');
+        const quantityInput = document.getElementById('quantity');
+        const workNotesInput = document.getElementById('workNotes');
+        const addEntryBtn = document.getElementById('addEntryBtn');
+        const entriesTableBody = document.getElementById('entriesTableBody');
+        
+        const downloadReportBtn = document.getElementById('downloadReportBtn');
+        const sendReportBtn = document.getElementById('sendReportBtn');
+        
+        const confirmationModal = document.getElementById('confirmationModal');
+        const confirmationMessage = document.getElementById('confirmationMessage');
+        const cancelActionBtn = document.getElementById('cancelAction');
+        const confirmActionBtn = document.getElementById('confirmAction');
+        
+        const successModal = document.getElementById('successModal');
+        const successMessage = document.getElementById('successMessage');
+        const closeSuccessModalBtn = document.getElementById('closeSuccessModal');
+        
+        // Set default date to today
+        workDateInput.valueAsDate = new Date();
+        
+        // Start Report button click handler
+        startReportBtn.addEventListener('click', startReport);
+        
+        // Add entry button click handler
+        addEntryBtn.addEventListener('click', handleAddEntry);
+        
+        // Download report button click handler
+        downloadReportBtn.addEventListener('click', downloadReport);
+        
+        // Send report button click handler
+        sendReportBtn.addEventListener('click', () => {
+            if (workEntries.length === 0) {
+                alert('Please add at least one entry before sending the report.');
+                return;
             }
             
-            // Function to update the entries table
-            function updateEntriesTable() {
-                const tableBody = document.getElementById('entriesTableBody');
-                
-                // Clear existing rows
-                tableBody.innerHTML = '';
-                
-                if (entries.length === 0) {
-                    // Show empty state
-                    const emptyRow = document.createElement('tr');
-                    emptyRow.className = 'text-gray-500 text-center';
-                    emptyRow.innerHTML = '<td colspan="7" class="px-3 sm:px-6 py-3 sm:py-4">No entries yet. Add your first work entry above.</td>';
-                    tableBody.appendChild(emptyRow);
-                    return;
+            showConfirmationModal(
+                'Are you sure you want to send this report to okgurwindersingh@gmail.com?',
+                sendReport
+            );
+        });
+        
+        // Calculate cubic meters when dimensions change
+        [lengthInput, widthInput, heightInput].forEach(input => {
+            input.addEventListener('input', calculateCubicMeters);
+        });
+        
+        // Calculate regular hours when manpower changes
+        manpowerInput.addEventListener('input', calculateRegularHours);
+        
+        // Modal cancel button
+        cancelActionBtn.addEventListener('click', () => {
+            confirmationModal.classList.add('hidden');
+        });
+        
+        // Close success modal button
+        closeSuccessModalBtn.addEventListener('click', () => {
+            successModal.classList.add('hidden');
+        });
+        
+        // Function to calculate cubic meters
+        function calculateCubicMeters() {
+            const length = parseFloat(lengthInput.value) || 0;
+            const width = parseFloat(widthInput.value) || 0;
+            const height = parseFloat(heightInput.value) || 0;
+            
+            const cubicMeters = length * width * height;
+            cubicMetersInput.value = cubicMeters.toFixed(2);
+        }
+        
+        // Function to calculate regular hours
+        function calculateRegularHours() {
+            const manpower = parseInt(manpowerInput.value) || 0;
+            const regularHours = manpower * 8;
+            regularHoursInput.value = regularHours;
+        }
+        
+        // Function to start a new report
+        function startReport() {
+            // Validate supervisor info
+            if (!supervisorNameSelect.value) {
+                alert('Please select a supervisor name');
+                supervisorNameSelect.focus();
+                return;
+            }
+            
+            if (!plantSelect.value) {
+                alert('Please select a plant');
+                plantSelect.focus();
+                return;
+            }
+            
+            if (!workDateInput.value) {
+                alert('Please select a work date');
+                workDateInput.focus();
+                return;
+            }
+            
+            if (!manpowerInput.value || parseInt(manpowerInput.value) <= 0) {
+                alert('Please enter the number of manpower');
+                manpowerInput.focus();
+                return;
+            }
+            
+            // Save supervisor info
+            supervisorInfo = {
+                name: supervisorNameSelect.value,
+                plant: plantSelect.value,
+                date: workDateInput.value,
+                manpower: parseInt(manpowerInput.value) || 0,
+                regularHours: parseInt(regularHoursInput.value) || 0,
+                otHours: parseFloat(otHoursInput.value) || 0
+            };
+            
+            // Show work entry section
+            workEntrySection.classList.remove('hidden');
+            
+            // Disable supervisor info inputs
+            supervisorNameSelect.disabled = true;
+            plantSelect.disabled = true;
+            workDateInput.disabled = true;
+            manpowerInput.disabled = true;
+            regularHoursInput.disabled = true;
+            otHoursInput.disabled = true;
+            startReportBtn.disabled = true;
+            startReportBtn.classList.add('bg-gray-400');
+            startReportBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+            
+            // Update manpower summary
+            updateManpowerSummary();
+        }
+        
+        // Function to update manpower summary
+        function updateManpowerSummary() {
+            document.getElementById('summaryManpower').textContent = supervisorInfo.manpower;
+            document.getElementById('summaryRegularHours').textContent = supervisorInfo.regularHours;
+            document.getElementById('summaryOTHours').textContent = supervisorInfo.otHours;
+        }
+        
+        // Function to handle adding/editing an entry
+        function handleAddEntry() {
+            // Validate required fields
+            if (!validateForm()) return;
+            
+            const entry = {
+                workType: workTypeSelect.value,
+                workArea: workAreaInput.value,
+                length: parseFloat(lengthInput.value),
+                width: parseFloat(widthInput.value),
+                height: parseFloat(heightInput.value),
+                cubicMeters: parseFloat(cubicMetersInput.value),
+                quantity: parseInt(quantityInput.value) || 1,
+                notes: workNotesInput.value
+            };
+            
+            if (currentEditIndex >= 0) {
+                // Update existing entry
+                workEntries[currentEditIndex] = entry;
+                currentEditIndex = -1;
+                addEntryBtn.textContent = 'Add Entry';
+            } else {
+                // Add new entry
+                workEntries.push(entry);
+            }
+            
+            // Update UI
+            renderEntries();
+            updateSummary();
+            resetForm();
+        }
+        
+        // Function to validate form
+        function validateForm() {
+            let isValid = true;
+            const requiredFields = [
+                { field: workTypeSelect, name: 'Work Type' },
+                { field: workAreaInput, name: 'Area/Zone' },
+                { field: lengthInput, name: 'Length' },
+                { field: widthInput, name: 'Width' },
+                { field: heightInput, name: 'Height' }
+            ];
+            
+            for (const item of requiredFields) {
+                if (!item.field.value) {
+                    alert(`Please enter ${item.name}`);
+                    item.field.focus();
+                    isValid = false;
+                    break;
                 }
-                
-                // Add entries to table
-                entries.forEach((entry, index) => {
-                    const row = document.createElement('tr');
-                    row.className = index % 2 === 0 ? 'bg-white' : 'bg-gray-50';
-                    
-                    row.innerHTML = `
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.workType}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.scaffoldType}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.locationDetails}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.volume.toFixed(3)}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.numWorkers}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">${entry.totalHours.toFixed(1)}</td>
-                        <td class="px-3 sm:px-6 py-2 sm:py-4 whitespace-nowrap text-xs sm:text-sm">
-                            <button class="text-red-600 hover:text-red-900 delete-btn" data-index="${index}">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 sm:h-5 sm:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            }
+            
+            return isValid;
+        }
+        
+        // Function to render entries in the table
+        function renderEntries() {
+            if (workEntries.length === 0) {
+                entriesTableBody.innerHTML = `
+                    <tr class="text-center text-sm text-gray-500">
+                        <td colspan="6" class="px-2 py-3">No entries added yet</td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            entriesTableBody.innerHTML = workEntries.map((entry, index) => `
+                <tr class="hover:bg-gray-50">
+                    <td class="px-2 py-2 text-xs text-gray-900">${entry.workType.substring(0, 3)}</td>
+                    <td class="px-2 py-2 text-xs text-gray-900">${entry.workArea}</td>
+                    <td class="px-2 py-2 text-xs text-gray-900">${entry.length}×${entry.width}×${entry.height}</td>
+                    <td class="px-2 py-2 text-xs text-gray-900">${entry.cubicMeters.toFixed(2)}</td>
+                    <td class="px-2 py-2 text-xs text-gray-900">${entry.quantity}</td>
+                    <td class="px-2 py-2 text-xs text-gray-900">
+                        <div class="flex space-x-1">
+                            <button class="text-blue-600 hover:text-blue-800" onclick="editEntry(${index})">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+                                </svg>
+                            </button>
+                            <button class="text-red-600 hover:text-red-800" onclick="deleteEntry(${index})">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                 </svg>
                             </button>
-                        </td>
-                    `;
-                    
-                    tableBody.appendChild(row);
-                });
-                
-                // Add event listeners to delete buttons
-                document.querySelectorAll('.delete-btn').forEach(button => {
-                    button.addEventListener('click', function() {
-                        const index = parseInt(this.getAttribute('data-index'));
-                        entryToDelete = index;
-                        currentAction = 'deleteEntry';
-                        document.getElementById('confirmationMessage').textContent = 'Are you sure you want to delete this entry?';
-                        document.getElementById('confirmationModal').classList.remove('hidden');
-                    });
-                });
-            }
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        // Function to calculate effective cubic meters for productivity
+        function calculateEffectiveCubicMeters() {
+            let totalEffectiveCubicMeters = 0;
             
-            // Function to update summary statistics
-            function updateSummary() {
-                let totalVolume = 0;
-                let totalWorkers = 0;
-                let totalHours = 0;
+            workEntries.forEach(entry => {
+                const cubicMeters = entry.cubicMeters * entry.quantity;
                 
-                entries.forEach(entry => {
-                    totalVolume += entry.volume;
-                    totalWorkers += entry.numWorkers;
-                    totalHours += entry.totalHours;
-                });
-                
-                document.getElementById('totalEntries').textContent = entries.length;
-                document.getElementById('totalVolume').textContent = totalVolume.toFixed(3);
-                document.getElementById('totalWorkers').textContent = totalWorkers;
-                document.getElementById('totalHours').textContent = totalHours.toFixed(1);
-            }
-            
-            // Function to generate Excel data
-            function generateExcelData() {
-                // Create workbook and worksheet
-                const wb = XLSX.utils.book_new();
-                
-                // Create summary worksheet
-                const summaryData = [
-                    ['Scaffolding Work Progress Report'],
-                    [],
-                    ['Supervisor:', document.getElementById('supervisorName').value || 'Not Specified'],
-                    ['Work Location:', document.getElementById('workLocation').value || 'Not Specified'],
-                    ['Work Date:', document.getElementById('workDate').value || 'Not Specified'],
-                    ['Report Generated:', new Date().toLocaleString()],
-                    [],
-                    ['Summary Statistics'],
-                    ['Total Entries:', entries.length],
-                    ['Total Volume (m³):', parseFloat(document.getElementById('totalVolume').textContent)],
-                    ['Total Workers:', parseInt(document.getElementById('totalWorkers').textContent)],
-                    ['Total Hours:', parseFloat(document.getElementById('totalHours').textContent)]
-                ];
-                
-                const summaryWS = XLSX.utils.aoa_to_sheet(summaryData);
-                XLSX.utils.book_append_sheet(wb, summaryWS, 'Summary');
-                
-                // Create entries worksheet
-                const entriesHeader = [
-                    'Work Date', 'Supervisor', 'Work Location', 'Work Type', 'Scaffold Type', 
-                    'Location Details', 'Length (m)', 'Width (m)', 'Height (m)', 'Volume (m³)', 
-                    'Workers', 'Regular Hours', 'Overtime Hours', 'Total Hours', 'Notes'
-                ];
-                
-                const entriesData = entries.map(entry => [
-                    entry.workDate,
-                    entry.supervisorName,
-                    entry.workLocation,
-                    entry.workType,
-                    entry.scaffoldType,
-                    entry.locationDetails,
-                    entry.dimensions.length,
-                    entry.dimensions.width,
-                    entry.dimensions.height,
-                    entry.volume,
-                    entry.numWorkers,
-                    entry.regularHours,
-                    entry.overtimeHours,
-                    entry.totalHours,
-                    entry.notes
-                ]);
-                
-                entriesData.unshift(entriesHeader);
-                const entriesWS = XLSX.utils.aoa_to_sheet(entriesData);
-                XLSX.utils.book_append_sheet(wb, entriesWS, 'Work Entries');
-                
-                return wb;
-            }
-            
-            // Function to export data to Excel
-            function exportToExcel() {
-                if (entries.length === 0) {
-                    alert('No data to export.');
-                    return;
+                // For dismantling, divide cubic meters by 2 for productivity calculation
+                if (entry.workType === 'Dismantling') {
+                    totalEffectiveCubicMeters += cubicMeters / 2;
+                } else {
+                    totalEffectiveCubicMeters += cubicMeters;
                 }
-                
-                const wb = generateExcelData();
-                const fileName = `scaffolding_report_${new Date().toISOString().split('T')[0]}.xlsx`;
-                
-                // Export to file
-                XLSX.writeFile(wb, fileName);
+            });
+            
+            return totalEffectiveCubicMeters;
+        }
+        
+        // Function to update summary statistics
+        function updateSummary() {
+            const totalCubicMeters = workEntries.reduce((sum, entry) => sum + (entry.cubicMeters * entry.quantity), 0);
+            const totalManHours = supervisorInfo.regularHours + supervisorInfo.otHours;
+            const effectiveCubicMeters = calculateEffectiveCubicMeters();
+            
+            // Calculate productivity (cubic meters per hour)
+            let productivity = 0;
+            if (totalManHours > 0) {
+                productivity = effectiveCubicMeters / totalManHours;
             }
             
-            // Function to print report
-            function printReport() {
-                if (entries.length === 0) {
-                    alert('No data to print.');
-                    return;
+            // Update summary dashboard
+            document.getElementById('totalCubicMeters').textContent = totalCubicMeters.toFixed(2);
+            document.getElementById('totalProductivity').textContent = productivity.toFixed(2);
+        }
+        
+        // Function to reset form
+        function resetForm() {
+            workTypeSelect.value = '';
+            workAreaInput.value = '';
+            lengthInput.value = '';
+            widthInput.value = '';
+            heightInput.value = '';
+            cubicMetersInput.value = '';
+            quantityInput.value = '1';
+            workNotesInput.value = '';
+        }
+        
+        // Function to edit an entry
+        window.editEntry = function(index) {
+            const entry = workEntries[index];
+            
+            // Populate form with entry data
+            workTypeSelect.value = entry.workType;
+            workAreaInput.value = entry.workArea;
+            lengthInput.value = entry.length;
+            widthInput.value = entry.width;
+            heightInput.value = entry.height;
+            cubicMetersInput.value = entry.cubicMeters.toFixed(2);
+            quantityInput.value = entry.quantity;
+            workNotesInput.value = entry.notes || '';
+            
+            // Update button text and set edit index
+            addEntryBtn.textContent = 'Update Entry';
+            currentEditIndex = index;
+        };
+        
+        // Function to delete an entry
+        window.deleteEntry = function(index) {
+            showConfirmationModal(
+                'Are you sure you want to delete this entry?',
+                () => {
+                    workEntries.splice(index, 1);
+                    renderEntries();
+                    updateSummary();
+                    
+                    // If currently editing this entry, reset the form
+                    if (currentEditIndex === index) {
+                        resetForm();
+                        addEntryBtn.textContent = 'Add Entry';
+                        currentEditIndex = -1;
+                    }
                 }
-                
-                const printContent = document.getElementById('printContent');
-                const supervisorName = document.getElementById('supervisorName').value || 'Not Specified';
-                const workLocation = document.getElementById('workLocation').value || 'Not Specified';
-                const workDate = document.getElementById('workDate').value || 'Not Specified';
-                
-                // Create print content
-                let html = `
-                    <style>
-                        body { font-family: Arial, sans-serif; margin: 20px; }
-                        h1 { color: #1e40af; text-align: center; }
-                        h2 { color: #1e40af; margin-top: 20px; }
-                        .info-section { margin-bottom: 20px; }
-                        .info-item { margin-bottom: 5px; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
-                        th { background-color: #f2f2f2; }
-                        .summary-box { display: inline-block; width: 23%; margin-right: 1%; padding: 10px; border: 1px solid #ddd; text-align: center; }
-                        .summary-value { font-size: 24px; font-weight: bold; color: #1e40af; }
-                        .summary-label { font-size: 14px; color: #666; }
-                        @media print {
-                            body { margin: 0; }
-                            button { display: none; }
-                        }
-                    </style>
-                    <h1>Scaffolding Work Progress Report</h1>
-                    
-                    <div class="info-section">
-                        <div class="info-item"><strong>Supervisor:</strong> ${supervisorName}</div>
-                        <div class="info-item"><strong>Work Location:</strong> ${workLocation}</div>
-                        <div class="info-item"><strong>Work Date:</strong> ${workDate}</div>
-                        <div class="info-item"><strong>Report Generated:</strong> ${new Date().toLocaleString()}</div>
-                    </div>
-                    
-                    <h2>Summary</h2>
-                    <div>
-                        <div class="summary-box">
-                            <div class="summary-value">${entries.length}</div>
-                            <div class="summary-label">Total Entries</div>
-                        </div>
-                        <div class="summary-box">
-                            <div class="summary-value">${parseFloat(document.getElementById('totalVolume').textContent).toFixed(3)}</div>
-                            <div class="summary-label">Total Volume (m³)</div>
-                        </div>
-                        <div class="summary-box">
-                            <div class="summary-value">${document.getElementById('totalWorkers').textContent}</div>
-                            <div class="summary-label">Total Workers</div>
-                        </div>
-                        <div class="summary-box">
-                            <div class="summary-value">${parseFloat(document.getElementById('totalHours').textContent).toFixed(1)}</div>
-                            <div class="summary-label">Total Hours</div>
-                        </div>
-                    </div>
-                    
-                    <h2>Work Entries</h2>
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Work Type</th>
-                                <th>Scaffold Type</th>
-                                <th>Location</th>
-                                <th>Volume (m³)</th>
-                                <th>Workers</th>
-                                <th>Regular Hours</th>
-                                <th>Overtime Hours</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                `;
-                
-                entries.forEach(entry => {
-                    html += `
-                        <tr>
-                            <td>${entry.workType}</td>
-                            <td>${entry.scaffoldType}</td>
-                            <td>${entry.locationDetails}</td>
-                            <td>${entry.volume.toFixed(3)}</td>
-                            <td>${entry.numWorkers}</td>
-                            <td>${entry.regularHours.toFixed(1)}</td>
-                            <td>${entry.overtimeHours.toFixed(1)}</td>
-                        </tr>
-                    `;
-                });
-                
-                html += `
-                        </tbody>
-                    </table>
-                `;
-                
-                // Set print content
-                printContent.innerHTML = html;
-                
-                // Open print dialog
-                const printWindow = window.open('', '_blank');
-                printWindow.document.write(html);
-                printWindow.document.close();
-                printWindow.focus();
-                printWindow.print();
-                printWindow.close();
+            );
+        };
+        
+        // Function to show confirmation modal
+        function showConfirmationModal(message, onConfirm) {
+            confirmationMessage.textContent = message;
+            confirmationModal.classList.remove('hidden');
+            
+            // Set up confirm action
+            confirmActionBtn.onclick = () => {
+                onConfirm();
+                confirmationModal.classList.add('hidden');
+            };
+        }
+        
+        // Function to prepare report preview
+        function prepareReportPreview() {
+            const reportPreview = document.getElementById('reportPreview');
+            const previewSupervisor = document.getElementById('previewSupervisor');
+            const previewPlant = document.getElementById('previewPlant');
+            const previewManpower = document.getElementById('previewManpower');
+            const previewRegularHours = document.getElementById('previewRegularHours');
+            const previewOTHours = document.getElementById('previewOTHours');
+            const reportDate = document.getElementById('reportDate');
+            const previewTableBody = document.getElementById('previewTableBody');
+            const previewTotalCubicMeters = document.getElementById('previewTotalCubicMeters');
+            const previewTotalManHours = document.getElementById('previewTotalManHours');
+            const previewProductivity = document.getElementById('previewProductivity');
+            const previewGeneratedDate = document.getElementById('previewGeneratedDate');
+            
+            // Set supervisor info
+            previewSupervisor.textContent = supervisorInfo.name;
+            previewPlant.textContent = supervisorInfo.plant;
+            previewManpower.textContent = supervisorInfo.manpower;
+            previewRegularHours.textContent = supervisorInfo.regularHours;
+            previewOTHours.textContent = supervisorInfo.otHours;
+            
+            // Format date
+            const formattedDate = new Date(supervisorInfo.date).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+            reportDate.textContent = formattedDate;
+            
+            // Generate table rows
+            previewTableBody.innerHTML = workEntries.map((entry, index) => `
+                <tr>
+                    <td class="border border-gray-200 px-2 py-1 text-xs text-center">${index + 1}</td>
+                    <td class="border border-gray-200 px-2 py-1 text-xs">${entry.workType}</td>
+                    <td class="border border-gray-200 px-2 py-1 text-xs">${entry.workArea}</td>
+                    <td class="border border-gray-200 px-2 py-1 text-xs">${entry.length}×${entry.width}×${entry.height}</td>
+                    <td class="border border-gray-200 px-2 py-1 text-xs text-center">${entry.cubicMeters.toFixed(2)}</td>
+                    <td class="border border-gray-200 px-2 py-1 text-xs text-center">${entry.quantity}</td>
+                </tr>
+            `).join('');
+            
+            // Calculate totals
+            const totalCubicMeters = workEntries.reduce((sum, entry) => sum + (entry.cubicMeters * entry.quantity), 0);
+            const totalManHours = supervisorInfo.regularHours + supervisorInfo.otHours;
+            const effectiveCubicMeters = calculateEffectiveCubicMeters();
+            
+            let productivity = 0;
+            if (totalManHours > 0) {
+                productivity = effectiveCubicMeters / totalManHours;
             }
-        });
+            
+            // Set summary info
+            previewTotalCubicMeters.textContent = totalCubicMeters.toFixed(2) + " m³";
+            previewTotalManHours.textContent = totalManHours + " hrs";
+            previewProductivity.textContent = productivity.toFixed(2) + " m³/hr";
+            
+            // Set generated date
+            previewGeneratedDate.textContent = new Date().toLocaleString();
+            
+            return reportPreview;
+        }
+        
+        // Function to download report as JPEG
+        function downloadReport() {
+            if (workEntries.length === 0) {
+                alert('Please add at least one entry before downloading the report.');
+                return;
+            }
+            
+            const reportPreview = prepareReportPreview();
+            reportPreview.classList.remove('hidden');
+            
+            html2canvas(reportPreview, {
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                allowTaint: true
+            }).then(canvas => {
+                // Hide the preview again
+                reportPreview.classList.add('hidden');
+                
+                // Create download link
+                const link = document.createElement('a');
+                link.download = `Scaffolding_Report_${supervisorInfo.plant}_${supervisorInfo.date}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.click();
+            });
+        }
+        
+        // Function to send report via email
+        function sendReport() {
+            // In a real application, this would send the data to a server
+            // Since we can't actually send emails from client-side JavaScript,
+            // we'll simulate the process and show a success message
+            
+            // Calculate totals for the report
+            const totalCubicMeters = workEntries.reduce((sum, entry) => sum + (entry.cubicMeters * entry.quantity), 0);
+            const totalManHours = supervisorInfo.regularHours + supervisorInfo.otHours;
+            const effectiveCubicMeters = calculateEffectiveCubicMeters();
+            
+            const productivity = totalManHours > 0 ? effectiveCubicMeters / totalManHours : 0;
+            
+            // Prepare Excel data
+            const excelData = workEntries.map((entry, index) => ({
+                'No.': index + 1,
+                'Work Type': entry.workType,
+                'Area/Zone': entry.workArea,
+                'Length (m)': entry.length,
+                'Width (m)': entry.width,
+                'Height (m)': entry.height,
+                'Cubic Meters (m³)': entry.cubicMeters,
+                'Quantity': entry.quantity,
+                'Notes': entry.notes || ''
+            }));
+            
+            // Add summary row
+            excelData.push({
+                'No.': '',
+                'Work Type': 'TOTALS',
+                'Area/Zone': '',
+                'Length (m)': '',
+                'Width (m)': '',
+                'Height (m)': '',
+                'Cubic Meters (m³)': totalCubicMeters.toFixed(2),
+                'Quantity': workEntries.reduce((sum, entry) => sum + entry.quantity, 0),
+                'Notes': `Productivity: ${productivity.toFixed(2)} m³/hr`
+            });
+            
+            // In a real application, this data would be sent to a server
+            console.log('Sending report data:', {
+                supervisorInfo,
+                entries: excelData,
+                summary: {
+                    totalCubicMeters: totalCubicMeters.toFixed(2),
+                    effectiveCubicMeters: effectiveCubicMeters.toFixed(2),
+                    totalManHours,
+                    productivity: productivity.toFixed(2)
+                },
+                emailTo: 'okgurwindersingh@gmail.com',
+                emailSubject: `Scaffolding Report - ${supervisorInfo.plant} - ${supervisorInfo.date}`,
+                emailBody: 'Dear Sir,\n\nPlease find the attached today\'s report.\n\nRegards,\n' + supervisorInfo.name
+            });
+            
+            // Show success message
+            successMessage.textContent = 'Your report has been sent successfully to okgurwindersingh@gmail.com';
+            successModal.classList.remove('hidden');
+            
+            // In a real application, you would use a server-side API endpoint to handle the email sending
+        }
+        
+        // Initialize the page
+        renderEntries();
+        updateSummary();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9639875f80947f8d',t:'MTc1MzI1NjQxNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963a5426d56cac91',t:'MTc1MzI2NDgwNS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
