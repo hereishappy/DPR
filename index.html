@@ -382,121 +382,186 @@
             const productivity = totalManhours > 0 ? (totalErection + (totalDismantling / 2)) / totalManhours : 0;
             const remarks = document.getElementById('remarks').value;
 
-            // Create a canvas to generate the JPEG report
+            // Create a canvas to generate the ID card sized JPEG report
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
             
-            // Set canvas size
-            canvas.width = 800;
-            canvas.height = 1200;
+            // Set canvas size for ID card (2 inch width x 3 inch height at 300 DPI)
+            canvas.width = 600;  // 2 inches * 300 DPI
+            canvas.height = 900; // 3 inches * 300 DPI
             
-            // Set background
-            ctx.fillStyle = '#ffffff';
+            // Set background with gradient
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#f8fafc');
+            gradient.addColorStop(1, '#e2e8f0');
+            ctx.fillStyle = gradient;
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             
-            // Set font styles
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 24px Arial';
-            ctx.textAlign = 'center';
+            // Add border
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 4;
+            ctx.strokeRect(10, 10, canvas.width - 20, canvas.height - 20);
             
-            let y = 40;
+            let y = 50;
             
             // Title
-            ctx.fillText('SCAFFOLDING WORK REPORT', canvas.width / 2, y);
-            y += 60;
+            ctx.fillStyle = '#1e40af';
+            ctx.font = 'bold 18px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('SCAFFOLDING REPORT', canvas.width / 2, y);
+            y += 35;
             
             // Basic Info
-            ctx.font = '16px Arial';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'left';
-            ctx.fillText(`Date: ${basicInfo.date}`, 50, y);
+            ctx.fillStyle = '#374151';
+            ctx.fillText(`Supervisor: ${basicInfo.supervisorName}`, 25, y);
+            y += 20;
+            ctx.fillText(`Date: ${basicInfo.date}`, 25, y);
+            y += 20;
+            ctx.fillText(`Area: ${basicInfo.area}`, 25, y);
+            y += 20;
+            ctx.fillText(`Manpower: ${basicInfo.manpower} × 8 + ${basicInfo.overtime}OT`, 25, y);
             y += 30;
-            ctx.fillText(`Supervisor: ${basicInfo.supervisorName}`, 50, y);
-            y += 30;
-            ctx.fillText(`Area: ${basicInfo.area}`, 50, y);
-            y += 30;
-            ctx.fillText(`Manpower: ${basicInfo.manpower} men × 8 + ${basicInfo.overtime} overtime = ${totalManhours} hours`, 50, y);
-            y += 50;
             
-            // Summary
-            ctx.font = 'bold 18px Arial';
-            ctx.fillText('SUMMARY', 50, y);
-            y += 30;
-            ctx.font = '16px Arial';
-            ctx.fillText(`Total Erection: ${totalErection.toFixed(2)} m³`, 50, y);
-            y += 25;
-            ctx.fillText(`Total Dismantling: ${totalDismantling.toFixed(2)} m³`, 50, y);
-            y += 25;
-            ctx.fillText(`Productivity: ${productivity.toFixed(3)} m³/hour`, 50, y);
-            y += 40;
+            // Summary boxes
+            ctx.fillStyle = '#dcfce7';
+            ctx.fillRect(25, y, 250, 35);
+            ctx.strokeStyle = '#16a34a';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(25, y, 250, 35);
+            ctx.fillStyle = '#16a34a';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('ERECTION', 30, y + 15);
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`${totalErection.toFixed(1)} m³`, 30, y + 30);
+            
+            y += 45;
+            ctx.fillStyle = '#fecaca';
+            ctx.fillRect(25, y, 250, 35);
+            ctx.strokeStyle = '#dc2626';
+            ctx.strokeRect(25, y, 250, 35);
+            ctx.fillStyle = '#dc2626';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('DISMANTLING', 30, y + 15);
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`${totalDismantling.toFixed(1)} m³`, 30, y + 30);
+            
+            y += 45;
+            ctx.fillStyle = '#e0e7ff';
+            ctx.fillRect(25, y, 250, 35);
+            ctx.strokeStyle = '#6366f1';
+            ctx.strokeRect(25, y, 250, 35);
+            ctx.fillStyle = '#6366f1';
+            ctx.font = 'bold 10px Arial';
+            ctx.fillText('PRODUCTIVITY', 30, y + 15);
+            ctx.font = 'bold 14px Arial';
+            ctx.fillText(`${productivity.toFixed(2)} m³/hr`, 30, y + 30);
+            
+            y += 55;
             
             // Productivity feedback
             if (productivity >= 2.5) {
-                ctx.fillStyle = '#10b981';
-                ctx.font = 'bold 16px Arial';
-                ctx.fillText('🎉 Excellent Work! Thank you for your outstanding efforts!', 50, y);
-                y += 25;
-                ctx.fillText('आपके उत्कृष्ट प्रयासों के लिए धन्यवाद!', 50, y);
+                ctx.fillStyle = '#dcfce7';
+                ctx.fillRect(25, y, 250, 60);
+                ctx.strokeStyle = '#16a34a';
+                ctx.strokeRect(25, y, 250, 60);
+                ctx.fillStyle = '#16a34a';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('🎉 EXCELLENT!', canvas.width / 2, y + 20);
+                ctx.font = '9px Arial';
+                ctx.fillText('Thank you for outstanding efforts!', canvas.width / 2, y + 35);
+                ctx.fillText('उत्कृष्ट प्रयासों के लिए धन्यवाद!', canvas.width / 2, y + 50);
             } else {
-                ctx.fillStyle = '#ef4444';
-                ctx.font = 'bold 16px Arial';
-                ctx.fillText('😔 Needs Improvement - This is not what we are expecting from you.', 50, y);
-                y += 25;
-                ctx.fillText('यह वह नहीं है जिसकी हम आपसे अपेक्षा कर रहे हैं।', 50, y);
+                ctx.fillStyle = '#fecaca';
+                ctx.fillRect(25, y, 250, 60);
+                ctx.strokeStyle = '#dc2626';
+                ctx.strokeRect(25, y, 250, 60);
+                ctx.fillStyle = '#dc2626';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('😔 NEEDS IMPROVEMENT', canvas.width / 2, y + 20);
+                ctx.font = '8px Arial';
+                ctx.fillText('Not what we expect from you', canvas.width / 2, y + 35);
+                ctx.fillText('यह हमारी अपेक्षा नहीं है', canvas.width / 2, y + 50);
             }
-            y += 40;
             
-            // Remarks
-            if (remarks) {
-                ctx.fillStyle = '#000000';
-                ctx.font = 'bold 18px Arial';
-                ctx.fillText('REMARKS', 50, y);
-                y += 30;
-                ctx.font = '16px Arial';
+            y += 80;
+            
+            // Remarks (if any)
+            if (remarks && remarks.trim()) {
+                ctx.fillStyle = '#fef3c7';
+                ctx.fillRect(25, y, 250, 60);
+                ctx.strokeStyle = '#f59e0b';
+                ctx.strokeRect(25, y, 250, 60);
+                ctx.fillStyle = '#92400e';
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('REMARKS:', 30, y + 15);
+                ctx.font = '8px Arial';
                 
-                // Word wrap for remarks
+                // Word wrap for remarks in small space
                 const words = remarks.split(' ');
                 let line = '';
+                let lineY = y + 30;
                 for (let n = 0; n < words.length; n++) {
                     const testLine = line + words[n] + ' ';
                     const metrics = ctx.measureText(testLine);
-                    const testWidth = metrics.width;
-                    if (testWidth > 700 && n > 0) {
-                        ctx.fillText(line, 50, y);
+                    if (metrics.width > 240 && n > 0) {
+                        ctx.fillText(line, 30, lineY);
                         line = words[n] + ' ';
-                        y += 25;
+                        lineY += 12;
+                        if (lineY > y + 55) break; // Stop if no more space
                     } else {
                         line = testLine;
                     }
                 }
-                ctx.fillText(line, 50, y);
-                y += 40;
+                if (lineY <= y + 55) ctx.fillText(line, 30, lineY);
+                y += 70;
             }
             
-            // Work Details
-            ctx.fillStyle = '#000000';
-            ctx.font = 'bold 18px Arial';
-            ctx.fillText('WORK DETAILS', 50, y);
-            y += 30;
-            ctx.font = '16px Arial';
+            // Work entries summary (compact)
+            if (entries.length > 0 && y < canvas.height - 100) {
+                ctx.fillStyle = '#374151';
+                ctx.font = 'bold 9px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText('WORK ENTRIES:', 25, y);
+                y += 15;
+                
+                ctx.font = '7px Arial';
+                entries.slice(0, 8).forEach((entry, index) => { // Show max 8 entries
+                    const color = entry.type === 'erection' ? '#16a34a' : '#dc2626';
+                    ctx.fillStyle = color;
+                    const text = `${index + 1}. ${entry.type.charAt(0).toUpperCase()}${entry.type.slice(1)}: ${entry.volume.toFixed(1)}m³`;
+                    ctx.fillText(text, 25, y);
+                    y += 12;
+                    if (y > canvas.height - 50) break;
+                });
+                
+                if (entries.length > 8) {
+                    ctx.fillStyle = '#6b7280';
+                    ctx.fillText(`... and ${entries.length - 8} more entries`, 25, y);
+                }
+            }
             
-            entries.forEach((entry, index) => {
-                const color = entry.type === 'erection' ? '#10b981' : '#ef4444';
-                ctx.fillStyle = color;
-                ctx.fillText(`${index + 1}. ${entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}: ${entry.length}×${entry.width}×${entry.height} × ${entry.quantity} = ${entry.volume.toFixed(2)} m³`, 50, y);
-                y += 25;
-            });
+            // Footer
+            ctx.fillStyle = '#6b7280';
+            ctx.font = '7px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText(`Generated: ${new Date().toLocaleString()}`, canvas.width / 2, canvas.height - 20);
             
             // Convert canvas to JPEG and download
             canvas.toBlob(function(blob) {
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `Scaffolding_Report_${basicInfo.supervisorName}_${basicInfo.date}.jpg`;
+                a.download = `Scaffolding_IDCard_${basicInfo.supervisorName}_${basicInfo.date}.jpg`;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
                 window.URL.revokeObjectURL(url);
-            }, 'image/jpeg', 0.9);
+            }, 'image/jpeg', 0.95);
         }
 
         function resetApp() {
@@ -520,5 +585,5 @@
             document.getElementById('card3').classList.add('hidden');
         }
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963c3831c36947e5',t:'MTc1MzI4NDYzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963c47e4379e493c',t:'MTc1MzI4NTI3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
