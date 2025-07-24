@@ -166,12 +166,49 @@
                 <!-- Report content will be generated here -->
             </div>
             
-            <div class="flex gap-3 mt-6">
+            <div class="flex gap-2 mt-6">
                 <button onclick="goToCard2()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
                     Back
                 </button>
                 <button onclick="downloadReport()" class="flex-1 bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-                    Download JPEG
+                    📥 Download
+                </button>
+                <button onclick="shareReport()" class="flex-1 bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors">
+                    📤 Share
+                </button>
+            </div>
+        </div>
+
+        <!-- Share Modal -->
+        <div id="shareModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="bg-white rounded-xl p-6 m-4 max-w-sm w-full">
+                <h3 class="text-lg font-bold text-gray-800 mb-4 text-center">📤 Share Report</h3>
+                <p class="text-sm text-gray-600 mb-4 text-center">Choose how you want to share this report:</p>
+                
+                <div class="space-y-3">
+                    <button onclick="shareViaWhatsApp()" class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        📱 WhatsApp
+                    </button>
+                    
+                    <button onclick="shareViaEmail()" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        📧 Email
+                    </button>
+                    
+                    <button onclick="shareViaTelegram()" class="w-full bg-sky-500 hover:bg-sky-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        ✈️ Telegram
+                    </button>
+                    
+                    <button onclick="copyReportLink()" class="w-full bg-purple-500 hover:bg-purple-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        🔗 Copy Link
+                    </button>
+                    
+                    <button onclick="shareViaWebShare()" class="w-full bg-orange-500 hover:bg-orange-600 text-white font-medium py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                        📲 More Options
+                    </button>
+                </div>
+                
+                <button onclick="closeShareModal()" class="w-full bg-gray-500 hover:bg-gray-600 text-white font-medium py-2 px-4 rounded-lg transition-colors mt-4">
+                    Cancel
                 </button>
             </div>
         </div>
@@ -351,68 +388,146 @@
             const totalManHours = (basicInfo.manpower * 8) + basicInfo.overtime;
             const productivity = ((totalErection + (totalDismantling / 2)) / totalManHours).toFixed(2);
             
+            // Calculate additional metrics
+            const erectionEntries = workEntries.filter(entry => entry.type === 'erection').length;
+            const dismantlingEntries = workEntries.filter(entry => entry.type === 'dismantling').length;
+            const avgErectionVolume = erectionEntries > 0 ? (totalErection / erectionEntries).toFixed(2) : 0;
+            const avgDismantlingVolume = dismantlingEntries > 0 ? (totalDismantling / dismantlingEntries).toFixed(2) : 0;
+            const totalVolume = totalErection + totalDismantling;
+            const efficiencyRating = productivity >= 3 ? 'Excellent' : productivity >= 2.5 ? 'Good' : productivity >= 2 ? 'Average' : 'Below Average';
+            
             // Generate report content
             const reportContent = document.getElementById('reportContent');
             reportContent.innerHTML = `
                 <div id="reportForDownload" class="space-y-4">
-                    <div class="text-center border-b pb-4">
-                        <h3 class="text-lg font-bold text-gray-800">Scaffolding Productivity Report</h3>
-                        <p class="text-sm text-gray-600">${new Date(basicInfo.date).toLocaleDateString()}</p>
+                    <div class="text-center border-b-2 border-blue-500 pb-4 mb-4">
+                        <h3 class="text-xl font-bold text-gray-800 mb-1">📊 SCAFFOLDING PRODUCTIVITY REPORT</h3>
+                        <p class="text-sm text-gray-600 font-medium">${new Date(basicInfo.date).toLocaleDateString('en-GB', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                        <p class="text-xs text-gray-500">Generated on ${new Date().toLocaleString()}</p>
                     </div>
                     
-                    <div class="grid grid-cols-2 gap-4 text-sm">
-                        <div>
-                            <p><span class="font-medium">Supervisor:</span> ${basicInfo.supervisorName}</p>
-                            <p><span class="font-medium">Area:</span> ${basicInfo.area}</p>
-                        </div>
-                        <div>
-                            <p><span class="font-medium">Manpower:</span> ${basicInfo.manpower} men</p>
-                            <p><span class="font-medium">Overtime:</span> ${basicInfo.overtime} hours</p>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <h4 class="font-medium text-blue-800 mb-2">Work Summary</h4>
+                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                        <h4 class="font-bold text-blue-800 mb-3 flex items-center">
+                            👤 SUPERVISOR INFORMATION
+                        </h4>
                         <div class="grid grid-cols-2 gap-4 text-sm">
-                            <div>
-                                <p><span class="font-medium">Total Erection:</span> ${totalErection.toFixed(2)} m³</p>
-                                <p><span class="font-medium">Total Dismantling:</span> ${totalDismantling.toFixed(2)} m³</p>
+                            <div class="space-y-1">
+                                <p><span class="font-semibold text-gray-700">Name:</span> ${basicInfo.supervisorName}</p>
+                                <p><span class="font-semibold text-gray-700">Work Area:</span> ${basicInfo.area}</p>
                             </div>
-                            <div>
-                                <p><span class="font-medium">Total Man Hours:</span> ${totalManHours}</p>
-                                <p><span class="font-medium">Productivity:</span> ${productivity}</p>
+                            <div class="space-y-1">
+                                <p><span class="font-semibold text-gray-700">Team Size:</span> ${basicInfo.manpower} workers</p>
+                                <p><span class="font-semibold text-gray-700">Overtime:</span> ${basicInfo.overtime} hours</p>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="space-y-2">
-                        <h4 class="font-medium text-gray-800">Work Entries:</h4>
-                        ${workEntries.map(entry => `
-                            <div class="text-sm p-2 rounded border-l-4 ${entry.type === 'erection' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'}">
-                                <span class="font-medium">${entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}:</span>
-                                ${entry.length}×${entry.width}×${entry.height} × ${entry.quantity} = ${entry.volume} m³
+                    <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border border-green-200">
+                        <h4 class="font-bold text-green-800 mb-3 flex items-center">
+                            📈 PRODUCTIVITY METRICS
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Total Erection:</span>
+                                    <span class="text-green-600 font-bold">${totalErection.toFixed(2)} m³</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Total Dismantling:</span>
+                                    <span class="text-red-600 font-bold">${totalDismantling.toFixed(2)} m³</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Total Volume:</span>
+                                    <span class="text-blue-600 font-bold">${totalVolume.toFixed(2)} m³</span>
+                                </div>
                             </div>
-                        `).join('')}
+                            <div class="space-y-2">
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Total Man Hours:</span>
+                                    <span class="font-bold">${totalManHours} hrs</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Productivity Score:</span>
+                                    <span class="font-bold text-lg ${productivity >= 2.5 ? 'text-green-600' : 'text-red-600'}">${productivity}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="font-semibold">Efficiency Rating:</span>
+                                    <span class="font-bold ${productivity >= 2.5 ? 'text-green-600' : 'text-red-600'}">${efficiencyRating}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border border-purple-200">
+                        <h4 class="font-bold text-purple-800 mb-3 flex items-center">
+                            📊 DETAILED ANALYSIS
+                        </h4>
+                        <div class="grid grid-cols-2 gap-4 text-sm">
+                            <div class="space-y-1">
+                                <p><span class="font-semibold">Erection Entries:</span> ${erectionEntries}</p>
+                                <p><span class="font-semibold">Dismantling Entries:</span> ${dismantlingEntries}</p>
+                                <p><span class="font-semibold">Total Entries:</span> ${workEntries.length}</p>
+                            </div>
+                            <div class="space-y-1">
+                                <p><span class="font-semibold">Avg Erection Vol:</span> ${avgErectionVolume} m³</p>
+                                <p><span class="font-semibold">Avg Dismantling Vol:</span> ${avgDismantlingVolume} m³</p>
+                                <p><span class="font-semibold">Vol per Hour:</span> ${(totalVolume / totalManHours).toFixed(2)} m³/hr</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <h4 class="font-bold text-gray-800 mb-3 flex items-center">
+                            📋 WORK ENTRIES BREAKDOWN
+                        </h4>
+                        <div class="space-y-2 max-h-40 overflow-y-auto">
+                            ${workEntries.map((entry, index) => `
+                                <div class="text-sm p-3 rounded-lg border-l-4 ${entry.type === 'erection' ? 'border-green-500 bg-green-50' : 'border-red-500 bg-red-50'} flex justify-between items-center">
+                                    <div>
+                                        <span class="font-semibold ${entry.type === 'erection' ? 'text-green-700' : 'text-red-700'}">${index + 1}. ${entry.type.charAt(0).toUpperCase() + entry.type.slice(1)}</span>
+                                        <p class="text-xs text-gray-600">Dimensions: ${entry.length}m × ${entry.width}m × ${entry.height}m</p>
+                                        <p class="text-xs text-gray-600">Quantity: ${entry.quantity} units</p>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-bold ${entry.type === 'erection' ? 'text-green-600' : 'text-red-600'}">${entry.volume} m³</p>
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
                     </div>
                     
                     ${remarks ? `
-                        <div class="bg-gray-50 p-3 rounded-lg">
-                            <h4 class="font-medium text-gray-800 mb-1">Remarks:</h4>
-                            <p class="text-sm text-gray-700">${remarks}</p>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
+                            <h4 class="font-bold text-yellow-800 mb-2 flex items-center">
+                                💬 SUPERVISOR REMARKS
+                            </h4>
+                            <p class="text-sm text-gray-700 italic">"${remarks}"</p>
                         </div>
                     ` : ''}
                     
-                    <div id="productivityCard" class="productivity-card p-4 rounded-lg text-white text-center ${productivity >= 2.5 ? 'thank-you-effect' : 'sad-effect'}">
+                    <div id="productivityCard" class="productivity-card p-6 rounded-lg text-white text-center ${productivity >= 2.5 ? 'thank-you-effect' : 'sad-effect'} border-2 border-white">
                         ${productivity >= 2.5 ? `
-                            <h4 class="font-bold text-lg mb-2">🎉 Thank You for Your Efforts! 🎉</h4>
-                            <p class="text-sm">आपके प्रयासों के लिए धन्यवाद!</p>
-                            <p class="text-xs mt-1">Productivity: ${productivity} (Excellent Performance)</p>
+                            <h4 class="font-bold text-2xl mb-3">🎉 EXCELLENT PERFORMANCE! 🎉</h4>
+                            <p class="text-lg mb-2">Thank You for Your Outstanding Efforts!</p>
+                            <p class="text-base mb-2">आपके उत्कृष्ट प्रयासों के लिए धन्यवाद!</p>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3 mt-3">
+                                <p class="text-sm">Productivity Score: <span class="font-bold text-xl">${productivity}</span></p>
+                                <p class="text-xs">Keep up the excellent work!</p>
+                            </div>
                         ` : `
-                            <h4 class="font-bold text-lg mb-2">😔 Performance Below Expectations</h4>
-                            <p class="text-sm">यह वह नहीं है जिसकी हम आपसे अपेक्षा करते हैं</p>
-                            <p class="text-sm">This is not what we are expecting from you</p>
-                            <p class="text-xs mt-1">Productivity: ${productivity} (Needs Improvement)</p>
+                            <h4 class="font-bold text-2xl mb-3">😔 PERFORMANCE NEEDS IMPROVEMENT</h4>
+                            <p class="text-lg mb-2">This is not what we are expecting from you</p>
+                            <p class="text-base mb-2">यह वह नहीं है जिसकी हम आपसे अपेक्षा करते हैं</p>
+                            <div class="bg-white bg-opacity-20 rounded-lg p-3 mt-3">
+                                <p class="text-sm">Productivity Score: <span class="font-bold text-xl">${productivity}</span></p>
+                                <p class="text-xs">Target: 2.5 or above</p>
+                            </div>
                         `}
+                    </div>
+                    
+                    <div class="text-center text-xs text-gray-500 border-t pt-3">
+                        <p>📱 Generated by Scaffolding Data Collection App</p>
+                        <p>Report ID: SCF-${Date.now()}</p>
                     </div>
                 </div>
             `;
@@ -440,6 +555,128 @@
                 alert('Error generating report. Please try again.');
             });
         }
+
+        function shareReport() {
+            document.getElementById('shareModal').classList.remove('hidden');
+        }
+
+        function closeShareModal() {
+            document.getElementById('shareModal').classList.add('hidden');
+        }
+
+        function generateShareText() {
+            const totalErection = workEntries.filter(entry => entry.type === 'erection').reduce((sum, entry) => sum + parseFloat(entry.volume), 0);
+            const totalDismantling = workEntries.filter(entry => entry.type === 'dismantling').reduce((sum, entry) => sum + parseFloat(entry.volume), 0);
+            const totalManHours = (basicInfo.manpower * 8) + basicInfo.overtime;
+            const productivity = ((totalErection + (totalDismantling / 2)) / totalManHours).toFixed(2);
+            
+            return `📊 SCAFFOLDING PRODUCTIVITY REPORT
+📅 Date: ${new Date(basicInfo.date).toLocaleDateString()}
+👤 Supervisor: ${basicInfo.supervisorName}
+📍 Area: ${basicInfo.area}
+
+📈 PERFORMANCE METRICS:
+• Total Erection: ${totalErection.toFixed(2)} m³
+• Total Dismantling: ${totalDismantling.toFixed(2)} m³
+• Team Size: ${basicInfo.manpower} workers
+• Overtime: ${basicInfo.overtime} hours
+• Productivity Score: ${productivity}
+• Status: ${productivity >= 2.5 ? '✅ Excellent Performance!' : '⚠️ Needs Improvement'}
+
+Generated by Scaffolding Data Collection App`;
+        }
+
+        function shareViaWhatsApp() {
+            const text = encodeURIComponent(generateShareText());
+            const url = `https://wa.me/?text=${text}`;
+            window.open(url, '_blank');
+            closeShareModal();
+        }
+
+        function shareViaEmail() {
+            const subject = encodeURIComponent(`Scaffolding Report - ${basicInfo.supervisorName} - ${basicInfo.date}`);
+            const body = encodeURIComponent(generateShareText());
+            const url = `mailto:?subject=${subject}&body=${body}`;
+            window.open(url, '_blank');
+            closeShareModal();
+        }
+
+        function shareViaTelegram() {
+            const text = encodeURIComponent(generateShareText());
+            const url = `https://t.me/share/url?text=${text}`;
+            window.open(url, '_blank');
+            closeShareModal();
+        }
+
+        function copyReportLink() {
+            const reportText = generateShareText();
+            
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(reportText).then(() => {
+                    alert('📋 Report details copied to clipboard!');
+                }).catch(() => {
+                    fallbackCopyText(reportText);
+                });
+            } else {
+                fallbackCopyText(reportText);
+            }
+            closeShareModal();
+        }
+
+        function fallbackCopyText(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                alert('📋 Report details copied to clipboard!');
+            } catch (err) {
+                alert('❌ Could not copy to clipboard. Please copy manually.');
+            }
+            document.body.removeChild(textArea);
+        }
+
+        function shareViaWebShare() {
+            if (navigator.share) {
+                const reportElement = document.getElementById('reportForDownload');
+                
+                html2canvas(reportElement, {
+                    backgroundColor: '#ffffff',
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                }).then(canvas => {
+                    canvas.toBlob(blob => {
+                        const file = new File([blob], `Scaffolding_Report_${basicInfo.supervisorName}_${basicInfo.date}.jpeg`, { type: 'image/jpeg' });
+                        
+                        navigator.share({
+                            title: `Scaffolding Report - ${basicInfo.supervisorName}`,
+                            text: generateShareText(),
+                            files: [file]
+                        }).catch(error => {
+                            console.log('Error sharing:', error);
+                            // Fallback to text sharing if file sharing fails
+                            navigator.share({
+                                title: `Scaffolding Report - ${basicInfo.supervisorName}`,
+                                text: generateShareText()
+                            });
+                        });
+                    }, 'image/jpeg', 0.9);
+                });
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                copyReportLink();
+            }
+            closeShareModal();
+        }
+
+        // Close modal when clicking outside
+        document.getElementById('shareModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeShareModal();
+            }
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963fa5b586cb8a1a',t:'MTc1MzMyMDU3NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'963fb85700b09a9b',t:'MTc1MzMyMTMzNy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
