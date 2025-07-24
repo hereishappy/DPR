@@ -10,78 +10,15 @@
         body {
             font-family: 'Poppins', sans-serif;
             background-color: #f0f4f8;
-            perspective: 1000px;
         }
-        /* 3D Card Styles */
-        .card-3d {
+        .card {
             border-radius: 12px;
-            transform-style: preserve-3d;
-            transform: perspective(1000px) rotateX(2deg) rotateY(2deg);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             transition: all 0.3s ease;
-            box-shadow: 
-                0 10px 20px rgba(0, 0, 0, 0.1),
-                0 6px 6px rgba(0, 0, 0, 0.1),
-                5px 5px 15px rgba(0, 0, 0, 0.05);
         }
-        .card-3d:hover {
-            transform: perspective(1000px) rotateX(0deg) rotateY(0deg) translateY(-5px);
-            box-shadow: 
-                0 15px 30px rgba(0, 0, 0, 0.12),
-                0 8px 8px rgba(0, 0, 0, 0.08),
-                5px 10px 20px rgba(0, 0, 0, 0.08);
+        .card:hover {
+            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-        /* 3D Button Styles */
-        .button-3d {
-            position: relative;
-            transform-style: preserve-3d;
-            transform: translateZ(0);
-            transition: all 0.2s ease;
-            box-shadow: 
-                0 4px 6px rgba(50, 50, 93, 0.11), 
-                0 1px 3px rgba(0, 0, 0, 0.08),
-                0 1px 0 rgba(0, 0, 0, 0.05);
-            overflow: hidden;
-        }
-        .button-3d:before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.2), rgba(255,255,255,0));
-            border-radius: inherit;
-            z-index: 1;
-        }
-        .button-3d:after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 40%;
-            background: linear-gradient(to top, rgba(0,0,0,0.05), rgba(0,0,0,0));
-            border-radius: inherit;
-            z-index: 1;
-        }
-        .button-3d:hover {
-            transform: translateY(-2px) translateZ(5px);
-            box-shadow: 
-                0 7px 14px rgba(50, 50, 93, 0.1), 
-                0 3px 6px rgba(0, 0, 0, 0.08),
-                0 2px 0 rgba(0, 0, 0, 0.05);
-        }
-        .button-3d:active {
-            transform: translateY(1px) translateZ(0);
-            box-shadow: 
-                0 3px 6px rgba(50, 50, 93, 0.1), 
-                0 1px 3px rgba(0, 0, 0, 0.08);
-        }
-        .button-3d span {
-            position: relative;
-            z-index: 2;
-        }
-        /* Other styles */
         input, select, textarea {
             border-radius: 8px;
             border: 1px solid #ddd;
@@ -92,6 +29,12 @@
             border-color: #3b82f6;
             outline: none;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        button {
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            transform: translateY(-2px);
         }
         .progress-step {
             transition: all 0.3s ease;
@@ -123,12 +66,23 @@
             20%, 60% { transform: translateX(-5px); }
             40%, 80% { transform: translateX(5px); }
         }
+        .success-animation {
+            animation: successPulse 1s ease-in-out;
+        }
+        @keyframes successPulse {
+            0% { transform: scale(0.8); opacity: 0; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
         .worker-row {
             animation: slideDown 0.3s ease-out;
         }
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+        .share-modal {
+            animation: fadeIn 0.3s ease;
         }
         /* 3D Report Card Styles */
         .report-3d-card {
@@ -199,20 +153,6 @@
             background-color: #fee2e2;
             color: #b91c1c;
         }
-        /* Focus highlight animation */
-        @keyframes highlightFocus {
-            0% { box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.4); }
-            50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); }
-            100% { box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.4); }
-        }
-        .highlight-focus {
-            animation: highlightFocus 1s ease;
-        }
-        /* Active field highlight */
-        .active-field {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
-        }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
@@ -240,7 +180,7 @@
         <form id="scaffolding-form">
             <!-- Card 1: Supervisor Information -->
             <section id="supervisor-info" class="form-section active">
-                <div class="card-3d bg-white p-6 mb-6">
+                <div class="card bg-white p-6 mb-6">
                     <h2 class="text-lg font-semibold text-blue-700 mb-4">Supervisor Information</h2>
                     
                     <div class="mb-4">
@@ -273,32 +213,47 @@
                     <div class="mb-4">
                         <div class="flex justify-between items-center mb-2">
                             <label class="block text-sm font-medium text-gray-700">Worker Details</label>
-                            <button type="button" id="add-worker" class="text-blue-600 text-sm flex items-center button-3d px-2 py-1 rounded">
-                                <span>
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Add Worker
-                                </span>
+                            <button type="button" id="add-worker" class="text-blue-600 text-sm flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                    <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                                </svg>
+                                Add Worker
                             </button>
                         </div>
                         
                         <div id="workers-container" class="space-y-3">
-                            <!-- Worker rows will be added here -->
+                            <div class="worker-row p-3 bg-blue-50 rounded-lg">
+                                <div class="grid grid-cols-2 gap-3 mb-2">
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Worker Name</label>
+                                        <input type="text" class="worker-name w-full bg-white" placeholder="Name" required>
+                                    </div>
+                                    <div>
+                                        <label class="block text-xs font-medium text-gray-700 mb-1">Overtime Hours</label>
+                                        <input type="number" class="worker-overtime w-full bg-white" min="0" step="0.5" placeholder="Hours" required>
+                                    </div>
+                                </div>
+                                <button type="button" class="remove-worker text-red-500 text-xs mt-1 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    Remove
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="flex justify-end">
-                    <button type="button" id="next-to-work" class="button-3d bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700">
-                        <span>Next</span>
+                    <button type="button" id="next-to-work" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700">
+                        Next
                     </button>
                 </div>
             </section>
 
             <!-- Card 2: Erection/Dismantling Details -->
             <section id="work-details" class="form-section">
-                <div class="card-3d bg-white p-6 mb-6">
+                <div class="card bg-white p-6 mb-6">
                     <h2 class="text-lg font-semibold text-blue-700 mb-4">Erection/Dismantling Details</h2>
                     
                     <div class="mb-6">
@@ -316,16 +271,44 @@
                     </div>
                     
                     <div id="entries-container">
-                        <!-- Entry rows will be added here -->
+                        <div class="entry-row mb-4 p-3 bg-blue-50 rounded-lg">
+                            <div class="grid grid-cols-2 gap-3 mb-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Length (m)</label>
+                                    <input type="number" class="length w-full bg-white" min="0.1" step="0.1" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Width (m)</label>
+                                    <input type="number" class="width w-full bg-white" min="0.1" step="0.1" required>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Height (m)</label>
+                                    <input type="number" class="height w-full bg-white" min="0.1" step="0.1" required>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Quantity</label>
+                                    <input type="number" class="quantity w-full bg-white" min="1" required>
+                                </div>
+                            </div>
+                            <div class="flex justify-between items-center mt-2">
+                                <button type="button" class="remove-entry text-red-500 text-sm flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
+                                    </svg>
+                                    Remove
+                                </button>
+                                <div class="text-xs text-gray-500 cubic-meter-display">0.00 m³</div>
+                            </div>
+                        </div>
                     </div>
                     
-                    <button type="button" id="add-entry" class="w-full border border-blue-500 text-blue-500 px-4 py-2 rounded-lg mt-2 flex items-center justify-center button-3d">
-                        <span>
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" viewBox="0 0 20 20" fill="currentColor">
-                                <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                            </svg>
-                            Add Another Entry
-                        </span>
+                    <button type="button" id="add-entry" class="w-full border border-blue-500 text-blue-500 px-4 py-2 rounded-lg mt-2 flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
+                        </svg>
+                        Add Another Entry
                     </button>
                     
                     <div class="mt-4 p-3 bg-blue-100 rounded-lg">
@@ -337,14 +320,14 @@
                 </div>
                 
                 <div class="flex justify-between">
-                    <button type="button" id="back-to-info" class="button-3d border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-medium">
-                        <span>Back</span>
+                    <button type="button" id="back-to-info" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-medium">
+                        Back
                     </button>
-                    <button type="button" id="add-work-type" class="button-3d bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700">
-                        <span>Add Dismantling</span>
+                    <button type="button" id="add-work-type" class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-green-700">
+                        Add Dismantling
                     </button>
-                    <button type="button" id="next-to-report" class="button-3d bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700">
-                        <span>Next</span>
+                    <button type="button" id="next-to-report" class="bg-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-blue-700">
+                        Next
                     </button>
                 </div>
             </section>
@@ -420,7 +403,7 @@
                         </div>
                         
                         <div class="report-footer flex justify-between items-center">
-                            <div class="text-xs text-gray-500">Generated by Happy AI</div>
+                            <div class="text-xs text-gray-500">Generated by Scaffolding App</div>
                             <div id="productivity-badge" class="productivity-badge">
                                 <!-- Productivity badge will be inserted here -->
                             </div>
@@ -428,7 +411,7 @@
                     </div>
                 </div>
                 
-                <div class="card-3d bg-white p-6 mb-6">
+                <div class="card bg-white p-6 mb-6">
                     <div class="mb-4">
                         <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
                         <textarea id="remarks" name="remarks" rows="3" class="w-full bg-gray-50 rounded-lg border border-gray-300 p-2" placeholder="Add any additional notes or remarks here..."></textarea>
@@ -436,34 +419,56 @@
                 </div>
                 
                 <div class="flex justify-between">
-                    <button type="button" id="back-to-work" class="button-3d border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-medium">
-                        <span>Back</span>
+                    <button type="button" id="back-to-work" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-medium">
+                        Back
                     </button>
                     <div class="flex space-x-2">
-                        <button type="button" id="share-report" class="button-3d bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center">
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                                </svg>
-                                Share
-                            </span>
+                        <button type="button" id="share-report" class="bg-green-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-green-700 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                            </svg>
+                            Share
                         </button>
-                        <button type="button" id="download-report" class="button-3d bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 flex items-center">
-                            <span>
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
-                                </svg>
-                                Download
-                            </span>
+                        <button type="button" id="download-report" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 flex items-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                            </svg>
+                            Download
                         </button>
                     </div>
                 </div>
             </section>
         </form>
         
+        <!-- Help Modal -->
+        <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
+            <div class="bg-white rounded-xl p-6 max-w-sm mx-4 max-h-[80vh] overflow-y-auto">
+                <h3 class="text-lg font-bold mb-4">Help & FAQ</h3>
+                <div class="space-y-4">
+                    <div>
+                        <h4 class="font-medium">How to use this app?</h4>
+                        <p class="text-sm text-gray-600">Fill in your information, add work details, and get productivity reports.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium">How is productivity calculated?</h4>
+                        <p class="text-sm text-gray-600">Productivity = (Erection + (Dismantling/2)) / Total Manhours</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium">Can I edit my entries?</h4>
+                        <p class="text-sm text-gray-600">Yes, you can go back to previous steps using the Back button.</p>
+                    </div>
+                    <div>
+                        <h4 class="font-medium">How do I add both erection and dismantling?</h4>
+                        <p class="text-sm text-gray-600">After adding erection details, click "Add Dismantling" to switch and add dismantling data.</p>
+                    </div>
+                </div>
+                <button id="close-help" class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg">Close</button>
+            </div>
+        </div>
+
         <!-- WhatsApp Share Modal -->
-        <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-            <div class="card-3d bg-white rounded-xl p-6 max-w-sm mx-4">
+        <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden share-modal">
+            <div class="bg-white rounded-xl p-6 max-w-sm mx-4">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold">Share Report</h3>
                     <button id="close-share" class="text-gray-500 hover:text-gray-700">
@@ -480,16 +485,21 @@
                     </div>
                 </div>
                 
-                <button id="share-whatsapp" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium flex items-center justify-center button-3d">
-                    <span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
-                        </svg>
-                        Share via WhatsApp
-                    </span>
+                <button id="share-whatsapp" class="w-full bg-green-600 text-white py-3 rounded-lg font-medium flex items-center justify-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+                    </svg>
+                    Share via WhatsApp
                 </button>
             </div>
         </div>
+
+        <!-- Floating Help Button -->
+        <button id="help-button" class="fixed bottom-4 right-4 bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+        </button>
     </div>
 
     <script>
@@ -540,19 +550,9 @@
                 }
             };
             
-            // Add first worker row on page load
-            addNewWorker();
-            
-            // Worker management with auto-progression
+            // Worker management
             document.getElementById('add-worker').addEventListener('click', function() {
                 addNewWorker();
-                // Focus on the newly added worker's name field
-                setTimeout(() => {
-                    const workerRows = document.querySelectorAll('.worker-row');
-                    const lastRow = workerRows[workerRows.length - 1];
-                    const nameInput = lastRow.querySelector('.worker-name');
-                    nameInput.focus();
-                }, 100);
             });
             
             function addNewWorker() {
@@ -585,36 +585,6 @@
                 removeBtn.addEventListener('click', function() {
                     workerRow.remove();
                 });
-                
-                // Add auto-progression for worker name field
-                const nameInput = workerRow.querySelector('.worker-name');
-                nameInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                        const overtimeInput = workerRow.querySelector('.worker-overtime');
-                        overtimeInput.focus();
-                    }
-                });
-                
-                // Add auto-progression for overtime field
-                const overtimeInput = workerRow.querySelector('.worker-overtime');
-                overtimeInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                        // Check if this is the last worker row
-                        const workerRows = document.querySelectorAll('.worker-row');
-                        const lastRow = workerRows[workerRows.length - 1];
-                        
-                        if (workerRow === lastRow) {
-                            // Add a new worker row and focus on it
-                            addNewWorker();
-                            setTimeout(() => {
-                                const newWorkerRows = document.querySelectorAll('.worker-row');
-                                const newLastRow = newWorkerRows[newWorkerRows.length - 1];
-                                const newNameInput = newLastRow.querySelector('.worker-name');
-                                newNameInput.focus();
-                            }, 100);
-                        }
-                    }
-                });
             }
             
             function saveWorkers() {
@@ -631,9 +601,6 @@
                 formData.workers = workers;
             }
             
-            // Add first entry row on page load
-            addNewEntry();
-            
             // Navigation event listeners
             document.getElementById('next-to-work').addEventListener('click', function() {
                 // Validate supervisor info
@@ -645,7 +612,7 @@
                 
                 if (!supervisorName || !date || !area || !manpower || overtime === '') {
                     // Shake the card to indicate validation error
-                    const card = document.querySelector('#supervisor-info .card-3d');
+                    const card = document.querySelector('#supervisor-info .card');
                     card.classList.add('shake');
                     setTimeout(() => card.classList.remove('shake'), 500);
                     
@@ -678,13 +645,6 @@
                 formData.calculations.manhours = formData.supervisorInfo.manhours;
                 
                 showSection('work-details');
-                
-                // Focus on the first entry field
-                setTimeout(() => {
-                    const firstEntryRow = document.querySelector('.entry-row');
-                    const lengthInput = firstEntryRow.querySelector('.length');
-                    lengthInput.focus();
-                }, 100);
             });
             
             document.getElementById('back-to-info').addEventListener('click', function() {
@@ -712,14 +672,11 @@
                 
                 if (!isValid) {
                     // Shake the card to indicate validation error
-                    const card = document.querySelector('#work-details .card-3d');
+                    const card = document.querySelector('#work-details .card');
                     card.classList.add('shake');
                     setTimeout(() => card.classList.remove('shake'), 500);
                     return;
                 }
-                
-                // Save current entries
-                saveCurrentEntries();
                 
                 // Calculate totals and productivity
                 calculateTotals();
@@ -728,6 +685,11 @@
                 populateReport();
                 
                 showSection('report-section');
+                
+                // Auto download report
+                setTimeout(() => {
+                    downloadReport();
+                }, 500);
             });
             
             document.getElementById('back-to-work').addEventListener('click', function() {
@@ -744,12 +706,12 @@
                 // Toggle work type
                 if (currentWorkType === 'erection') {
                     currentWorkType = 'dismantling';
-                    this.innerHTML = '<span>Add Erection</span>';
+                    this.textContent = 'Add Erection';
                     document.getElementById('current-work-type').textContent = 'Dismantling Total:';
                     document.querySelector('input[value="dismantling"]').checked = true;
                 } else {
                     currentWorkType = 'erection';
-                    this.innerHTML = '<span>Add Dismantling</span>';
+                    this.textContent = 'Add Dismantling';
                     document.getElementById('current-work-type').textContent = 'Erection Total:';
                     document.querySelector('input[value="erection"]').checked = true;
                 }
@@ -763,13 +725,6 @@
                 
                 // Update cubic meter total
                 updateCubicMeterTotal();
-                
-                // Focus on the first entry field
-                setTimeout(() => {
-                    const firstEntryRow = document.querySelector('.entry-row');
-                    const lengthInput = firstEntryRow.querySelector('.length');
-                    lengthInput.focus();
-                }, 100);
             });
             
             // Radio button change event
@@ -784,10 +739,10 @@
                     // Update button text
                     const addWorkTypeBtn = document.getElementById('add-work-type');
                     if (currentWorkType === 'erection') {
-                        addWorkTypeBtn.innerHTML = '<span>Add Dismantling</span>';
+                        addWorkTypeBtn.textContent = 'Add Dismantling';
                         document.getElementById('current-work-type').textContent = 'Erection Total:';
                     } else {
-                        addWorkTypeBtn.innerHTML = '<span>Add Erection</span>';
+                        addWorkTypeBtn.textContent = 'Add Erection';
                         document.getElementById('current-work-type').textContent = 'Dismantling Total:';
                     }
                     
@@ -800,27 +755,11 @@
                     
                     // Update cubic meter total
                     updateCubicMeterTotal();
-                    
-                    // Focus on the first entry field
-                    setTimeout(() => {
-                        const firstEntryRow = document.querySelector('.entry-row');
-                        const lengthInput = firstEntryRow.querySelector('.length');
-                        lengthInput.focus();
-                    }, 100);
                 });
             });
             
             // Add entry button
-            document.getElementById('add-entry').addEventListener('click', function() {
-                addNewEntry();
-                // Focus on the newly added entry's length field
-                setTimeout(() => {
-                    const entryRows = document.querySelectorAll('.entry-row');
-                    const lastRow = entryRows[entryRows.length - 1];
-                    const lengthInput = lastRow.querySelector('.length');
-                    lengthInput.focus();
-                }, 100);
-            });
+            document.getElementById('add-entry').addEventListener('click', addNewEntry);
             
             function addNewEntry() {
                 const entryRow = document.createElement('div');
@@ -860,60 +799,13 @@
                 
                 document.getElementById('entries-container').appendChild(entryRow);
                 
-                // Add event listeners to new inputs with auto-progression
-                const lengthInput = entryRow.querySelector('.length');
-                const widthInput = entryRow.querySelector('.width');
-                const heightInput = entryRow.querySelector('.height');
-                const quantityInput = entryRow.querySelector('.quantity');
-                
-                // Auto-progression for length field
-                lengthInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                        widthInput.focus();
-                    }
-                    calculateEntryVolume(entryRow);
-                    updateCubicMeterTotal();
-                });
-                
-                // Auto-progression for width field
-                widthInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                        heightInput.focus();
-                    }
-                    calculateEntryVolume(entryRow);
-                    updateCubicMeterTotal();
-                });
-                
-                // Auto-progression for height field
-                heightInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                        quantityInput.focus();
-                    }
-                    calculateEntryVolume(entryRow);
-                    updateCubicMeterTotal();
-                });
-                
-                // Auto-progression for quantity field
-                quantityInput.addEventListener('keyup', function(e) {
-                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
+                // Add event listeners to new inputs
+                const newInputs = entryRow.querySelectorAll('input');
+                newInputs.forEach(input => {
+                    input.addEventListener('input', function() {
                         calculateEntryVolume(entryRow);
                         updateCubicMeterTotal();
-                        
-                        // Check if this is the last entry row
-                        const entryRows = document.querySelectorAll('.entry-row');
-                        const lastRow = entryRows[entryRows.length - 1];
-                        
-                        if (entryRow === lastRow) {
-                            // Add a new entry row and focus on it
-                            addNewEntry();
-                            setTimeout(() => {
-                                const newEntryRows = document.querySelectorAll('.entry-row');
-                                const newLastRow = newEntryRows[newEntryRows.length - 1];
-                                const newLengthInput = newLastRow.querySelector('.length');
-                                newLengthInput.focus();
-                            }, 100);
-                        }
-                    }
+                    });
                 });
                 
                 // Add remove button event listener
@@ -1011,7 +903,7 @@
                             <button type="button" class="remove-entry text-red-500 text-sm flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                </svg>
+                            </svg>
                                 Remove
                             </button>
                             <div class="text-xs text-gray-500 cubic-meter-display">0.00 m³</div>
@@ -1023,60 +915,13 @@
                     // Calculate volume for this entry
                     calculateEntryVolume(entryRow);
                     
-                    // Add event listeners to inputs with auto-progression
-                    const lengthInput = entryRow.querySelector('.length');
-                    const widthInput = entryRow.querySelector('.width');
-                    const heightInput = entryRow.querySelector('.height');
-                    const quantityInput = entryRow.querySelector('.quantity');
-                    
-                    // Auto-progression for length field
-                    lengthInput.addEventListener('keyup', function(e) {
-                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                            widthInput.focus();
-                        }
-                        calculateEntryVolume(entryRow);
-                        updateCubicMeterTotal();
-                    });
-                    
-                    // Auto-progression for width field
-                    widthInput.addEventListener('keyup', function(e) {
-                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                            heightInput.focus();
-                        }
-                        calculateEntryVolume(entryRow);
-                        updateCubicMeterTotal();
-                    });
-                    
-                    // Auto-progression for height field
-                    heightInput.addEventListener('keyup', function(e) {
-                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
-                            quantityInput.focus();
-                        }
-                        calculateEntryVolume(entryRow);
-                        updateCubicMeterTotal();
-                    });
-                    
-                    // Auto-progression for quantity field
-                    quantityInput.addEventListener('keyup', function(e) {
-                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
+                    // Add event listeners to inputs
+                    const inputs = entryRow.querySelectorAll('input');
+                    inputs.forEach(input => {
+                        input.addEventListener('input', function() {
                             calculateEntryVolume(entryRow);
                             updateCubicMeterTotal();
-                            
-                            // Check if this is the last entry row
-                            const entryRows = document.querySelectorAll('.entry-row');
-                            const lastRow = entryRows[entryRows.length - 1];
-                            
-                            if (entryRow === lastRow) {
-                                // Add a new entry row and focus on it
-                                addNewEntry();
-                                setTimeout(() => {
-                                    const newEntryRows = document.querySelectorAll('.entry-row');
-                                    const newLastRow = newEntryRows[newEntryRows.length - 1];
-                                    const newLengthInput = newLastRow.querySelector('.length');
-                                    newLengthInput.focus();
-                                }, 100);
-                            }
-                        }
+                        });
                     });
                     
                     // Add remove button event listener
@@ -1095,6 +940,9 @@
             }
             
             function calculateTotals() {
+                // Save current entries before calculation
+                saveCurrentEntries();
+                
                 // Calculate erection total
                 let erectionTotal = 0;
                 formData.erectionEntries.forEach(entry => {
@@ -1241,7 +1089,9 @@
             }
             
             // Download report as JPEG
-            document.getElementById('download-report').addEventListener('click', function() {
+            document.getElementById('download-report').addEventListener('click', downloadReport);
+            
+            function downloadReport() {
                 // Update remarks in formData if changed
                 formData.remarks = document.getElementById('remarks').value;
                 
@@ -1253,18 +1103,32 @@
                     document.getElementById('remarks-section').style.display = 'none';
                 }
                 
-                // Create a downloadable report
-                const reportText = createReportText();
-                const blob = new Blob([reportText], { type: 'text/plain' });
-                const url = URL.createObjectURL(blob);
+                // Get the report card element
+                const reportCard = document.getElementById('report-card');
                 
-                const link = document.createElement('a');
-                link.download = `Scaffolding_Report_${formData.supervisorInfo.name}_${formData.supervisorInfo.date}.txt`;
-                link.href = url;
-                link.click();
+                // Temporarily remove 3D effect for clean capture
+                reportCard.style.transform = 'none';
+                reportCard.style.boxShadow = 'none';
                 
-                URL.revokeObjectURL(url);
-            });
+                // Use html2canvas to convert to image
+                html2canvas(reportCard, {
+                    scale: 2, // Higher resolution
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
+                    // Create download link
+                    const link = document.createElement('a');
+                    link.download = `Scaffolding_Report_${formData.supervisorInfo.name}_${formData.supervisorInfo.date}.jpg`;
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                    link.click();
+                    
+                    // Restore 3D effect
+                    setTimeout(() => {
+                        reportCard.style.transform = '';
+                        reportCard.style.boxShadow = '';
+                    }, 100);
+                });
+            }
             
             // WhatsApp sharing
             document.getElementById('share-report').addEventListener('click', function() {
@@ -1272,7 +1136,7 @@
                 formData.remarks = document.getElementById('remarks').value;
                 
                 // Create WhatsApp text
-                const whatsappText = createReportText();
+                const whatsappText = createWhatsAppText();
                 
                 // Show in modal
                 document.getElementById('whatsapp-text').innerText = whatsappText;
@@ -1280,7 +1144,7 @@
             });
             
             document.getElementById('share-whatsapp').addEventListener('click', function() {
-                const text = encodeURIComponent(createReportText());
+                const text = encodeURIComponent(createWhatsAppText());
                 window.open(`https://wa.me/?text=${text}`, '_blank');
             });
             
@@ -1288,7 +1152,7 @@
                 document.getElementById('share-modal').classList.add('hidden');
             });
             
-            function createReportText() {
+            function createWhatsAppText() {
                 let text = `*Scaffolding Productivity Report*\n`;
                 text += `Date: ${formData.supervisorInfo.date}\n`;
                 text += `Supervisor: ${formData.supervisorInfo.name}\n`;
@@ -1321,16 +1185,38 @@
                     text += `*Productivity Below Target*\nIt's not what we are expecting from you\nयह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं`;
                 }
                 
-                text += `\n\nGenerated by Happy AI`;
-                
                 return text;
             }
             
-            // Focus on the first input field when the page loads
-            setTimeout(() => {
-                document.getElementById('supervisor-name').focus();
-            }, 500);
+            // Help button functionality
+            document.getElementById('help-button').addEventListener('click', function() {
+                document.getElementById('help-modal').classList.remove('hidden');
+            });
+            
+            document.getElementById('close-help').addEventListener('click', function() {
+                document.getElementById('help-modal').classList.add('hidden');
+            });
+            
+            // Add html2canvas library for report download
+            const script = document.createElement('script');
+            script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
+            document.head.appendChild(script);
+            
+            // Add first entry row
+            addNewEntry();
+            
+            // Add remarks change listener to update report in real-time
+            document.getElementById('remarks').addEventListener('input', function() {
+                if (document.getElementById('report-section').classList.contains('active')) {
+                    if (this.value) {
+                        document.getElementById('report-remarks').textContent = this.value;
+                        document.getElementById('remarks-section').style.display = 'block';
+                    } else {
+                        document.getElementById('remarks-section').style.display = 'none';
+                    }
+                }
+            });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9641818760757f70',t:'MTc1MzM0MDA2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96416174f05b87fe',t:'MTc1MzMzODc1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
