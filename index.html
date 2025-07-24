@@ -123,23 +123,12 @@
             20%, 60% { transform: translateX(-5px); }
             40%, 80% { transform: translateX(5px); }
         }
-        .success-animation {
-            animation: successPulse 1s ease-in-out;
-        }
-        @keyframes successPulse {
-            0% { transform: scale(0.8); opacity: 0; }
-            50% { transform: scale(1.1); opacity: 1; }
-            100% { transform: scale(1); opacity: 1; }
-        }
         .worker-row {
             animation: slideDown 0.3s ease-out;
         }
         @keyframes slideDown {
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-        .share-modal {
-            animation: fadeIn 0.3s ease;
         }
         /* 3D Report Card Styles */
         .report-3d-card {
@@ -210,15 +199,7 @@
             background-color: #fee2e2;
             color: #b91c1c;
         }
-        /* Entry row focus styles */
-        .entry-row.focused {
-            box-shadow: 0 0 0 2px #3b82f6;
-        }
-        /* Worker row focus styles */
-        .worker-row.focused {
-            box-shadow: 0 0 0 2px #3b82f6;
-        }
-        /* Auto-focus highlight animation */
+        /* Focus highlight animation */
         @keyframes highlightFocus {
             0% { box-shadow: 0 0 0 0px rgba(59, 130, 246, 0.4); }
             50% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.4); }
@@ -226,6 +207,11 @@
         }
         .highlight-focus {
             animation: highlightFocus 1s ease;
+        }
+        /* Active field highlight */
+        .active-field {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
         }
     </style>
 </head>
@@ -298,24 +284,7 @@
                         </div>
                         
                         <div id="workers-container" class="space-y-3">
-                            <div class="worker-row p-3 bg-blue-50 rounded-lg">
-                                <div class="grid grid-cols-2 gap-3 mb-2">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Worker Name</label>
-                                        <input type="text" class="worker-name w-full bg-white" placeholder="Name" required>
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Overtime Hours</label>
-                                        <input type="number" class="worker-overtime w-full bg-white" min="0" step="0.5" placeholder="Hours" required>
-                                    </div>
-                                </div>
-                                <button type="button" class="remove-worker text-red-500 text-xs mt-1 flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Remove
-                                </button>
-                            </div>
+                            <!-- Worker rows will be added here -->
                         </div>
                     </div>
                 </div>
@@ -347,37 +316,7 @@
                     </div>
                     
                     <div id="entries-container">
-                        <div class="entry-row mb-4 p-3 bg-blue-50 rounded-lg">
-                            <div class="grid grid-cols-2 gap-3 mb-2">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Length (m)</label>
-                                    <input type="number" class="length w-full bg-white" min="0.1" step="0.1" required>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Width (m)</label>
-                                    <input type="number" class="width w-full bg-white" min="0.1" step="0.1" required>
-                                </div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Height (m)</label>
-                                    <input type="number" class="height w-full bg-white" min="0.1" step="0.1" required>
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-medium text-gray-700 mb-1">Quantity</label>
-                                    <input type="number" class="quantity w-full bg-white" min="1" required>
-                                </div>
-                            </div>
-                            <div class="flex justify-between items-center mt-2">
-                                <button type="button" class="remove-entry text-red-500 text-sm flex items-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                                    </svg>
-                                    Remove
-                                </button>
-                                <div class="text-xs text-gray-500 cubic-meter-display">0.00 m³</div>
-                            </div>
-                        </div>
+                        <!-- Entry rows will be added here -->
                     </div>
                     
                     <button type="button" id="add-entry" class="w-full border border-blue-500 text-blue-500 px-4 py-2 rounded-lg mt-2 flex items-center justify-center button-3d">
@@ -522,36 +461,8 @@
             </section>
         </form>
         
-        <!-- Help Modal -->
-        <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
-            <div class="card-3d bg-white rounded-xl p-6 max-w-sm mx-4 max-h-[80vh] overflow-y-auto">
-                <h3 class="text-lg font-bold mb-4">Help & FAQ</h3>
-                <div class="space-y-4">
-                    <div>
-                        <h4 class="font-medium">How to use this app?</h4>
-                        <p class="text-sm text-gray-600">Fill in your information, add work details, and get productivity reports.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-medium">How is productivity calculated?</h4>
-                        <p class="text-sm text-gray-600">Productivity = (Erection + (Dismantling/2)) / Total Manhours</p>
-                    </div>
-                    <div>
-                        <h4 class="font-medium">Can I edit my entries?</h4>
-                        <p class="text-sm text-gray-600">Yes, you can go back to previous steps using the Back button.</p>
-                    </div>
-                    <div>
-                        <h4 class="font-medium">How do I add both erection and dismantling?</h4>
-                        <p class="text-sm text-gray-600">After adding erection details, click "Add Dismantling" to switch and add dismantling data.</p>
-                    </div>
-                </div>
-                <button id="close-help" class="mt-6 w-full bg-blue-600 text-white py-2 rounded-lg button-3d">
-                    <span>Close</span>
-                </button>
-            </div>
-        </div>
-
         <!-- WhatsApp Share Modal -->
-        <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden share-modal">
+        <div id="share-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center hidden">
             <div class="card-3d bg-white rounded-xl p-6 max-w-sm mx-4">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-lg font-bold">Share Report</h3>
@@ -579,15 +490,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- Floating Help Button -->
-        <button id="help-button" class="fixed bottom-4 right-4 bg-blue-600 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-lg button-3d">
-            <span>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-            </span>
-        </button>
     </div>
 
     <script>
@@ -638,6 +540,9 @@
                 }
             };
             
+            // Add first worker row on page load
+            addNewWorker();
+            
             // Worker management with auto-progression
             document.getElementById('add-worker').addEventListener('click', function() {
                 addNewWorker();
@@ -647,7 +552,6 @@
                     const lastRow = workerRows[workerRows.length - 1];
                     const nameInput = lastRow.querySelector('.worker-name');
                     nameInput.focus();
-                    lastRow.classList.add('highlight-focus');
                 }, 100);
             });
             
@@ -684,8 +588,8 @@
                 
                 // Add auto-progression for worker name field
                 const nameInput = workerRow.querySelector('.worker-name');
-                nameInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                nameInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         const overtimeInput = workerRow.querySelector('.worker-overtime');
                         overtimeInput.focus();
                     }
@@ -693,8 +597,8 @@
                 
                 // Add auto-progression for overtime field
                 const overtimeInput = workerRow.querySelector('.worker-overtime');
-                overtimeInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                overtimeInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         // Check if this is the last worker row
                         const workerRows = document.querySelectorAll('.worker-row');
                         const lastRow = workerRows[workerRows.length - 1];
@@ -707,7 +611,6 @@
                                 const newLastRow = newWorkerRows[newWorkerRows.length - 1];
                                 const newNameInput = newLastRow.querySelector('.worker-name');
                                 newNameInput.focus();
-                                newLastRow.classList.add('highlight-focus');
                             }, 100);
                         }
                     }
@@ -727,6 +630,9 @@
                 
                 formData.workers = workers;
             }
+            
+            // Add first entry row on page load
+            addNewEntry();
             
             // Navigation event listeners
             document.getElementById('next-to-work').addEventListener('click', function() {
@@ -778,7 +684,6 @@
                     const firstEntryRow = document.querySelector('.entry-row');
                     const lengthInput = firstEntryRow.querySelector('.length');
                     lengthInput.focus();
-                    firstEntryRow.classList.add('highlight-focus');
                 }, 100);
             });
             
@@ -813,6 +718,9 @@
                     return;
                 }
                 
+                // Save current entries
+                saveCurrentEntries();
+                
                 // Calculate totals and productivity
                 calculateTotals();
                 
@@ -820,11 +728,6 @@
                 populateReport();
                 
                 showSection('report-section');
-                
-                // Auto download report
-                setTimeout(() => {
-                    downloadReport();
-                }, 500);
             });
             
             document.getElementById('back-to-work').addEventListener('click', function() {
@@ -866,7 +769,6 @@
                     const firstEntryRow = document.querySelector('.entry-row');
                     const lengthInput = firstEntryRow.querySelector('.length');
                     lengthInput.focus();
-                    firstEntryRow.classList.add('highlight-focus');
                 }, 100);
             });
             
@@ -904,7 +806,6 @@
                         const firstEntryRow = document.querySelector('.entry-row');
                         const lengthInput = firstEntryRow.querySelector('.length');
                         lengthInput.focus();
-                        firstEntryRow.classList.add('highlight-focus');
                     }, 100);
                 });
             });
@@ -918,7 +819,6 @@
                     const lastRow = entryRows[entryRows.length - 1];
                     const lengthInput = lastRow.querySelector('.length');
                     lengthInput.focus();
-                    lastRow.classList.add('highlight-focus');
                 }, 100);
             });
             
@@ -967,8 +867,8 @@
                 const quantityInput = entryRow.querySelector('.quantity');
                 
                 // Auto-progression for length field
-                lengthInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                lengthInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         widthInput.focus();
                     }
                     calculateEntryVolume(entryRow);
@@ -976,8 +876,8 @@
                 });
                 
                 // Auto-progression for width field
-                widthInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                widthInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         heightInput.focus();
                     }
                     calculateEntryVolume(entryRow);
@@ -985,8 +885,8 @@
                 });
                 
                 // Auto-progression for height field
-                heightInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                heightInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         quantityInput.focus();
                     }
                     calculateEntryVolume(entryRow);
@@ -994,8 +894,8 @@
                 });
                 
                 // Auto-progression for quantity field
-                quantityInput.addEventListener('input', function() {
-                    if (this.value.trim().length > 0) {
+                quantityInput.addEventListener('keyup', function(e) {
+                    if (this.value.trim().length > 0 && e.key !== 'Tab') {
                         calculateEntryVolume(entryRow);
                         updateCubicMeterTotal();
                         
@@ -1011,7 +911,6 @@
                                 const newLastRow = newEntryRows[newEntryRows.length - 1];
                                 const newLengthInput = newLastRow.querySelector('.length');
                                 newLengthInput.focus();
-                                newLastRow.classList.add('highlight-focus');
                             }, 100);
                         }
                     }
@@ -1112,7 +1011,7 @@
                             <button type="button" class="remove-entry text-red-500 text-sm flex items-center">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" viewBox="0 0 20 20" fill="currentColor">
                                     <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" />
-                            </svg>
+                                </svg>
                                 Remove
                             </button>
                             <div class="text-xs text-gray-500 cubic-meter-display">0.00 m³</div>
@@ -1131,8 +1030,8 @@
                     const quantityInput = entryRow.querySelector('.quantity');
                     
                     // Auto-progression for length field
-                    lengthInput.addEventListener('input', function() {
-                        if (this.value.trim().length > 0) {
+                    lengthInput.addEventListener('keyup', function(e) {
+                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
                             widthInput.focus();
                         }
                         calculateEntryVolume(entryRow);
@@ -1140,8 +1039,8 @@
                     });
                     
                     // Auto-progression for width field
-                    widthInput.addEventListener('input', function() {
-                        if (this.value.trim().length > 0) {
+                    widthInput.addEventListener('keyup', function(e) {
+                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
                             heightInput.focus();
                         }
                         calculateEntryVolume(entryRow);
@@ -1149,8 +1048,8 @@
                     });
                     
                     // Auto-progression for height field
-                    heightInput.addEventListener('input', function() {
-                        if (this.value.trim().length > 0) {
+                    heightInput.addEventListener('keyup', function(e) {
+                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
                             quantityInput.focus();
                         }
                         calculateEntryVolume(entryRow);
@@ -1158,8 +1057,8 @@
                     });
                     
                     // Auto-progression for quantity field
-                    quantityInput.addEventListener('input', function() {
-                        if (this.value.trim().length > 0) {
+                    quantityInput.addEventListener('keyup', function(e) {
+                        if (this.value.trim().length > 0 && e.key !== 'Tab') {
                             calculateEntryVolume(entryRow);
                             updateCubicMeterTotal();
                             
@@ -1175,7 +1074,6 @@
                                     const newLastRow = newEntryRows[newEntryRows.length - 1];
                                     const newLengthInput = newLastRow.querySelector('.length');
                                     newLengthInput.focus();
-                                    newLastRow.classList.add('highlight-focus');
                                 }, 100);
                             }
                         }
@@ -1197,9 +1095,6 @@
             }
             
             function calculateTotals() {
-                // Save current entries before calculation
-                saveCurrentEntries();
-                
                 // Calculate erection total
                 let erectionTotal = 0;
                 formData.erectionEntries.forEach(entry => {
@@ -1346,9 +1241,7 @@
             }
             
             // Download report as JPEG
-            document.getElementById('download-report').addEventListener('click', downloadReport);
-            
-            function downloadReport() {
+            document.getElementById('download-report').addEventListener('click', function() {
                 // Update remarks in formData if changed
                 formData.remarks = document.getElementById('remarks').value;
                 
@@ -1360,32 +1253,18 @@
                     document.getElementById('remarks-section').style.display = 'none';
                 }
                 
-                // Get the report card element
-                const reportCard = document.getElementById('report-card');
+                // Create a downloadable report
+                const reportText = createReportText();
+                const blob = new Blob([reportText], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
                 
-                // Temporarily remove 3D effect for clean capture
-                reportCard.style.transform = 'none';
-                reportCard.style.boxShadow = 'none';
+                const link = document.createElement('a');
+                link.download = `Scaffolding_Report_${formData.supervisorInfo.name}_${formData.supervisorInfo.date}.txt`;
+                link.href = url;
+                link.click();
                 
-                // Use html2canvas to convert to image
-                html2canvas(reportCard, {
-                    scale: 2, // Higher resolution
-                    backgroundColor: null,
-                    logging: false
-                }).then(canvas => {
-                    // Create download link
-                    const link = document.createElement('a');
-                    link.download = `Scaffolding_Report_${formData.supervisorInfo.name}_${formData.supervisorInfo.date}.jpg`;
-                    link.href = canvas.toDataURL('image/jpeg', 0.9);
-                    link.click();
-                    
-                    // Restore 3D effect
-                    setTimeout(() => {
-                        reportCard.style.transform = '';
-                        reportCard.style.boxShadow = '';
-                    }, 100);
-                });
-            }
+                URL.revokeObjectURL(url);
+            });
             
             // WhatsApp sharing
             document.getElementById('share-report').addEventListener('click', function() {
@@ -1393,7 +1272,7 @@
                 formData.remarks = document.getElementById('remarks').value;
                 
                 // Create WhatsApp text
-                const whatsappText = createWhatsAppText();
+                const whatsappText = createReportText();
                 
                 // Show in modal
                 document.getElementById('whatsapp-text').innerText = whatsappText;
@@ -1401,7 +1280,7 @@
             });
             
             document.getElementById('share-whatsapp').addEventListener('click', function() {
-                const text = encodeURIComponent(createWhatsAppText());
+                const text = encodeURIComponent(createReportText());
                 window.open(`https://wa.me/?text=${text}`, '_blank');
             });
             
@@ -1409,7 +1288,7 @@
                 document.getElementById('share-modal').classList.add('hidden');
             });
             
-            function createWhatsAppText() {
+            function createReportText() {
                 let text = `*Scaffolding Productivity Report*\n`;
                 text += `Date: ${formData.supervisorInfo.date}\n`;
                 text += `Supervisor: ${formData.supervisorInfo.name}\n`;
@@ -1447,40 +1326,11 @@
                 return text;
             }
             
-            // Help button functionality
-            document.getElementById('help-button').addEventListener('click', function() {
-                document.getElementById('help-modal').classList.remove('hidden');
-            });
-            
-            document.getElementById('close-help').addEventListener('click', function() {
-                document.getElementById('help-modal').classList.add('hidden');
-            });
-            
-            // Add html2canvas library for report download
-            const script = document.createElement('script');
-            script.src = 'https://html2canvas.hertzen.com/dist/html2canvas.min.js';
-            document.head.appendChild(script);
-            
-            // Add first entry row
-            addNewEntry();
-            
-            // Add remarks change listener to update report in real-time
-            document.getElementById('remarks').addEventListener('input', function() {
-                if (document.getElementById('report-section').classList.contains('active')) {
-                    if (this.value) {
-                        document.getElementById('report-remarks').textContent = this.value;
-                        document.getElementById('remarks-section').style.display = 'block';
-                    } else {
-                        document.getElementById('remarks-section').style.display = 'none';
-                    }
-                }
-            });
-            
             // Focus on the first input field when the page loads
             setTimeout(() => {
                 document.getElementById('supervisor-name').focus();
             }, 500);
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964174e4a6a3a9ec',t:'MTc1MzMzOTU0Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9641818760757f70',t:'MTc1MzM0MDA2NC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
