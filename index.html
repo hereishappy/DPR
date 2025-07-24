@@ -84,6 +84,75 @@
         .share-modal {
             animation: fadeIn 0.3s ease;
         }
+        /* 3D Report Card Styles */
+        .report-3d-card {
+            transform-style: preserve-3d;
+            transform: perspective(1000px) rotateX(5deg) rotateY(5deg);
+            transition: all 0.5s ease;
+            box-shadow: 
+                0 10px 20px rgba(0, 0, 0, 0.1),
+                0 6px 6px rgba(0, 0, 0, 0.1),
+                5px 10px 20px rgba(0, 0, 0, 0.05);
+        }
+        .report-3d-card:hover {
+            transform: perspective(1000px) rotateX(0deg) rotateY(0deg);
+        }
+        .report-section {
+            position: relative;
+            z-index: 1;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .report-section::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            z-index: 2;
+        }
+        .report-header {
+            position: relative;
+            padding: 20px;
+            background: linear-gradient(135deg, #dbeafe, #eff6ff);
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .report-body {
+            padding: 20px;
+        }
+        .report-footer {
+            padding: 15px 20px;
+            background: #f9fafb;
+            border-top: 1px solid #e5e7eb;
+        }
+        .worker-detail-row:nth-child(odd) {
+            background-color: #f8fafc;
+        }
+        .worker-detail-row:nth-child(even) {
+            background-color: #f1f5f9;
+        }
+        .productivity-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .productivity-high {
+            background-color: #d1fae5;
+            color: #065f46;
+        }
+        .productivity-medium {
+            background-color: #fef3c7;
+            color: #92400e;
+        }
+        .productivity-low {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
     </style>
 </head>
 <body class="bg-blue-50 min-h-screen">
@@ -265,53 +334,89 @@
 
             <!-- Card 3: Report Generation -->
             <section id="report-section" class="form-section">
-                <div class="card bg-white p-6 mb-6">
-                    <h2 class="text-lg font-semibold text-blue-700 mb-4">Report Summary</h2>
-                    
-                    <div class="mb-4 p-4 bg-gray-50 rounded-lg">
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div class="text-sm font-medium">Supervisor:</div>
-                            <div class="text-sm" id="report-supervisor"></div>
-                            
-                            <div class="text-sm font-medium">Date:</div>
-                            <div class="text-sm" id="report-date"></div>
-                            
-                            <div class="text-sm font-medium">Area:</div>
-                            <div class="text-sm" id="report-area"></div>
-                            
-                            <div class="text-sm font-medium">Manpower:</div>
-                            <div class="text-sm" id="report-manpower"></div>
-                            
-                            <div class="text-sm font-medium">Total Manhours:</div>
-                            <div class="text-sm" id="report-manhours"></div>
+                <!-- 3D Report Card -->
+                <div id="report-card" class="report-3d-card mb-6">
+                    <div class="report-section">
+                        <div class="report-header">
+                            <h2 class="text-xl font-bold text-blue-800">Scaffolding Productivity Report</h2>
+                            <p class="text-sm text-gray-600" id="report-date-header"></p>
                         </div>
                         
-                        <div class="h-px bg-gray-300 my-3"></div>
-                        
-                        <div class="grid grid-cols-2 gap-2 mb-3">
-                            <div class="text-sm font-medium">Erection Total:</div>
-                            <div class="text-sm" id="report-erection"></div>
+                        <div class="report-body">
+                            <div class="mb-4">
+                                <h3 class="text-md font-semibold text-blue-700 mb-2">Supervisor Information</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="text-sm font-medium text-gray-700">Supervisor:</div>
+                                    <div class="text-sm" id="report-supervisor"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Date:</div>
+                                    <div class="text-sm" id="report-date"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Area:</div>
+                                    <div class="text-sm" id="report-area"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Manpower:</div>
+                                    <div class="text-sm" id="report-manpower"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Total Manhours:</div>
+                                    <div class="text-sm" id="report-manhours"></div>
+                                </div>
+                            </div>
                             
-                            <div class="text-sm font-medium">Dismantling Total:</div>
-                            <div class="text-sm" id="report-dismantling"></div>
+                            <div class="mb-4" id="worker-details-section">
+                                <h3 class="text-md font-semibold text-blue-700 mb-2">Worker Details</h3>
+                                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                                    <div class="grid grid-cols-2 gap-2 bg-blue-100 p-2">
+                                        <div class="text-sm font-medium text-blue-800">Name</div>
+                                        <div class="text-sm font-medium text-blue-800">Overtime Hours</div>
+                                    </div>
+                                    <div id="report-workers" class="max-h-40 overflow-y-auto">
+                                        <!-- Worker details will be inserted here -->
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <h3 class="text-md font-semibold text-blue-700 mb-2">Work Summary</h3>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div class="text-sm font-medium text-gray-700">Erection Total:</div>
+                                    <div class="text-sm" id="report-erection"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Dismantling Total:</div>
+                                    <div class="text-sm" id="report-dismantling"></div>
+                                    
+                                    <div class="text-sm font-medium text-gray-700">Productivity:</div>
+                                    <div class="text-sm font-bold" id="report-productivity"></div>
+                                </div>
+                            </div>
+                            
+                            <div id="productivity-status" class="mb-4 p-3 rounded-lg">
+                                <!-- Productivity status will be inserted here -->
+                            </div>
+                            
+                            <div class="mb-4" id="remarks-section">
+                                <h3 class="text-md font-semibold text-blue-700 mb-2">Remarks</h3>
+                                <div class="text-sm text-gray-700 bg-gray-50 p-3 rounded-lg" id="report-remarks">
+                                    No remarks added.
+                                </div>
+                            </div>
                         </div>
                         
-                        <div class="h-px bg-gray-300 my-3"></div>
-                        
-                        <div class="grid grid-cols-2 gap-2">
-                            <div class="text-sm font-medium">Productivity:</div>
-                            <div class="text-sm font-bold" id="report-productivity"></div>
+                        <div class="report-footer flex justify-between items-center">
+                            <div class="text-xs text-gray-500">Generated by Scaffolding App</div>
+                            <div id="productivity-badge" class="productivity-badge">
+                                <!-- Productivity badge will be inserted here -->
+                            </div>
                         </div>
                     </div>
-                    
+                </div>
+                
+                <div class="card bg-white p-6 mb-6">
                     <div class="mb-4">
                         <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
                         <textarea id="remarks" name="remarks" rows="3" class="w-full bg-gray-50 rounded-lg border border-gray-300 p-2" placeholder="Add any additional notes or remarks here..."></textarea>
                     </div>
                 </div>
-                
-                <!-- Productivity Feedback Cards (will be shown based on calculation) -->
-                <div id="feedback-container" class="mb-6"></div>
                 
                 <div class="flex justify-between">
                     <button type="button" id="back-to-work" class="border border-blue-600 text-blue-600 px-6 py-2 rounded-lg font-medium">
@@ -861,12 +966,46 @@
             }
             
             function populateReport() {
+                // Update remarks in formData
+                formData.remarks = document.getElementById('remarks').value || '';
+                
+                // Format date for header
+                const reportDate = new Date(formData.supervisorInfo.date);
+                const formattedDate = reportDate.toLocaleDateString('en-US', { 
+                    weekday: 'long', 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                
+                // Populate report header
+                document.getElementById('report-date-header').textContent = formattedDate;
+                
                 // Populate supervisor info
                 document.getElementById('report-supervisor').textContent = formData.supervisorInfo.name;
                 document.getElementById('report-date').textContent = formData.supervisorInfo.date;
                 document.getElementById('report-area').textContent = formData.supervisorInfo.area;
                 document.getElementById('report-manpower').textContent = formData.supervisorInfo.manpower + ' workers';
                 document.getElementById('report-manhours').textContent = formData.supervisorInfo.manhours + ' hours';
+                
+                // Populate worker details
+                const workersContainer = document.getElementById('report-workers');
+                workersContainer.innerHTML = '';
+                
+                if (formData.workers.length > 0) {
+                    formData.workers.forEach((worker, index) => {
+                        const workerRow = document.createElement('div');
+                        workerRow.className = 'worker-detail-row grid grid-cols-2 gap-2 p-2';
+                        workerRow.innerHTML = `
+                            <div class="text-sm">${worker.name}</div>
+                            <div class="text-sm">${worker.overtime} hours</div>
+                        `;
+                        workersContainer.appendChild(workerRow);
+                    });
+                    document.getElementById('worker-details-section').style.display = 'block';
+                } else {
+                    document.getElementById('worker-details-section').style.display = 'none';
+                }
                 
                 // Populate work totals
                 document.getElementById('report-erection').textContent = formData.calculations.erectionTotal.toFixed(2) + ' m³';
@@ -876,45 +1015,76 @@
                 const productivity = formData.calculations.productivity;
                 document.getElementById('report-productivity').textContent = productivity.toFixed(2) + ' m³/hour';
                 
-                // Show productivity feedback
-                const feedbackContainer = document.getElementById('feedback-container');
-                feedbackContainer.innerHTML = '';
+                // Show productivity status
+                const productivityStatus = document.getElementById('productivity-status');
+                const productivityBadge = document.getElementById('productivity-badge');
                 
                 if (productivity >= 2.5) {
-                    // Good productivity feedback
-                    feedbackContainer.innerHTML = `
-                        <div class="card bg-green-100 p-6 border-l-4 border-green-500 success-animation">
-                            <div class="flex items-center">
-                                <div class="bg-green-500 rounded-full p-2 mr-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-green-800">Thank You for Your Efforts!</h3>
-                                    <p class="text-green-700 text-sm mt-1">Great job achieving excellent productivity.</p>
-                                </div>
+                    // Excellent productivity
+                    productivityStatus.className = 'mb-4 p-3 rounded-lg bg-green-100';
+                    productivityStatus.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="bg-green-500 rounded-full p-2 mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-green-800">Excellent Productivity</h3>
+                                <p class="text-green-700 text-sm mt-1">Great job achieving excellent productivity.</p>
                             </div>
                         </div>
                     `;
+                    
+                    productivityBadge.className = 'productivity-badge productivity-high';
+                    productivityBadge.textContent = 'Above Target';
+                } else if (productivity >= 1.8) {
+                    // Good productivity
+                    productivityStatus.className = 'mb-4 p-3 rounded-lg bg-yellow-100';
+                    productivityStatus.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="bg-yellow-500 rounded-full p-2 mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-yellow-800">Good Productivity</h3>
+                                <p class="text-yellow-700 text-sm mt-1">You're doing well, but there's room for improvement.</p>
+                            </div>
+                        </div>
+                    `;
+                    
+                    productivityBadge.className = 'productivity-badge productivity-medium';
+                    productivityBadge.textContent = 'Good';
                 } else {
-                    // Low productivity feedback
-                    feedbackContainer.innerHTML = `
-                        <div class="card bg-red-100 p-6 border-l-4 border-red-500">
-                            <div class="flex items-center">
-                                <div class="bg-red-500 rounded-full p-2 mr-4">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 class="font-bold text-red-800">Productivity Below Target</h3>
-                                    <p class="text-red-700 text-sm mt-1">It's not what we are expecting from you</p>
-                                    <p class="text-red-700 text-sm mt-1">यह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं</p>
-                                </div>
+                    // Low productivity
+                    productivityStatus.className = 'mb-4 p-3 rounded-lg bg-red-100';
+                    productivityStatus.innerHTML = `
+                        <div class="flex items-center">
+                            <div class="bg-red-500 rounded-full p-2 mr-3">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                            </div>
+                            <div>
+                                <h3 class="font-bold text-red-800">Productivity Below Target</h3>
+                                <p class="text-red-700 text-sm mt-1">It's not what we are expecting from you</p>
+                                <p class="text-red-700 text-sm mt-1">यह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं</p>
                             </div>
                         </div>
                     `;
+                    
+                    productivityBadge.className = 'productivity-badge productivity-low';
+                    productivityBadge.textContent = 'Below Target';
+                }
+                
+                // Populate remarks
+                if (formData.remarks) {
+                    document.getElementById('report-remarks').textContent = formData.remarks;
+                    document.getElementById('remarks-section').style.display = 'block';
+                } else {
+                    document.getElementById('remarks-section').style.display = 'none';
                 }
             }
             
@@ -922,141 +1092,41 @@
             document.getElementById('download-report').addEventListener('click', downloadReport);
             
             function downloadReport() {
-                // Update remarks in formData
+                // Update remarks in formData if changed
                 formData.remarks = document.getElementById('remarks').value;
                 
-                // Create a report card for download
-                const reportCard = document.createElement('div');
-                reportCard.style.width = '800px';
-                reportCard.style.padding = '40px';
-                reportCard.style.backgroundColor = 'white';
-                reportCard.style.fontFamily = 'Arial, sans-serif';
-                
-                // Company header
-                reportCard.innerHTML = `
-                    <div style="text-align: center; margin-bottom: 30px;">
-                        <h1 style="color: #2563eb; font-size: 24px; margin-bottom: 5px;">Scaffolding Productivity Report</h1>
-                        <p style="color: #64748b; font-size: 14px;">Generated on ${new Date().toLocaleDateString()}</p>
-                    </div>
-                    
-                    <div style="margin-bottom: 30px; padding: 20px; background-color: #f8fafc; border-radius: 8px;">
-                        <h2 style="color: #1e40af; font-size: 18px; margin-bottom: 15px;">Supervisor Information</h2>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Supervisor Name:</td>
-                                <td style="padding: 8px;">${formData.supervisorInfo.name}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Date:</td>
-                                <td style="padding: 8px;">${formData.supervisorInfo.date}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Area:</td>
-                                <td style="padding: 8px;">${formData.supervisorInfo.area}</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Manpower:</td>
-                                <td style="padding: 8px;">${formData.supervisorInfo.manpower} workers</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Total Manhours:</td>
-                                <td style="padding: 8px;">${formData.supervisorInfo.manhours} hours</td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
-                
-                // Add worker details if available
-                if (formData.workers.length > 0) {
-                    reportCard.innerHTML += `
-                        <div style="margin-bottom: 30px; padding: 20px; background-color: #f0f7ff; border-radius: 8px;">
-                            <h2 style="color: #1e40af; font-size: 18px; margin-bottom: 15px;">Worker Details</h2>
-                            <table style="width: 100%; border-collapse: collapse;">
-                                <tr style="background-color: #dbeafe;">
-                                    <th style="padding: 8px; text-align: left; color: #1e40af;">Name</th>
-                                    <th style="padding: 8px; text-align: left; color: #1e40af;">Overtime Hours</th>
-                                </tr>
-                    `;
-                    
-                    formData.workers.forEach((worker, index) => {
-                        reportCard.innerHTML += `
-                            <tr style="background-color: ${index % 2 === 0 ? '#f8fafc' : '#f1f5f9'};">
-                                <td style="padding: 8px;">${worker.name}</td>
-                                <td style="padding: 8px;">${worker.overtime} hours</td>
-                            </tr>
-                        `;
-                    });
-                    
-                    reportCard.innerHTML += `
-                            </table>
-                        </div>
-                    `;
-                }
-                
-                // Add work summary
-                reportCard.innerHTML += `
-                    <div style="margin-bottom: 30px; padding: 20px; background-color: #f0f9ff; border-radius: 8px;">
-                        <h2 style="color: #1e40af; font-size: 18px; margin-bottom: 15px;">Work Summary</h2>
-                        <table style="width: 100%; border-collapse: collapse;">
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Erection Total:</td>
-                                <td style="padding: 8px;">${formData.calculations.erectionTotal.toFixed(2)} m³</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Dismantling Total:</td>
-                                <td style="padding: 8px;">${formData.calculations.dismantlingTotal.toFixed(2)} m³</td>
-                            </tr>
-                            <tr>
-                                <td style="padding: 8px; width: 40%; color: #475569; font-weight: bold;">Productivity:</td>
-                                <td style="padding: 8px; font-weight: bold; color: ${formData.calculations.productivity >= 2.5 ? '#15803d' : '#b91c1c'}">
-                                    ${formData.calculations.productivity.toFixed(2)} m³/hour
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                `;
-                
-                // Add remarks if any
+                // Update report with latest remarks
                 if (formData.remarks) {
-                    reportCard.innerHTML += `
-                        <div style="margin-bottom: 30px; padding: 20px; background-color: #fefce8; border-radius: 8px;">
-                            <h2 style="color: #1e40af; font-size: 18px; margin-bottom: 15px;">Remarks</h2>
-                            <p style="color: #525252; line-height: 1.5;">${formData.remarks}</p>
-                        </div>
-                    `;
-                }
-                
-                // Add productivity feedback
-                if (formData.calculations.productivity >= 2.5) {
-                    reportCard.innerHTML += `
-                        <div style="padding: 20px; background-color: #dcfce7; border-radius: 8px; border-left: 4px solid #22c55e;">
-                            <h2 style="color: #15803d; font-size: 18px; margin-bottom: 10px;">Thank You for Your Efforts!</h2>
-                            <p style="color: #166534;">Great job achieving excellent productivity.</p>
-                        </div>
-                    `;
+                    document.getElementById('report-remarks').textContent = formData.remarks;
+                    document.getElementById('remarks-section').style.display = 'block';
                 } else {
-                    reportCard.innerHTML += `
-                        <div style="padding: 20px; background-color: #fee2e2; border-radius: 8px; border-left: 4px solid #ef4444;">
-                            <h2 style="color: #b91c1c; font-size: 18px; margin-bottom: 10px;">Productivity Below Target</h2>
-                            <p style="color: #991b1b;">It's not what we are expecting from you</p>
-                            <p style="color: #991b1b;">यह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं</p>
-                        </div>
-                    `;
+                    document.getElementById('remarks-section').style.display = 'none';
                 }
                 
-                // Add to document body temporarily
-                document.body.appendChild(reportCard);
+                // Get the report card element
+                const reportCard = document.getElementById('report-card');
+                
+                // Temporarily remove 3D effect for clean capture
+                reportCard.style.transform = 'none';
+                reportCard.style.boxShadow = 'none';
                 
                 // Use html2canvas to convert to image
-                html2canvas(reportCard).then(canvas => {
+                html2canvas(reportCard, {
+                    scale: 2, // Higher resolution
+                    backgroundColor: null,
+                    logging: false
+                }).then(canvas => {
                     // Create download link
                     const link = document.createElement('a');
                     link.download = `Scaffolding_Report_${formData.supervisorInfo.name}_${formData.supervisorInfo.date}.jpg`;
-                    link.href = canvas.toDataURL('image/jpeg', 0.8);
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
                     link.click();
                     
-                    // Remove the temporary element
-                    document.body.removeChild(reportCard);
+                    // Restore 3D effect
+                    setTimeout(() => {
+                        reportCard.style.transform = '';
+                        reportCard.style.boxShadow = '';
+                    }, 100);
                 });
             }
             
@@ -1108,7 +1178,9 @@
                 }
                 
                 if (formData.calculations.productivity >= 2.5) {
-                    text += `*Thank You for Your Efforts!*\nGreat job achieving excellent productivity.`;
+                    text += `*Excellent Productivity!*\nGreat job achieving excellent productivity.`;
+                } else if (formData.calculations.productivity >= 1.8) {
+                    text += `*Good Productivity*\nYou're doing well, but there's room for improvement.`;
                 } else {
                     text += `*Productivity Below Target*\nIt's not what we are expecting from you\nयह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं`;
                 }
@@ -1132,7 +1204,19 @@
             
             // Add first entry row
             addNewEntry();
+            
+            // Add remarks change listener to update report in real-time
+            document.getElementById('remarks').addEventListener('input', function() {
+                if (document.getElementById('report-section').classList.contains('active')) {
+                    if (this.value) {
+                        document.getElementById('report-remarks').textContent = this.value;
+                        document.getElementById('remarks-section').style.display = 'block';
+                    } else {
+                        document.getElementById('remarks-section').style.display = 'none';
+                    }
+                }
+            });
         });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'964126f054e685cc',t:'MTc1MzMzNjM1My4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96416174f05b87fe',t:'MTc1MzMzODc1MC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
