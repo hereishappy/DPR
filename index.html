@@ -3,1089 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Scaffolding Supervisor Data Collection</title>
+    <title>DPR & Manpower Logger</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f0f4f8;
+        .card-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-        .card {
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 12px;
-            transition: all 0.3s ease;
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
-        .card:hover {
-            box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
         }
-        input, select, textarea {
-            border-radius: 8px;
-            border: 1px solid #e2e8f0;
-            padding: 10px;
-            transition: all 0.3s ease;
+        .btn-success {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
         }
-        input:focus, select:focus, textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        .btn-success:hover {
+            background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
         }
-        button {
-            transition: all 0.3s ease;
-        }
-        button:hover {
-            transform: translateY(-2px);
-        }
-        .entry-row {
-            animation: fadeIn 0.5s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .progress-bar {
-            height: 8px;
-            border-radius: 4px;
-            background: linear-gradient(to right, #3b82f6, #2563eb);
-            transition: width 0.5s ease;
-        }
-        .step-indicator {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            transition: all 0.3s ease;
-        }
-        .active-step {
-            background-color: #3b82f6;
+        .productivity-excellent {
+            background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             color: white;
         }
-        .inactive-step {
-            background-color: #e2e8f0;
-            color: #64748b;
-        }
-        .completed-step {
-            background-color: #10b981;
+        .productivity-poor {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
             color: white;
-        }
-        .worker-entry {
-            animation: fadeIn 0.5s ease;
-        }
-        .entry-badge {
-            animation: fadeIn 0.3s ease;
         }
     </style>
 </head>
-<body class="bg-gradient-to-br from-blue-50 to-indigo-50 min-h-screen pb-20">
-    <div class="container mx-auto px-4 py-8 max-w-md">
-        <header class="mb-8 text-center">
-            <h1 class="text-3xl font-bold text-gray-800 mb-2">Scaffolding Data Collection</h1>
-            <p class="text-gray-600">Daily productivity tracker for supervisors</p>
-        </header>
-
-        <!-- Progress Bar -->
-        <div class="mb-8">
-            <div class="flex justify-between mb-2">
-                <div class="flex flex-col items-center">
-                    <div id="step1" class="step-indicator active-step">1</div>
-                    <span class="text-xs mt-1 text-gray-600">Info</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div id="step2" class="step-indicator inactive-step">2</div>
-                    <span class="text-xs mt-1 text-gray-600">Workers</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div id="step3" class="step-indicator inactive-step">3</div>
-                    <span class="text-xs mt-1 text-gray-600">Details</span>
-                </div>
-                <div class="flex flex-col items-center">
-                    <div id="step4" class="step-indicator inactive-step">4</div>
-                    <span class="text-xs mt-1 text-gray-600">Report</span>
-                </div>
-            </div>
-            <div class="bg-gray-200 rounded-full h-2">
-                <div id="progressBar" class="progress-bar w-1/4"></div>
-            </div>
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
+    <div class="max-w-md mx-auto space-y-6">
+        <!-- Header -->
+        <div class="text-center py-4">
+            <h1 class="text-2xl font-bold text-gray-800 mb-2">DPR & Manpower Logger</h1>
+            <p class="text-gray-600 text-sm">Daily Progress Report Management</p>
         </div>
 
-        <!-- Step 1: Supervisor Information -->
-        <div id="supervisorInfoCard" class="card bg-white p-6 mb-6">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Supervisor Information</h2>
-            <form id="supervisorForm" class="space-y-4">
-                <div class="form-group">
-                    <label for="date" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input type="date" id="date" name="date" class="w-full bg-gray-50" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="supervisorName" class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name</label>
-                    <input type="text" id="supervisorName" name="supervisorName" class="w-full bg-gray-50" placeholder="Enter your name" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="area" class="block text-sm font-medium text-gray-700 mb-1">Area</label>
-                    <input type="text" id="area" name="area" class="w-full bg-gray-50" placeholder="Work area" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="manpowerCount" class="block text-sm font-medium text-gray-700 mb-1">Manpower Count</label>
-                    <input type="number" id="manpowerCount" name="manpowerCount" min="1" class="w-full bg-gray-50" placeholder="Number of workers" required>
-                </div>
-                
-                <div class="form-group">
-                    <label for="overtimeHours" class="block text-sm font-medium text-gray-700 mb-1">Overtime Hours</label>
-                    <input type="number" id="overtimeHours" name="overtimeHours" min="0" step="0.5" class="w-full bg-gray-50" placeholder="Total overtime hours" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Total Man-hours</label>
-                    <div id="totalManhoursDisplay" class="p-2 bg-blue-50 rounded-md text-blue-800 font-medium">
-                        Calculation: 0 man * 8 + 0 overtime = 0 hours
-                    </div>
-                </div>
-                
-                <button type="button" id="nextToWorkers" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                    <span>Next</span>
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            </form>
-        </div>
-
-        <!-- Step 2: Workers Information -->
-        <div id="workersCard" class="card bg-white p-6 mb-6 hidden">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Workers Information</h2>
-            <form id="workersForm" class="space-y-4">
-                <!-- Worker Entry Form -->
-                <div id="workerEntryForm" class="bg-gray-50 p-4 rounded-lg">
-                    <div class="grid grid-cols-1 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Worker Name</label>
-                            <input type="text" id="workerNameInput" class="w-full" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Overtime Hours</label>
-                            <input type="number" id="workerOvertimeInput" class="w-full" min="0" step="0.5" value="0">
-                        </div>
-                    </div>
-                    <button type="button" id="addWorkerBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Add Worker</span>
-                    </button>
-                </div>
-
-                <!-- Worker Badges Container -->
-                <div id="workerBadgesContainer" class="flex flex-wrap gap-2 min-h-[50px]">
-                    <!-- Worker badges will be added here -->
-                </div>
-
-                <div class="text-sm text-gray-500 mt-2">
-                    <p id="workerCountDisplay">0 workers added</p>
-                </div>
-
-                <div class="flex space-x-3 mt-6">
-                    <button type="button" id="backToInfo" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Back</span>
-                    </button>
-                    <button type="button" id="nextToDetails" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                        <span>Next</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Step 3: Erection/Dismantling Details -->
-        <div id="detailsCard" class="card bg-white p-6 mb-6 hidden">
-            <h2 class="text-xl font-semibold text-gray-800 mb-4">Scaffolding Work Details</h2>
-            <form id="detailsForm" class="space-y-4">
-                <!-- Tabs for Erection and Dismantling -->
-                <div class="mb-4">
-                    <div class="flex border-b border-gray-200">
-                        <button type="button" id="erectionTab" class="py-2 px-4 text-center border-b-2 border-blue-500 text-blue-600 font-medium flex-1">
-                            Erection
-                        </button>
-                        <button type="button" id="dismantlingTab" class="py-2 px-4 text-center border-b-2 border-transparent text-gray-500 hover:text-gray-700 font-medium flex-1">
-                            Dismantling
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Erection Entry Form -->
-                <div id="erectionEntryForm" class="bg-gray-50 p-4 rounded-lg">
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)</label>
-                            <input type="number" id="erectionLengthInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)</label>
-                            <input type="number" id="erectionWidthInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)</label>
-                            <input type="number" id="erectionHeightInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                            <input type="number" id="erectionQuantityInput" class="w-full" min="1" value="1" required>
-                        </div>
-                    </div>
-                    <div class="mb-3 text-sm text-gray-600">
-                        Volume: <span id="erectionVolumeDisplay">0</span> m³
-                    </div>
-                    <button type="button" id="addErectionBtn" class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Add Erection</span>
-                    </button>
-                </div>
-
-                <!-- Erection Badges Container -->
-                <div id="erectionBadgesContainer" class="flex flex-wrap gap-2 min-h-[50px]">
-                    <!-- Erection badges will be added here -->
-                </div>
-
-                <!-- Dismantling Entry Form -->
-                <div id="dismantlingEntryForm" class="bg-gray-50 p-4 rounded-lg hidden">
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)</label>
-                            <input type="number" id="dismantlingLengthInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)</label>
-                            <input type="number" id="dismantlingWidthInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-3 mb-3">
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)</label>
-                            <input type="number" id="dismantlingHeightInput" class="w-full" min="0.1" step="0.1" required>
-                        </div>
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                            <input type="number" id="dismantlingQuantityInput" class="w-full" min="1" value="1" required>
-                        </div>
-                    </div>
-                    <div class="mb-3 text-sm text-gray-600">
-                        Volume: <span id="dismantlingVolumeDisplay">0</span> m³
-                    </div>
-                    <button type="button" id="addDismantlingBtn" class="w-full bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 5a1 1 0 011 1v3h3a1 1 0 110 2h-3v3a1 1 0 11-2 0v-3H6a1 1 0 110-2h3V6a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Add Dismantling</span>
-                    </button>
-                </div>
-
-                <!-- Dismantling Badges Container -->
-                <div id="dismantlingBadgesContainer" class="flex flex-wrap gap-2 min-h-[50px] hidden">
-                    <!-- Dismantling badges will be added here -->
-                </div>
-
-                <div class="text-sm text-gray-500 mt-2">
-                    <p id="erectionCountDisplay">0 erection entries added</p>
-                    <p id="dismantlingCountDisplay" class="hidden">0 dismantling entries added</p>
-                </div>
-
-                <div class="form-group mt-6">
-                    <label for="remarks" class="block text-sm font-medium text-gray-700 mb-1">Remarks</label>
-                    <textarea id="remarks" name="remarks" class="w-full bg-gray-50" rows="3" placeholder="Add any additional notes or remarks"></textarea>
-                </div>
-
-                <div class="flex space-x-3">
-                    <button type="button" id="backToWorkers" class="w-1/2 bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M9.707 14.707a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 1.414L7.414 9H15a1 1 0 110 2H7.414l2.293 2.293a1 1 0 010 1.414z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Back</span>
-                    </button>
-                    <button type="button" id="generateReport" class="w-1/2 bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                        <span>Generate Report</span>
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd" />
-                        </svg>
-                    </button>
-                </div>
-            </form>
-        </div>
-
-        <!-- Step 4: Report -->
-        <div id="reportCard" class="hidden">
-            <div id="reportContent" class="card bg-white p-6 mb-6">
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-bold text-gray-800">Scaffolding Work Report</h2>
-                    <p id="reportDate" class="text-gray-600">Date: </p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="font-medium text-gray-800 mb-2">Supervisor Details</h3>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div class="text-gray-600">Name:</div>
-                            <div id="reportSupervisorName" class="font-medium"></div>
-                            <div class="text-gray-600">Area:</div>
-                            <div id="reportArea" class="font-medium"></div>
-                            <div class="text-gray-600">Manpower:</div>
-                            <div id="reportManpower" class="font-medium"></div>
-                            <div class="text-gray-600">Total Man-hours:</div>
-                            <div id="reportManhours" class="font-medium"></div>
-                        </div>
-                    </div>
-                    
-                    <div id="workersListSection" class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="font-medium text-gray-800 mb-2">Workers</h3>
-                        <div id="reportWorkersList" class="text-sm space-y-1">
-                            <!-- Workers will be listed here -->
-                        </div>
-                    </div>
-                    
-                    <div class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="font-medium text-gray-800 mb-2">Work Summary</h3>
-                        <div class="grid grid-cols-2 gap-2 text-sm">
-                            <div class="text-gray-600">Total Erection:</div>
-                            <div id="reportErection" class="font-medium">0 m³</div>
-                            <div class="text-gray-600">Total Dismantling:</div>
-                            <div id="reportDismantling" class="font-medium">0 m³</div>
-                            <div class="text-gray-600">Erection Count:</div>
-                            <div id="reportErectionCount" class="font-medium">0 entries</div>
-                            <div class="text-gray-600">Dismantling Count:</div>
-                            <div id="reportDismantlingCount" class="font-medium">0 entries</div>
-                        </div>
-                    </div>
-                    
-                    <div class="bg-blue-50 p-4 rounded-lg">
-                        <h3 class="font-medium text-blue-800 mb-2">Productivity</h3>
-                        <div class="text-center">
-                            <div id="productivityValue" class="text-3xl font-bold text-blue-700">0</div>
-                            <div class="text-sm text-blue-600">m³ per man-hour</div>
-                        </div>
-                    </div>
-                    
-                    <div id="remarksSection" class="bg-gray-50 p-4 rounded-lg">
-                        <h3 class="font-medium text-gray-800 mb-2">Remarks</h3>
-                        <p id="reportRemarks" class="text-gray-700 text-sm italic">No remarks</p>
-                    </div>
-                </div>
-            </div>
+        <!-- DPR Entry Card -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
+                DPR Entry
+            </h2>
             
-            <!-- Feedback Card -->
-            <div id="feedbackCard" class="card p-6 mb-6 text-center hidden">
-                <!-- Content will be dynamically generated -->
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="dprDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name</label>
+                    <select id="dprSupervisor" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select Supervisor</option>
+                        <option value="MAHENDRA KUMAR">MAHENDRA KUMAR</option>
+                        <option value="PINTU SAH">PINTU SAH</option>
+                        <option value="HARKIRAT SINGH">HARKIRAT SINGH</option>
+                        <option value="SUNIL CHAUHAN">SUNIL CHAUHAN</option>
+                        <option value="NSUP1">NSUP1</option>
+                        <option value="NSUP2">NSUP2</option>
+                        <option value="NSUP3">NSUP3</option>
+                    </select>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Work Type</label>
+                    <select id="workType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        <option value="">Select Work Type</option>
+                        <option value="ERECTION">ERECTION</option>
+                        <option value="DISMANTLING">DISMANTLING</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)</label>
+                        <input type="number" id="length" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)</label>
+                        <input type="number" id="width" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)</label>
+                        <input type="number" id="height" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                        <input type="number" id="quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                </div>
+                
+                <button onclick="addDPREntry()" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    Add DPR Entry
+                </button>
             </div>
+        </div>
+
+        <!-- Manpower Entry Card -->
+        <div class="bg-white rounded-xl p-6 card-shadow">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
+                Manpower Entry
+            </h2>
             
-            <div class="flex flex-col space-y-3">
-                <button type="button" id="downloadReport" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Download Report as Image</span>
-                </button>
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="manpowerDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                </div>
                 
-                <button type="button" id="shareWhatsApp" class="w-full bg-[#25D366] hover:bg-[#128C7E] text-white font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                    <svg class="h-5 w-5 mr-2" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-                    </svg>
-                    <span>Share on WhatsApp</span>
-                </button>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name</label>
+                    <input type="text" id="manpowerSupervisor" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                </div>
                 
-                <button type="button" id="startNewReport" class="w-full border border-blue-500 text-blue-500 hover:bg-blue-50 font-medium py-3 px-4 rounded-lg flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
-                    </svg>
-                    <span>Start New Report</span>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                    <input type="text" id="employeeName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter employee name">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Overtime (hours)</label>
+                    <input type="number" id="overtime" step="0.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="0">
+                </div>
+                
+                <button onclick="addManpowerEntry()" class="w-full btn-success text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    Add Manpower Entry
                 </button>
+            </div>
+        </div>
+
+        <!-- Summary Card -->
+        <div class="bg-white rounded-xl p-6 card-shadow" id="summaryCard" style="display: none;">
+            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">📊</span>
+                Summary Report
+            </h2>
+            
+            <div class="space-y-3">
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Total Volume:</span>
+                    <span class="font-semibold text-gray-800" id="totalVolume">0 m³</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Total Manhours:</span>
+                    <span class="font-semibold text-gray-800" id="totalManhours">0 hrs</span>
+                </div>
+                <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                    <span class="text-gray-600">Productivity:</span>
+                    <span class="font-semibold text-gray-800" id="productivity">0 m³/hr</span>
+                </div>
+                
+                <div id="feedbackMessage" class="p-3 rounded-lg text-center font-medium mt-4" style="display: none;"></div>
+                
+                <button onclick="shareReport()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 mt-4">
+                    Share Report
+                </button>
+            </div>
+        </div>
+
+        <!-- Entries List -->
+        <div class="bg-white rounded-xl p-6 card-shadow" id="entriesList" style="display: none;">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Entries</h3>
+            <div id="dprEntries" class="space-y-2 mb-4">
+                <h4 class="font-medium text-gray-700">DPR Entries:</h4>
+            </div>
+            <div id="manpowerEntries" class="space-y-2">
+                <h4 class="font-medium text-gray-700">Manpower Entries:</h4>
             </div>
         </div>
     </div>
 
     <script>
-        // Global variables
-        let currentStep = 1;
-        let totalErection = 0;
-        let totalDismantling = 0;
-        let totalManhours = 0;
-        let productivity = 0;
-        
         // Data storage
-        let workers = [];
-        let erectionEntries = [];
-        let dismantlingEntries = [];
-        
-        // DOM Elements
-        const supervisorInfoCard = document.getElementById('supervisorInfoCard');
-        const workersCard = document.getElementById('workersCard');
-        const detailsCard = document.getElementById('detailsCard');
-        const reportCard = document.getElementById('reportCard');
-        const progressBar = document.getElementById('progressBar');
-        const step1Indicator = document.getElementById('step1');
-        const step2Indicator = document.getElementById('step2');
-        const step3Indicator = document.getElementById('step3');
-        const step4Indicator = document.getElementById('step4');
-        
-        // Step 1 Elements
-        const manpowerCountInput = document.getElementById('manpowerCount');
-        const overtimeHoursInput = document.getElementById('overtimeHours');
-        const totalManhoursDisplay = document.getElementById('totalManhoursDisplay');
-        const nextToWorkersBtn = document.getElementById('nextToWorkers');
-        
-        // Step 2 Elements
-        const workerNameInput = document.getElementById('workerNameInput');
-        const workerOvertimeInput = document.getElementById('workerOvertimeInput');
-        const addWorkerBtn = document.getElementById('addWorkerBtn');
-        const workerBadgesContainer = document.getElementById('workerBadgesContainer');
-        const workerCountDisplay = document.getElementById('workerCountDisplay');
-        const backToInfoBtn = document.getElementById('backToInfo');
-        const nextToDetailsBtn = document.getElementById('nextToDetails');
-        
-        // Step 3 Elements
-        const erectionTab = document.getElementById('erectionTab');
-        const dismantlingTab = document.getElementById('dismantlingTab');
-        const erectionEntryForm = document.getElementById('erectionEntryForm');
-        const dismantlingEntryForm = document.getElementById('dismantlingEntryForm');
-        const erectionBadgesContainer = document.getElementById('erectionBadgesContainer');
-        const dismantlingBadgesContainer = document.getElementById('dismantlingBadgesContainer');
-        const erectionCountDisplay = document.getElementById('erectionCountDisplay');
-        const dismantlingCountDisplay = document.getElementById('dismantlingCountDisplay');
-        
-        // Erection Form Elements
-        const erectionLengthInput = document.getElementById('erectionLengthInput');
-        const erectionWidthInput = document.getElementById('erectionWidthInput');
-        const erectionHeightInput = document.getElementById('erectionHeightInput');
-        const erectionQuantityInput = document.getElementById('erectionQuantityInput');
-        const erectionVolumeDisplay = document.getElementById('erectionVolumeDisplay');
-        const addErectionBtn = document.getElementById('addErectionBtn');
-        
-        // Dismantling Form Elements
-        const dismantlingLengthInput = document.getElementById('dismantlingLengthInput');
-        const dismantlingWidthInput = document.getElementById('dismantlingWidthInput');
-        const dismantlingHeightInput = document.getElementById('dismantlingHeightInput');
-        const dismantlingQuantityInput = document.getElementById('dismantlingQuantityInput');
-        const dismantlingVolumeDisplay = document.getElementById('dismantlingVolumeDisplay');
-        const addDismantlingBtn = document.getElementById('addDismantlingBtn');
-        
-        const backToWorkersBtn = document.getElementById('backToWorkers');
-        const generateReportBtn = document.getElementById('generateReport');
-        
-        // Step 4 Elements
-        const reportDate = document.getElementById('reportDate');
-        const reportSupervisorName = document.getElementById('reportSupervisorName');
-        const reportArea = document.getElementById('reportArea');
-        const reportManpower = document.getElementById('reportManpower');
-        const reportManhours = document.getElementById('reportManhours');
-        const reportWorkersList = document.getElementById('reportWorkersList');
-        const reportErection = document.getElementById('reportErection');
-        const reportDismantling = document.getElementById('reportDismantling');
-        const reportErectionCount = document.getElementById('reportErectionCount');
-        const reportDismantlingCount = document.getElementById('reportDismantlingCount');
-        const productivityValue = document.getElementById('productivityValue');
-        const reportRemarks = document.getElementById('reportRemarks');
-        const feedbackCard = document.getElementById('feedbackCard');
-        const downloadReportBtn = document.getElementById('downloadReport');
-        const shareWhatsAppBtn = document.getElementById('shareWhatsApp');
-        const startNewReportBtn = document.getElementById('startNewReport');
-        
-        // Calculate total manhours when manpower or overtime changes
-        function updateTotalManhours() {
-            const manpower = parseInt(manpowerCountInput.value) || 0;
-            const overtime = parseFloat(overtimeHoursInput.value) || 0;
-            totalManhours = (manpower * 8) + overtime;
-            totalManhoursDisplay.textContent = `Calculation: ${manpower} man * 8 + ${overtime} overtime = ${totalManhours} hours`;
-        }
-        
-        manpowerCountInput.addEventListener('input', updateTotalManhours);
-        overtimeHoursInput.addEventListener('input', updateTotalManhours);
-        
-        // Add a worker
-        addWorkerBtn.addEventListener('click', () => {
-            const name = workerNameInput.value.trim();
-            const overtime = parseFloat(workerOvertimeInput.value) || 0;
-            
-            if (!name) {
-                workerNameInput.classList.add('border-red-500');
+        let dprEntries = [];
+        let manpowerEntries = [];
+        let totalErectionVolume = 0;
+        let totalDismantlingVolume = 0;
+        let totalManhours = 0;
+        let currentDate = '';
+        let currentSupervisor = '';
+
+        // Set today's date as default
+        document.getElementById('dprDate').value = new Date().toISOString().split('T')[0];
+
+        function addDPREntry() {
+            const date = document.getElementById('dprDate').value;
+            const supervisor = document.getElementById('dprSupervisor').value;
+            const workType = document.getElementById('workType').value;
+            const length = parseFloat(document.getElementById('length').value);
+            const width = parseFloat(document.getElementById('width').value);
+            const height = parseFloat(document.getElementById('height').value);
+            const quantity = parseInt(document.getElementById('quantity').value);
+
+            // Validation
+            if (!date || !supervisor || !workType || !length || !width || !height || !quantity) {
+                alert('Please fill all DPR fields');
                 return;
             }
+
+            // Calculate volume
+            let volume;
+            if (workType === 'ERECTION') {
+                volume = length * width * height * quantity;
+                totalErectionVolume += volume;
+            } else if (workType === 'DISMANTLING') {
+                volume = (length * width * height * quantity) / 2;
+                totalDismantlingVolume += volume;
+            }
+
+            // Store entry
+            const entry = {
+                date,
+                supervisor,
+                workType,
+                length,
+                width,
+                height,
+                quantity,
+                volume: volume.toFixed(2)
+            };
+
+            dprEntries.push(entry);
+
+            // Update current session data
+            currentDate = date;
+            currentSupervisor = supervisor;
+
+            // Update manpower fields
+            document.getElementById('manpowerDate').value = date;
+            document.getElementById('manpowerSupervisor').value = supervisor;
+
+            // Clear DPR form
+            document.getElementById('workType').value = '';
+            document.getElementById('length').value = '';
+            document.getElementById('width').value = '';
+            document.getElementById('height').value = '';
+            document.getElementById('quantity').value = '';
+
+            // Update display
+            updateDisplay();
             
-            // Add worker to array
-            workers.push({ name, overtime });
-            
-            // Create badge
-            const badge = document.createElement('div');
-            badge.className = 'entry-badge bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded flex items-center';
-            badge.innerHTML = `
-                ${name} <span class="ml-1 text-blue-600">(OT: ${overtime}h)</span>
-                <button type="button" class="ml-1 text-blue-500 hover:text-blue-700" data-index="${workers.length - 1}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            `;
-            
-            workerBadgesContainer.appendChild(badge);
-            
-            // Add event listener to remove button
-            const removeBtn = badge.querySelector('button');
-            removeBtn.addEventListener('click', (e) => {
-                const index = parseInt(e.currentTarget.getAttribute('data-index'));
-                workers.splice(index, 1);
-                workerBadgesContainer.removeChild(badge);
-                updateWorkerBadgeIndices();
-                updateWorkerCount();
-            });
-            
-            // Clear inputs
-            workerNameInput.value = '';
-            workerOvertimeInput.value = '0';
-            workerNameInput.classList.remove('border-red-500');
-            workerNameInput.focus();
-            
-            // Update count
-            updateWorkerCount();
-        });
-        
-        // Update worker badge indices
-        function updateWorkerBadgeIndices() {
-            const removeBtns = workerBadgesContainer.querySelectorAll('button');
-            removeBtns.forEach((btn, index) => {
-                btn.setAttribute('data-index', index);
-            });
+            // Send to Google Sheets
+            sendToGoogleSheets('DPR', entry);
+
+            alert(`DPR Entry added successfully! Volume: ${volume.toFixed(2)} m³`);
         }
-        
-        // Update worker count display
-        function updateWorkerCount() {
-            workerCountDisplay.textContent = `${workers.length} workers added`;
-        }
-        
-        // Update erection volume display
-        function updateErectionVolumeDisplay() {
-            const length = parseFloat(erectionLengthInput.value) || 0;
-            const width = parseFloat(erectionWidthInput.value) || 0;
-            const height = parseFloat(erectionHeightInput.value) || 0;
-            const quantity = parseInt(erectionQuantityInput.value) || 0;
-            
-            const volume = length * width * height * quantity;
-            erectionVolumeDisplay.textContent = volume.toFixed(2);
-        }
-        
-        // Update dismantling volume display
-        function updateDismantlingVolumeDisplay() {
-            const length = parseFloat(dismantlingLengthInput.value) || 0;
-            const width = parseFloat(dismantlingWidthInput.value) || 0;
-            const height = parseFloat(dismantlingHeightInput.value) || 0;
-            const quantity = parseInt(dismantlingQuantityInput.value) || 0;
-            
-            const volume = length * width * height * quantity;
-            dismantlingVolumeDisplay.textContent = volume.toFixed(2);
-        }
-        
-        // Add erection entry
-        addErectionBtn.addEventListener('click', () => {
-            const length = parseFloat(erectionLengthInput.value);
-            const width = parseFloat(erectionWidthInput.value);
-            const height = parseFloat(erectionHeightInput.value);
-            const quantity = parseInt(erectionQuantityInput.value) || 1;
-            
-            if (!length || !width || !height) {
-                if (!length) erectionLengthInput.classList.add('border-red-500');
-                if (!width) erectionWidthInput.classList.add('border-red-500');
-                if (!height) erectionHeightInput.classList.add('border-red-500');
+
+        function addManpowerEntry() {
+            const date = document.getElementById('manpowerDate').value;
+            const supervisor = document.getElementById('manpowerSupervisor').value;
+            const employeeName = document.getElementById('employeeName').value;
+            const overtime = parseFloat(document.getElementById('overtime').value) || 0;
+
+            // Validation
+            if (!date || !supervisor || !employeeName) {
+                alert('Please fill all required manpower fields');
                 return;
             }
+
+            // Calculate manhours (8 hours standard + overtime)
+            const manhours = 8 + overtime;
+            totalManhours += manhours;
+
+            // Store entry
+            const entry = {
+                date,
+                supervisor,
+                employeeName,
+                overtime,
+                manhours
+            };
+
+            manpowerEntries.push(entry);
+
+            // Clear manpower form
+            document.getElementById('employeeName').value = '';
+            document.getElementById('overtime').value = '';
+
+            // Update display
+            updateDisplay();
             
-            const volume = length * width * height * quantity;
-            
-            // Add entry to array
-            erectionEntries.push({ length, width, height, quantity, volume });
-            
-            // Create badge
-            const badge = document.createElement('div');
-            badge.className = 'entry-badge bg-blue-100 text-blue-800 text-xs font-medium px-2.5 py-1 rounded flex items-center';
-            badge.innerHTML = `
-                ${length}×${width}×${height}m (${volume.toFixed(2)} m³)
-                <button type="button" class="ml-1 text-blue-500 hover:text-blue-700" data-index="${erectionEntries.length - 1}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            `;
-            
-            erectionBadgesContainer.appendChild(badge);
-            
-            // Add event listener to remove button
-            const removeBtn = badge.querySelector('button');
-            removeBtn.addEventListener('click', (e) => {
-                const index = parseInt(e.currentTarget.getAttribute('data-index'));
-                erectionEntries.splice(index, 1);
-                erectionBadgesContainer.removeChild(badge);
-                updateErectionBadgeIndices();
-                updateErectionCount();
-            });
-            
-            // Clear inputs
-            erectionLengthInput.value = '';
-            erectionWidthInput.value = '';
-            erectionHeightInput.value = '';
-            erectionQuantityInput.value = '1';
-            erectionVolumeDisplay.textContent = '0';
-            erectionLengthInput.classList.remove('border-red-500');
-            erectionWidthInput.classList.remove('border-red-500');
-            erectionHeightInput.classList.remove('border-red-500');
-            erectionLengthInput.focus();
-            
-            // Update count
-            updateErectionCount();
-        });
-        
-        // Add dismantling entry
-        addDismantlingBtn.addEventListener('click', () => {
-            const length = parseFloat(dismantlingLengthInput.value);
-            const width = parseFloat(dismantlingWidthInput.value);
-            const height = parseFloat(dismantlingHeightInput.value);
-            const quantity = parseInt(dismantlingQuantityInput.value) || 1;
-            
-            if (!length || !width || !height) {
-                if (!length) dismantlingLengthInput.classList.add('border-red-500');
-                if (!width) dismantlingWidthInput.classList.add('border-red-500');
-                if (!height) dismantlingHeightInput.classList.add('border-red-500');
-                return;
-            }
-            
-            const volume = length * width * height * quantity;
-            
-            // Add entry to array
-            dismantlingEntries.push({ length, width, height, quantity, volume });
-            
-            // Create badge
-            const badge = document.createElement('div');
-            badge.className = 'entry-badge bg-red-100 text-red-800 text-xs font-medium px-2.5 py-1 rounded flex items-center';
-            badge.innerHTML = `
-                ${length}×${width}×${height}m (${volume.toFixed(2)} m³)
-                <button type="button" class="ml-1 text-red-500 hover:text-red-700" data-index="${dismantlingEntries.length - 1}">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                        <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                    </svg>
-                </button>
-            `;
-            
-            dismantlingBadgesContainer.appendChild(badge);
-            
-            // Add event listener to remove button
-            const removeBtn = badge.querySelector('button');
-            removeBtn.addEventListener('click', (e) => {
-                const index = parseInt(e.currentTarget.getAttribute('data-index'));
-                dismantlingEntries.splice(index, 1);
-                dismantlingBadgesContainer.removeChild(badge);
-                updateDismantlingBadgeIndices();
-                updateDismantlingCount();
-            });
-            
-            // Clear inputs
-            dismantlingLengthInput.value = '';
-            dismantlingWidthInput.value = '';
-            dismantlingHeightInput.value = '';
-            dismantlingQuantityInput.value = '1';
-            dismantlingVolumeDisplay.textContent = '0';
-            dismantlingLengthInput.classList.remove('border-red-500');
-            dismantlingWidthInput.classList.remove('border-red-500');
-            dismantlingHeightInput.classList.remove('border-red-500');
-            dismantlingLengthInput.focus();
-            
-            // Update count
-            updateDismantlingCount();
-        });
-        
-        // Update erection badge indices
-        function updateErectionBadgeIndices() {
-            const removeBtns = erectionBadgesContainer.querySelectorAll('button');
-            removeBtns.forEach((btn, index) => {
-                btn.setAttribute('data-index', index);
-            });
+            // Send to Google Sheets
+            sendToGoogleSheets('Manpower', entry);
+
+            alert(`Manpower entry added! Manhours: ${manhours}`);
         }
-        
-        // Update dismantling badge indices
-        function updateDismantlingBadgeIndices() {
-            const removeBtns = dismantlingBadgesContainer.querySelectorAll('button');
-            removeBtns.forEach((btn, index) => {
-                btn.setAttribute('data-index', index);
-            });
-        }
-        
-        // Update erection count display
-        function updateErectionCount() {
-            erectionCountDisplay.textContent = `${erectionEntries.length} erection entries added`;
-        }
-        
-        // Update dismantling count display
-        function updateDismantlingCount() {
-            dismantlingCountDisplay.textContent = `${dismantlingEntries.length} dismantling entries added`;
-        }
-        
-        // Add event listeners for volume calculation
-        [erectionLengthInput, erectionWidthInput, erectionHeightInput, erectionQuantityInput].forEach(input => {
-            input.addEventListener('input', updateErectionVolumeDisplay);
-        });
-        
-        [dismantlingLengthInput, dismantlingWidthInput, dismantlingHeightInput, dismantlingQuantityInput].forEach(input => {
-            input.addEventListener('input', updateDismantlingVolumeDisplay);
-        });
-        
-        // Tab switching
-        erectionTab.addEventListener('click', () => {
-            erectionTab.classList.add('border-blue-500', 'text-blue-600');
-            erectionTab.classList.remove('border-transparent', 'text-gray-500');
-            dismantlingTab.classList.remove('border-blue-500', 'text-blue-600');
-            dismantlingTab.classList.add('border-transparent', 'text-gray-500');
-            
-            erectionEntryForm.classList.remove('hidden');
-            erectionBadgesContainer.classList.remove('hidden');
-            erectionCountDisplay.classList.remove('hidden');
-            dismantlingEntryForm.classList.add('hidden');
-            dismantlingBadgesContainer.classList.add('hidden');
-            dismantlingCountDisplay.classList.add('hidden');
-        });
-        
-        dismantlingTab.addEventListener('click', () => {
-            dismantlingTab.classList.add('border-blue-500', 'text-blue-600');
-            dismantlingTab.classList.remove('border-transparent', 'text-gray-500');
-            erectionTab.classList.remove('border-blue-500', 'text-blue-600');
-            erectionTab.classList.add('border-transparent', 'text-gray-500');
-            
-            dismantlingEntryForm.classList.remove('hidden');
-            dismantlingBadgesContainer.classList.remove('hidden');
-            dismantlingCountDisplay.classList.remove('hidden');
-            erectionEntryForm.classList.add('hidden');
-            erectionBadgesContainer.classList.add('hidden');
-            erectionCountDisplay.classList.add('hidden');
-        });
-        
-        // Navigation between steps
-        nextToWorkersBtn.addEventListener('click', () => {
-            // Validate supervisor form
-            const supervisorForm = document.getElementById('supervisorForm');
-            const requiredInputs = supervisorForm.querySelectorAll('[required]');
-            let isValid = true;
-            
-            requiredInputs.forEach(input => {
-                if (!input.value) {
-                    input.classList.add('border-red-500');
-                    isValid = false;
+
+        function updateDisplay() {
+            const totalVolume = totalErectionVolume + totalDismantlingVolume;
+            const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
+
+            // Update summary
+            document.getElementById('totalVolume').textContent = `${totalVolume.toFixed(2)} m³`;
+            document.getElementById('totalManhours').textContent = `${totalManhours} hrs`;
+            document.getElementById('productivity').textContent = `${productivity.toFixed(2)} m³/hr`;
+
+            // Show summary card
+            document.getElementById('summaryCard').style.display = 'block';
+
+            // Update feedback
+            const feedbackDiv = document.getElementById('feedbackMessage');
+            if (productivity > 0) {
+                feedbackDiv.style.display = 'block';
+                if (productivity < 2.5) {
+                    feedbackDiv.className = 'p-3 rounded-lg text-center font-medium mt-4 productivity-poor';
+                    feedbackDiv.textContent = 'ये अच्छे प्रयास नहीं हैं';
                 } else {
-                    input.classList.remove('border-red-500');
+                    feedbackDiv.className = 'p-3 rounded-lg text-center font-medium mt-4 productivity-excellent';
+                    feedbackDiv.textContent = 'Excellent';
                 }
-            });
-            
-            if (!isValid) {
-                alert('Please fill in all required fields.');
-                return;
             }
-            
-            // Move to step 2
-            supervisorInfoCard.classList.add('hidden');
-            workersCard.classList.remove('hidden');
-            currentStep = 2;
-            updateProgressBar();
-        });
-        
-        backToInfoBtn.addEventListener('click', () => {
-            workersCard.classList.add('hidden');
-            supervisorInfoCard.classList.remove('hidden');
-            currentStep = 1;
-            updateProgressBar();
-        });
-        
-        nextToDetailsBtn.addEventListener('click', () => {
-            // Check if at least one worker is added
-            if (workers.length === 0) {
-                alert('Please add at least one worker.');
-                return;
-            }
-            
-            // Move to step 3
-            workersCard.classList.add('hidden');
-            detailsCard.classList.remove('hidden');
-            currentStep = 3;
-            updateProgressBar();
-        });
-        
-        backToWorkersBtn.addEventListener('click', () => {
-            detailsCard.classList.add('hidden');
-            workersCard.classList.remove('hidden');
-            currentStep = 2;
-            updateProgressBar();
-        });
-        
-        generateReportBtn.addEventListener('click', () => {
-            // Check if at least one entry is added
-            if (erectionEntries.length === 0 && dismantlingEntries.length === 0) {
-                alert('Please add at least one erection or dismantling entry.');
-                return;
-            }
-            
-            // Calculate totals
-            calculateTotals();
-            
-            // Generate report
-            generateReport();
-            
-            // Move to step 4
-            detailsCard.classList.add('hidden');
-            reportCard.classList.remove('hidden');
-            currentStep = 4;
-            updateProgressBar();
-        });
-        
-        // Calculate totals
-        function calculateTotals() {
-            totalErection = 0;
-            totalDismantling = 0;
-            
-            // Calculate erection total
-            erectionEntries.forEach(entry => {
-                totalErection += entry.volume;
+
+            // Update entries list
+            updateEntriesList();
+        }
+
+        function updateEntriesList() {
+            const dprDiv = document.getElementById('dprEntries');
+            const manpowerDiv = document.getElementById('manpowerEntries');
+
+            // Clear existing entries
+            dprDiv.innerHTML = '<h4 class="font-medium text-gray-700">DPR Entries:</h4>';
+            manpowerDiv.innerHTML = '<h4 class="font-medium text-gray-700">Manpower Entries:</h4>';
+
+            // Add DPR entries
+            dprEntries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'text-sm bg-blue-50 p-2 rounded';
+                entryDiv.innerHTML = `
+                    <strong>${entry.workType}</strong> - ${entry.volume} m³<br>
+                    <span class="text-gray-600">${entry.date} | ${entry.supervisor}</span>
+                `;
+                dprDiv.appendChild(entryDiv);
             });
-            
-            // Calculate dismantling total
-            dismantlingEntries.forEach(entry => {
-                totalDismantling += entry.volume;
+
+            // Add manpower entries
+            manpowerEntries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'text-sm bg-green-50 p-2 rounded';
+                entryDiv.innerHTML = `
+                    <strong>${entry.employeeName}</strong> - ${entry.manhours} hrs<br>
+                    <span class="text-gray-600">${entry.date} | OT: ${entry.overtime}hrs</span>
+                `;
+                manpowerDiv.appendChild(entryDiv);
             });
-            
-            // Calculate productivity
-            if (totalManhours > 0) {
-                productivity = (totalErection + (totalDismantling / 2)) / totalManhours;
-            } else {
-                productivity = 0;
+
+            // Show entries list if there are entries
+            if (dprEntries.length > 0 || manpowerEntries.length > 0) {
+                document.getElementById('entriesList').style.display = 'block';
             }
         }
-        
-        // Generate report
-        function generateReport() {
-            const date = document.getElementById('date').value;
-            const supervisorName = document.getElementById('supervisorName').value;
-            const area = document.getElementById('area').value;
-            const manpower = document.getElementById('manpowerCount').value;
-            const remarks = document.getElementById('remarks').value || 'No remarks';
-            
-            // Update report content
-            reportDate.textContent = `Date: ${formatDate(date)}`;
-            reportSupervisorName.textContent = supervisorName;
-            reportArea.textContent = area;
-            reportManpower.textContent = `${manpower} workers`;
-            reportManhours.textContent = `${totalManhours} hours`;
-            reportErection.textContent = `${totalErection.toFixed(2)} m³`;
-            reportDismantling.textContent = `${totalDismantling.toFixed(2)} m³`;
-            reportErectionCount.textContent = `${erectionEntries.length} entries`;
-            reportDismantlingCount.textContent = `${dismantlingEntries.length} entries`;
-            productivityValue.textContent = productivity.toFixed(2);
-            reportRemarks.textContent = remarks;
-            
-            // Generate workers list
-            reportWorkersList.innerHTML = '';
-            workers.forEach((worker, index) => {
-                const workerItem = document.createElement('div');
-                workerItem.className = 'flex justify-between';
-                workerItem.innerHTML = `
-                    <span>${index + 1}. ${worker.name}</span>
-                    <span>OT: ${worker.overtime} hrs</span>
-                `;
-                reportWorkersList.appendChild(workerItem);
-            });
-            
-            // Show appropriate feedback
-            showFeedback();
-        }
-        
-        // Show feedback based on productivity
-        function showFeedback() {
-            feedbackCard.classList.remove('hidden');
-            
-            if (productivity >= 2.5) {
-                feedbackCard.className = 'card bg-green-50 p-6 mb-6 text-center';
-                feedbackCard.innerHTML = `
-                    <div class="text-green-500 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-green-800 mb-2">Great Job!</h3>
-                    <p class="text-green-700">Thank You for Your Efforts</p>
-                `;
-            } else {
-                feedbackCard.className = 'card bg-red-50 p-6 mb-6 text-center';
-                feedbackCard.innerHTML = `
-                    <div class="text-red-500 mb-3">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-bold text-red-800 mb-2">We Need Improvement</h3>
-                    <p class="text-red-700 mb-1">It's not what we are expecting from you</p>
-                    <p class="text-red-700 font-light italic">यह वह नहीं है जो हम आपसे उम्मीद कर रहे हैं</p>
-                `;
-            }
-        }
-        
-        // Download report as image
-        downloadReportBtn.addEventListener('click', () => {
-            const reportContent = document.getElementById('reportContent');
-            const feedbackContent = document.getElementById('feedbackCard');
-            
-            // Temporarily combine report and feedback for screenshot
-            const combinedReport = document.createElement('div');
-            combinedReport.className = 'p-4 bg-white';
-            combinedReport.appendChild(reportContent.cloneNode(true));
-            combinedReport.appendChild(feedbackContent.cloneNode(true));
-            document.body.appendChild(combinedReport);
-            
-            html2canvas(combinedReport).then(canvas => {
-                const link = document.createElement('a');
-                link.download = `Scaffolding_Report_${formatDateForFilename(document.getElementById('date').value)}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg');
-                link.click();
-                
-                // Remove the temporary element
-                document.body.removeChild(combinedReport);
-            });
-        });
-        
-        // Share on WhatsApp
-        shareWhatsAppBtn.addEventListener('click', () => {
-            const supervisorName = document.getElementById('supervisorName').value;
-            const date = formatDate(document.getElementById('date').value);
-            const area = document.getElementById('area').value;
-            const remarks = document.getElementById('remarks').value || 'No remarks';
-            
-            // Get workers list
-            let workersList = '';
-            workers.forEach((worker, index) => {
-                workersList += `${index + 1}. ${worker.name} (OT: ${worker.overtime} hrs)\n`;
-            });
-            
-            const message = `
-*Scaffolding Work Report*
-Date: ${date}
-Supervisor: ${supervisorName}
-Area: ${area}
-Manpower: ${document.getElementById('manpowerCount').value} workers
-Total Man-hours: ${totalManhours} hours
 
-*Workers:*
-${workersList}
-*Work Summary*
-Total Erection: ${totalErection.toFixed(2)} m³ (${erectionEntries.length} entries)
-Total Dismantling: ${totalDismantling.toFixed(2)} m³ (${dismantlingEntries.length} entries)
+        function shareReport() {
+            const totalVolume = totalErectionVolume + totalDismantlingVolume;
+            const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
 
-*Productivity: ${productivity.toFixed(2)} m³ per man-hour*
+            const report = `
+📊 DAILY PROGRESS REPORT
 
-Remarks: ${remarks}
+📅 Date: ${currentDate}
+👨‍💼 Supervisor: ${currentSupervisor}
+📦 Total Volume: ${totalVolume.toFixed(2)} m³
+⏰ Total Manhours: ${totalManhours} hrs
+📈 Productivity: ${productivity.toFixed(2)} m³/hr
+
+${productivity < 2.5 ? '⚠️ ये अच्छे प्रयास नहीं हैं' : '✅ Excellent'}
+
+Generated by DPR & Manpower Logger
             `.trim();
-            
-            const encodedMessage = encodeURIComponent(message);
-            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
-        });
-        
-        // Start new report
-        startNewReportBtn.addEventListener('click', () => {
-            // Reset all forms
-            document.getElementById('supervisorForm').reset();
-            
-            // Reset data arrays
-            workers = [];
-            erectionEntries = [];
-            dismantlingEntries = [];
-            
-            // Clear badges containers
-            workerBadgesContainer.innerHTML = '';
-            erectionBadgesContainer.innerHTML = '';
-            dismantlingBadgesContainer.innerHTML = '';
-            
-            // Reset inputs
-            workerNameInput.value = '';
-            workerOvertimeInput.value = '0';
-            
-            erectionLengthInput.value = '';
-            erectionWidthInput.value = '';
-            erectionHeightInput.value = '';
-            erectionQuantityInput.value = '1';
-            erectionVolumeDisplay.textContent = '0';
-            
-            dismantlingLengthInput.value = '';
-            dismantlingWidthInput.value = '';
-            dismantlingHeightInput.value = '';
-            dismantlingQuantityInput.value = '1';
-            dismantlingVolumeDisplay.textContent = '0';
-            
-            // Reset counts
-            updateWorkerCount();
-            updateErectionCount();
-            updateDismantlingCount();
-            
-            // Reset totals
-            totalErection = 0;
-            totalDismantling = 0;
-            totalManhours = 0;
-            productivity = 0;
-            updateTotalManhours();
-            
-            // Switch back to erection tab
-            erectionTab.click();
-            
-            // Go back to step 1
-            reportCard.classList.add('hidden');
-            supervisorInfoCard.classList.remove('hidden');
-            currentStep = 1;
-            updateProgressBar();
-        });
-        
-        // Update progress bar and step indicators
-        function updateProgressBar() {
-            // Update progress bar width
-            progressBar.style.width = `${(currentStep / 4) * 100}%`;
-            
-            // Update step indicators
-            step1Indicator.className = currentStep > 1 ? 'step-indicator completed-step' : 'step-indicator active-step';
-            step2Indicator.className = currentStep > 2 ? 'step-indicator completed-step' : (currentStep === 2 ? 'step-indicator active-step' : 'step-indicator inactive-step');
-            step3Indicator.className = currentStep > 3 ? 'step-indicator completed-step' : (currentStep === 3 ? 'step-indicator active-step' : 'step-indicator inactive-step');
-            step4Indicator.className = currentStep === 4 ? 'step-indicator active-step' : 'step-indicator inactive-step';
+
+            // Check if Web Share API is supported
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Daily Progress Report',
+                    text: report
+                }).catch(console.error);
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(report).then(() => {
+                    alert('Report copied to clipboard!');
+                }).catch(() => {
+                    // Final fallback: show in alert
+                    alert(report);
+                });
+            }
         }
-        
-        // Helper function to format date
-        function formatDate(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' });
+
+        // Google Sheets integration function - Fixed version
+        function sendToGoogleSheets(type, data) {
+            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqVOZwNIu9aCDgt3uP_DrYCowLS6gnvtOeKYHQGhLgUk0tC8LPbXdYLEaEGOv7m0zs/exec';
+            
+            let rowData;
+            let tabName;
+            
+            if (type === 'DPR') {
+                tabName = 'DPR';
+                rowData = [
+                    data.date,
+                    data.supervisor,
+                    data.workType,
+                    data.length,
+                    data.width,
+                    data.height,
+                    data.quantity
+                ];
+            } else if (type === 'Manpower') {
+                tabName = 'MANPOWER';
+                rowData = [
+                    data.date,
+                    data.supervisor,
+                    data.employeeName,
+                    data.overtime
+                ];
+            }
+            
+            console.log(`📤 Sending ${type} data to ${tabName}:`, rowData);
+            
+            // Create form data with individual parameters
+            const formData = new FormData();
+            formData.append('tab', tabName);
+            formData.append('date', rowData[0]);
+            formData.append('supervisor', rowData[1]);
+            
+            if (type === 'DPR') {
+                formData.append('workType', rowData[2]);
+                formData.append('length', rowData[3]);
+                formData.append('width', rowData[4]);
+                formData.append('height', rowData[5]);
+                formData.append('quantity', rowData[6]);
+            } else {
+                formData.append('employeeName', rowData[2]);
+                formData.append('overtime', rowData[3]);
+            }
+            
+            fetch(SCRIPT_URL, {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.text())
+            .then(result => {
+                console.log('✅ Response from Google Sheets:', result);
+                
+                // Show success notification
+                const successMsg = document.createElement('div');
+                successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                successMsg.textContent = `${type} data sent to Google Sheets!`;
+                document.body.appendChild(successMsg);
+                
+                setTimeout(() => {
+                    if (document.body.contains(successMsg)) {
+                        document.body.removeChild(successMsg);
+                    }
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('❌ Error sending data:', error);
+                
+                // Show error notification
+                const errorMsg = document.createElement('div');
+                errorMsg.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+                errorMsg.textContent = `Failed to send ${type} data`;
+                document.body.appendChild(errorMsg);
+                
+                setTimeout(() => {
+                    if (document.body.contains(errorMsg)) {
+                        document.body.removeChild(errorMsg);
+                    }
+                }, 3000);
+            });
         }
-        
-        // Helper function to format date for filename
-        function formatDateForFilename(dateString) {
-            if (!dateString) return '';
-            const date = new Date(dateString);
-            return `${date.getFullYear()}-${(date.getMonth() + 1).toString().padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
-        }
-        
-        // Initialize
-        updateTotalManhours();
-        updateWorkerCount();
-        updateErectionCount();
-        updateDismantlingCount();
-        updateProgressBar();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96430eadf4938730',t:'MTc1MzM1NjMzMS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9652ab0017219bc1',t:'MTc1MzUyMDAyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
