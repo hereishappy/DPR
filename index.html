@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DPR & Manpower Logger</title>
+    <title>DPR & Manpower Logger v11</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         .card-shadow {
@@ -21,6 +21,12 @@
         .btn-success:hover {
             background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
         }
+        .btn-danger {
+            background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+        }
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+        }
         .productivity-excellent {
             background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
             color: white;
@@ -29,171 +35,428 @@
             background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
             color: white;
         }
+        .locked-employee {
+            background: linear-gradient(135deg, #ffd89b 0%, #19547b 100%);
+            color: white;
+        }
     </style>
 </head>
 <body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-screen p-4">
     <div class="max-w-md mx-auto space-y-6">
-        <!-- Header -->
-        <div class="text-center py-4">
-            <h1 class="text-2xl font-bold text-gray-800 mb-2">DPR & Manpower Logger</h1>
-            <p class="text-gray-600 text-sm">Daily Progress Report Management</p>
-        </div>
-
-        <!-- DPR Entry Card -->
-        <div class="bg-white rounded-xl p-6 card-shadow">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">1</span>
-                DPR Entry
-            </h2>
+        
+        <!-- PIN Login Screen -->
+        <div id="loginScreen" class="bg-white rounded-xl p-6 card-shadow">
+            <div class="text-center mb-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">🔐 DPR & Manpower Logger</h1>
+                <p class="text-gray-600 text-sm">Version 11.0 - Secure Access</p>
+                <p class="text-xs text-gray-400 mt-1">Enter your supervisor PIN to continue</p>
+            </div>
             
             <div class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input type="date" id="dprDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor PIN</label>
+                    <input type="password" id="supervisorPIN" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Enter your PIN (e.g., MAHE13)">
                 </div>
                 
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name</label>
-                    <select id="dprSupervisor" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Select Supervisor</option>
-                        <option value="MAHENDRA KUMAR">MAHENDRA KUMAR</option>
-                        <option value="PINTU SAH">PINTU SAH</option>
-                        <option value="HARKIRAT SINGH">HARKIRAT SINGH</option>
-                        <option value="SUNIL CHAUHAN">SUNIL CHAUHAN</option>
-                        <option value="NSUP1">NSUP1</option>
-                        <option value="NSUP2">NSUP2</option>
-                        <option value="NSUP3">NSUP3</option>
-                    </select>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Work Type</label>
-                    <select id="workType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Select Work Type</option>
-                        <option value="ERECTION">ERECTION</option>
-                        <option value="DISMANTLING">DISMANTLING</option>
-                    </select>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)</label>
-                        <input type="number" id="length" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)</label>
-                        <input type="number" id="width" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)</label>
-                        <input type="number" id="height" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
-                        <input type="number" id="quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                </div>
-                
-                <button onclick="addDPREntry()" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
-                    Add DPR Entry
+                <button onclick="validatePIN()" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                    🔓 Login
                 </button>
+                
+                <div class="text-xs text-gray-500 text-center mt-4">
+                    💡 PIN Format: First 4 letters + 13<br>
+                    Example: MAHENDRA KUMAR = MAHE13
+                </div>
             </div>
         </div>
 
-        <!-- Manpower Entry Card -->
-        <div class="bg-white rounded-xl p-6 card-shadow">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">2</span>
-                Manpower Entry
-            </h2>
+        <!-- Main App (Hidden initially) -->
+        <div id="mainApp" style="display: none;">
             
-            <div class="space-y-4">
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
-                    <input type="date" id="manpowerDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Supervisor Name</label>
-                    <input type="text" id="manpowerSupervisor" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
-                    <input type="text" id="employeeName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter employee name">
-                </div>
-                
-                <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-1">Overtime (hours)</label>
-                    <input type="number" id="overtime" step="0.5" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="0">
-                </div>
-                
-                <button onclick="addManpowerEntry()" class="w-full btn-success text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
-                    Add Manpower Entry
-                </button>
+            <!-- Header -->
+            <div class="text-center py-4 bg-white rounded-xl card-shadow mb-6">
+                <h1 class="text-2xl font-bold text-gray-800 mb-2">DPR & Manpower Logger</h1>
+                <p class="text-gray-600 text-sm">Welcome, <span id="currentSupervisor" class="font-semibold"></span></p>
+                <p class="text-xs text-gray-400 mt-1">Version 11.0 - Enhanced Workflow</p>
+                <button onclick="logout()" class="mt-2 text-xs text-red-600 hover:text-red-800">🚪 Logout</button>
             </div>
-        </div>
 
-        <!-- Summary Card -->
-        <div class="bg-white rounded-xl p-6 card-shadow" id="summaryCard" style="display: none;">
-            <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
-                <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">📊</span>
-                Summary Report
-            </h2>
-            
-            <div class="space-y-3">
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-gray-600">Total Volume:</span>
-                    <span class="font-semibold text-gray-800" id="totalVolume">0 m³</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-gray-600">Total Manhours:</span>
-                    <span class="font-semibold text-gray-800" id="totalManhours">0 hrs</span>
-                </div>
-                <div class="flex justify-between items-center py-2 border-b border-gray-100">
-                    <span class="text-gray-600">Productivity:</span>
-                    <span class="font-semibold text-gray-800" id="productivity">0 m³/hr</span>
-                </div>
+            <!-- Manpower Entry Card (Shows First) -->
+            <div class="bg-white rounded-xl p-6 card-shadow" id="manpowerCard">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">👥</span>
+                    Daily Attendance Entry
+                </h2>
                 
-                <div id="feedbackMessage" class="p-3 rounded-lg text-center font-medium mt-4" style="display: none;"></div>
-                
-                <button onclick="shareReport()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 mt-4">
-                    Share Report
-                </button>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                        <input type="date" id="attendanceDate" class="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50" readonly>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Employee Name</label>
+                        <input type="text" id="employeeName" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent" placeholder="Enter employee name">
+                    </div>
+                    
+                    <button onclick="addEmployee()" class="w-full btn-success text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        ➕ Add Employee
+                    </button>
+                    
+                    <!-- Employee List -->
+                    <div id="employeeList" class="space-y-2" style="display: none;">
+                        <h4 class="font-medium text-gray-700 border-t pt-3">Today's Attendance:</h4>
+                        <div id="employeeEntries"></div>
+                    </div>
+                    
+                    <!-- Submit Attendance Button -->
+                    <button onclick="submitAttendance()" id="submitAttendanceBtn" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105" style="display: none;">
+                        🔒 Submit & Lock Attendance
+                    </button>
+                </div>
             </div>
-        </div>
 
-        <!-- Entries List -->
-        <div class="bg-white rounded-xl p-6 card-shadow" id="entriesList" style="display: none;">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4">Recent Entries</h3>
-            <div id="dprEntries" class="space-y-2 mb-4">
-                <h4 class="font-medium text-gray-700">DPR Entries:</h4>
+            <!-- Attendance Locked Screen -->
+            <div class="bg-white rounded-xl p-6 card-shadow" id="attendanceLockedCard" style="display: none;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-yellow-100 text-yellow-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">🔒</span>
+                    Attendance Locked
+                </h2>
+                
+                <div class="space-y-4">
+                    <div class="bg-green-50 p-3 rounded-lg">
+                        <p class="text-sm text-green-800">✅ Attendance submitted successfully!</p>
+                        <p class="text-xs text-green-600 mt-1">Date: <span id="lockedDate"></span></p>
+                    </div>
+                    
+                    <button onclick="shareAttendance()" class="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        📱 Share Attendance to WhatsApp
+                    </button>
+                    
+                    <button onclick="proceedToDPR()" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        ➡️ Proceed to DPR Entry
+                    </button>
+                </div>
             </div>
-            <div id="manpowerEntries" class="space-y-2">
-                <h4 class="font-medium text-gray-700">Manpower Entries:</h4>
+
+            <!-- DPR Entry Card -->
+            <div class="bg-white rounded-xl p-6 card-shadow" id="dprCard" style="display: none;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-blue-100 text-blue-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">📊</span>
+                    DPR Entry
+                </h2>
+                
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Work Type</label>
+                        <select id="workType" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                            <option value="">Select Work Type</option>
+                            <option value="ERECTION">ERECTION</option>
+                            <option value="DISMANTLING">DISMANTLING</option>
+                        </select>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Length (m)</label>
+                            <input type="number" id="length" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Width (m)</label>
+                            <input type="number" id="width" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Height (m)</label>
+                            <input type="number" id="height" step="0.01" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Quantity</label>
+                            <input type="number" id="quantity" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                        </div>
+                    </div>
+                    
+                    <button onclick="addDPREntry()" class="w-full btn-primary text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        ➕ Add DPR Entry
+                    </button>
+                    
+                    <!-- DPR Entries List -->
+                    <div id="dprEntriesList" class="space-y-2" style="display: none;">
+                        <h4 class="font-medium text-gray-700 border-t pt-3">Today's DPR Entries:</h4>
+                        <div id="dprEntries"></div>
+                    </div>
+                    
+                    <button onclick="completeDPR()" id="completeDPRBtn" class="w-full btn-success text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105" style="display: none;">
+                        ✅ Complete DPR & Return to Overtime
+                    </button>
+                </div>
+            </div>
+
+            <!-- Overtime Management Card -->
+            <div class="bg-white rounded-xl p-6 card-shadow" id="overtimeCard" style="display: none;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-purple-100 text-purple-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">⏰</span>
+                    Overtime Management
+                </h2>
+                
+                <div class="space-y-3">
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <p class="text-sm text-blue-800">📋 Locked Attendance List</p>
+                        <p class="text-xs text-blue-600">Add overtime hours for employees</p>
+                    </div>
+                    
+                    <div id="lockedEmployeesList" class="space-y-2"></div>
+                    
+                    <button onclick="finalSubmission()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                        🎯 Final Submission
+                    </button>
+                </div>
+            </div>
+
+            <!-- Final Summary Card -->
+            <div class="bg-white rounded-xl p-6 card-shadow" id="summaryCard" style="display: none;">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <span class="bg-green-100 text-green-600 rounded-full w-8 h-8 flex items-center justify-center text-sm font-bold mr-3">📊</span>
+                    Final Summary Report
+                </h2>
+                
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Total Volume:</span>
+                        <span class="font-semibold text-gray-800" id="totalVolume">0 m³</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Total Manhours:</span>
+                        <span class="font-semibold text-gray-800" id="totalManhours">0 hrs</span>
+                    </div>
+                    <div class="flex justify-between items-center py-2 border-b border-gray-100">
+                        <span class="text-gray-600">Productivity:</span>
+                        <span class="font-semibold text-gray-800" id="productivity">0 m³/hr</span>
+                    </div>
+                    
+                    <div id="feedbackMessage" class="p-3 rounded-lg text-center font-medium mt-4" style="display: none;"></div>
+                    
+                    <div class="space-y-3 mt-4">
+                        <button onclick="shareReport()" class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white py-3 rounded-lg font-medium transition-all duration-200 transform hover:scale-105">
+                            📱 Share Final Report
+                        </button>
+                        
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="exportToCSV()" class="bg-gradient-to-r from-green-500 to-blue-500 hover:from-green-600 hover:to-blue-600 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 text-sm">
+                                📊 CSV Export
+                            </button>
+                            <button onclick="exportToExcelHTML()" class="bg-gradient-to-r from-blue-600 to-green-600 hover:from-blue-700 hover:to-green-700 text-white py-2 rounded-lg font-medium transition-all duration-200 transform hover:scale-105 text-sm">
+                                📈 Excel File
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Data storage
+        // Supervisor PIN database
+        const supervisorPINs = {
+            'MAHE13': 'MAHENDRA KUMAR',
+            'PINT13': 'PINTU SAH',
+            'HARK13': 'HARKIRAT SINGH',
+            'SUNI13': 'SUNIL CHAUHAN',
+            'NSUP13': 'NSUP1',
+            'NSUP13': 'NSUP2',
+            'NSUP13': 'NSUP3'
+        };
+
+        // Global variables
+        let currentSupervisorName = '';
+        let currentDate = '';
+        let employees = [];
         let dprEntries = [];
-        let manpowerEntries = [];
+        let attendanceLocked = false;
+        let dprCompleted = false;
         let totalErectionVolume = 0;
         let totalDismantlingVolume = 0;
         let totalManhours = 0;
-        let currentDate = '';
-        let currentSupervisor = '';
 
-        // Set today's date as default
-        document.getElementById('dprDate').value = new Date().toISOString().split('T')[0];
+        // Initialize app
+        function initializeApp() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('attendanceDate').value = today;
+            currentDate = today;
+            
+            // Check if returning user
+            const savedState = localStorage.getItem('appState_' + currentDate);
+            if (savedState) {
+                const state = JSON.parse(savedState);
+                if (state.attendanceLocked && !state.dprCompleted) {
+                    // Show DPR entry
+                    showDPREntry();
+                } else if (state.dprCompleted) {
+                    // Show overtime management
+                    loadSavedState(state);
+                    showOvertimeManagement();
+                }
+            }
+        }
 
+        // PIN Validation
+        function validatePIN() {
+            const enteredPIN = document.getElementById('supervisorPIN').value.toUpperCase();
+            
+            if (supervisorPINs[enteredPIN]) {
+                currentSupervisorName = supervisorPINs[enteredPIN];
+                document.getElementById('currentSupervisor').textContent = currentSupervisorName;
+                
+                // Hide login, show main app
+                document.getElementById('loginScreen').style.display = 'none';
+                document.getElementById('mainApp').style.display = 'block';
+                
+                initializeApp();
+                showNotification('✅ Login successful!', 'success');
+            } else {
+                showNotification('❌ Invalid PIN. Please try again.', 'error');
+                document.getElementById('supervisorPIN').value = '';
+            }
+        }
+
+        // Logout function
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Save current state
+                saveAppState();
+                
+                // Reset UI
+                document.getElementById('loginScreen').style.display = 'block';
+                document.getElementById('mainApp').style.display = 'none';
+                document.getElementById('supervisorPIN').value = '';
+                
+                showNotification('👋 Logged out successfully!', 'success');
+            }
+        }
+
+        // Add Employee
+        function addEmployee() {
+            const employeeName = document.getElementById('employeeName').value.trim();
+            
+            if (!employeeName) {
+                alert('Please enter employee name');
+                return;
+            }
+            
+            if (employees.find(emp => emp.name.toLowerCase() === employeeName.toLowerCase())) {
+                alert('Employee already added');
+                return;
+            }
+            
+            employees.push({
+                name: employeeName,
+                overtime: 0,
+                manhours: 8
+            });
+            
+            document.getElementById('employeeName').value = '';
+            updateEmployeeList();
+            
+            showNotification(`✅ ${employeeName} added to attendance`, 'success');
+        }
+
+        // Update Employee List
+        function updateEmployeeList() {
+            const listDiv = document.getElementById('employeeEntries');
+            listDiv.innerHTML = '';
+            
+            employees.forEach((employee, index) => {
+                const employeeDiv = document.createElement('div');
+                employeeDiv.className = 'flex justify-between items-center bg-green-50 p-2 rounded';
+                employeeDiv.innerHTML = `
+                    <span class="text-sm font-medium">${index + 1}. ${employee.name}</span>
+                    <button onclick="removeEmployee(${index})" class="text-red-600 hover:text-red-800 text-xs">❌</button>
+                `;
+                listDiv.appendChild(employeeDiv);
+            });
+            
+            // Show/hide elements based on employee count
+            if (employees.length > 0) {
+                document.getElementById('employeeList').style.display = 'block';
+                document.getElementById('submitAttendanceBtn').style.display = 'block';
+            } else {
+                document.getElementById('employeeList').style.display = 'none';
+                document.getElementById('submitAttendanceBtn').style.display = 'none';
+            }
+        }
+
+        // Remove Employee
+        function removeEmployee(index) {
+            if (confirm(`Remove ${employees[index].name} from attendance?`)) {
+                employees.splice(index, 1);
+                updateEmployeeList();
+                showNotification('Employee removed', 'warning');
+            }
+        }
+
+        // Submit Attendance
+        function submitAttendance() {
+            if (employees.length === 0) {
+                alert('Please add at least one employee');
+                return;
+            }
+            
+            if (confirm(`Lock attendance for ${employees.length} employees?`)) {
+                attendanceLocked = true;
+                
+                // Hide manpower card, show locked card
+                document.getElementById('manpowerCard').style.display = 'none';
+                document.getElementById('attendanceLockedCard').style.display = 'block';
+                document.getElementById('lockedDate').textContent = currentDate;
+                
+                saveAppState();
+                showNotification('🔒 Attendance locked successfully!', 'success');
+            }
+        }
+
+        // Share Attendance to WhatsApp
+        function shareAttendance() {
+            let attendanceReport = `📋 DAILY ATTENDANCE REPORT\n\n`;
+            attendanceReport += `📅 Date: ${currentDate}\n`;
+            attendanceReport += `👨‍💼 Supervisor: ${currentSupervisorName}\n\n`;
+            attendanceReport += `👥 Present Employees:\n`;
+            
+            employees.forEach((employee, index) => {
+                attendanceReport += `${index + 1}. ${employee.name}\n`;
+            });
+            
+            attendanceReport += `\n✅ Total Present: ${employees.length}\n`;
+            attendanceReport += `\nGenerated by DPR & Manpower Logger v11`;
+            
+            // Share via WhatsApp or copy to clipboard
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Daily Attendance Report',
+                    text: attendanceReport
+                }).catch(console.error);
+            } else {
+                navigator.clipboard.writeText(attendanceReport).then(() => {
+                    showNotification('📋 Attendance report copied to clipboard!', 'success');
+                }).catch(() => {
+                    alert(attendanceReport);
+                });
+            }
+        }
+
+        // Proceed to DPR Entry
+        function proceedToDPR() {
+            showDPREntry();
+        }
+
+        // Show DPR Entry
+        function showDPREntry() {
+            document.getElementById('attendanceLockedCard').style.display = 'none';
+            document.getElementById('dprCard').style.display = 'block';
+        }
+
+        // Add DPR Entry
         function addDPREntry() {
-            const date = document.getElementById('dprDate').value;
-            const supervisor = document.getElementById('dprSupervisor').value;
             const workType = document.getElementById('workType').value;
             const length = parseFloat(document.getElementById('length').value);
             const width = parseFloat(document.getElementById('width').value);
@@ -201,7 +464,7 @@
             const quantity = parseInt(document.getElementById('quantity').value);
 
             // Validation
-            if (!date || !supervisor || !workType || !length || !width || !height || !quantity) {
+            if (!workType || !length || !width || !height || !quantity) {
                 alert('Please fill all DPR fields');
                 return;
             }
@@ -218,8 +481,6 @@
 
             // Store entry
             const entry = {
-                date,
-                supervisor,
                 workType,
                 length,
                 width,
@@ -230,71 +491,99 @@
 
             dprEntries.push(entry);
 
-            // Update current session data
-            currentDate = date;
-            currentSupervisor = supervisor;
-
-            // Update manpower fields
-            document.getElementById('manpowerDate').value = date;
-            document.getElementById('manpowerSupervisor').value = supervisor;
-
-            // Clear DPR form
+            // Clear form
             document.getElementById('workType').value = '';
             document.getElementById('length').value = '';
             document.getElementById('width').value = '';
             document.getElementById('height').value = '';
             document.getElementById('quantity').value = '';
 
-            // Update display
-            updateDisplay();
+            updateDPRList();
+            saveAppState();
             
-            // Send to Google Sheets
-            sendToGoogleSheets('DPR', entry);
-
-            alert(`DPR Entry added successfully! Volume: ${volume.toFixed(2)} m³`);
+            showNotification(`✅ DPR Entry added! Volume: ${volume.toFixed(2)} m³`, 'success');
         }
 
-        function addManpowerEntry() {
-            const date = document.getElementById('manpowerDate').value;
-            const supervisor = document.getElementById('manpowerSupervisor').value;
-            const employeeName = document.getElementById('employeeName').value;
-            const overtime = parseFloat(document.getElementById('overtime').value) || 0;
+        // Update DPR List
+        function updateDPRList() {
+            const listDiv = document.getElementById('dprEntries');
+            listDiv.innerHTML = '';
+            
+            dprEntries.forEach((entry, index) => {
+                const entryDiv = document.createElement('div');
+                entryDiv.className = 'text-sm bg-blue-50 p-2 rounded';
+                entryDiv.innerHTML = `
+                    <strong>${entry.workType}</strong> - ${entry.volume} m³<br>
+                    <span class="text-gray-600">${entry.length}×${entry.width}×${entry.height} × ${entry.quantity}</span>
+                `;
+                listDiv.appendChild(entryDiv);
+            });
+            
+            if (dprEntries.length > 0) {
+                document.getElementById('dprEntriesList').style.display = 'block';
+                document.getElementById('completeDPRBtn').style.display = 'block';
+            }
+        }
 
-            // Validation
-            if (!date || !supervisor || !employeeName) {
-                alert('Please fill all required manpower fields');
+        // Complete DPR
+        function completeDPR() {
+            if (dprEntries.length === 0) {
+                alert('Please add at least one DPR entry');
                 return;
             }
-
-            // Calculate manhours (8 hours standard + overtime)
-            const manhours = 8 + overtime;
-            totalManhours += manhours;
-
-            // Store entry
-            const entry = {
-                date,
-                supervisor,
-                employeeName,
-                overtime,
-                manhours
-            };
-
-            manpowerEntries.push(entry);
-
-            // Clear manpower form
-            document.getElementById('employeeName').value = '';
-            document.getElementById('overtime').value = '';
-
-            // Update display
-            updateDisplay();
             
-            // Send to Google Sheets
-            sendToGoogleSheets('Manpower', entry);
-
-            alert(`Manpower entry added! Manhours: ${manhours}`);
+            dprCompleted = true;
+            saveAppState();
+            showOvertimeManagement();
+            showNotification('✅ DPR completed! Now manage overtime.', 'success');
         }
 
-        function updateDisplay() {
+        // Show Overtime Management
+        function showOvertimeManagement() {
+            document.getElementById('dprCard').style.display = 'none';
+            document.getElementById('overtimeCard').style.display = 'block';
+            updateLockedEmployeesList();
+        }
+
+        // Update Locked Employees List
+        function updateLockedEmployeesList() {
+            const listDiv = document.getElementById('lockedEmployeesList');
+            listDiv.innerHTML = '';
+            
+            employees.forEach((employee, index) => {
+                const employeeDiv = document.createElement('div');
+                employeeDiv.className = 'flex justify-between items-center locked-employee p-3 rounded-lg';
+                employeeDiv.innerHTML = `
+                    <div>
+                        <span class="font-medium">${index + 1}. ${employee.name}</span><br>
+                        <span class="text-xs opacity-80">Overtime: ${employee.overtime} hrs | Total: ${employee.manhours} hrs</span>
+                    </div>
+                    <button onclick="addOvertime(${index})" class="bg-white text-blue-600 px-3 py-1 rounded text-sm font-medium hover:bg-gray-100">
+                        ⏰ Add OT
+                    </button>
+                `;
+                listDiv.appendChild(employeeDiv);
+            });
+        }
+
+        // Add Overtime
+        function addOvertime(employeeIndex) {
+            const currentOT = employees[employeeIndex].overtime;
+            const newOT = prompt(`Add overtime hours for ${employees[employeeIndex].name}:\nCurrent: ${currentOT} hrs`, currentOT);
+            
+            if (newOT !== null && !isNaN(newOT) && newOT >= 0) {
+                employees[employeeIndex].overtime = parseFloat(newOT);
+                employees[employeeIndex].manhours = 8 + parseFloat(newOT);
+                updateLockedEmployeesList();
+                saveAppState();
+                showNotification(`⏰ Overtime updated for ${employees[employeeIndex].name}`, 'success');
+            }
+        }
+
+        // Final Submission
+        function finalSubmission() {
+            // Calculate totals
+            totalManhours = employees.reduce((total, emp) => total + emp.manhours, 0);
             const totalVolume = totalErectionVolume + totalDismantlingVolume;
             const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
 
@@ -303,10 +592,7 @@
             document.getElementById('totalManhours').textContent = `${totalManhours} hrs`;
             document.getElementById('productivity').textContent = `${productivity.toFixed(2)} m³/hr`;
 
-            // Show summary card
-            document.getElementById('summaryCard').style.display = 'block';
-
-            // Update feedback
+            // Show feedback
             const feedbackDiv = document.getElementById('feedbackMessage');
             if (productivity > 0) {
                 feedbackDiv.style.display = 'block';
@@ -319,164 +605,277 @@
                 }
             }
 
-            // Update entries list
-            updateEntriesList();
+            // Show summary card
+            document.getElementById('overtimeCard').style.display = 'none';
+            document.getElementById('summaryCard').style.display = 'block';
+            
+            // Send data to external systems
+            sendDataToSystems();
+            
+            showNotification('🎯 Final submission completed!', 'success');
         }
 
-        function updateEntriesList() {
-            const dprDiv = document.getElementById('dprEntries');
-            const manpowerDiv = document.getElementById('manpowerEntries');
-
-            // Clear existing entries
-            dprDiv.innerHTML = '<h4 class="font-medium text-gray-700">DPR Entries:</h4>';
-            manpowerDiv.innerHTML = '<h4 class="font-medium text-gray-700">Manpower Entries:</h4>';
-
-            // Add DPR entries
-            dprEntries.forEach((entry, index) => {
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'text-sm bg-blue-50 p-2 rounded';
-                entryDiv.innerHTML = `
-                    <strong>${entry.workType}</strong> - ${entry.volume} m³<br>
-                    <span class="text-gray-600">${entry.date} | ${entry.supervisor}</span>
-                `;
-                dprDiv.appendChild(entryDiv);
-            });
-
-            // Add manpower entries
-            manpowerEntries.forEach((entry, index) => {
-                const entryDiv = document.createElement('div');
-                entryDiv.className = 'text-sm bg-green-50 p-2 rounded';
-                entryDiv.innerHTML = `
-                    <strong>${entry.employeeName}</strong> - ${entry.manhours} hrs<br>
-                    <span class="text-gray-600">${entry.date} | OT: ${entry.overtime}hrs</span>
-                `;
-                manpowerDiv.appendChild(entryDiv);
-            });
-
-            // Show entries list if there are entries
-            if (dprEntries.length > 0 || manpowerEntries.length > 0) {
-                document.getElementById('entriesList').style.display = 'block';
-            }
-        }
-
+        // Share Final Report
         function shareReport() {
             const totalVolume = totalErectionVolume + totalDismantlingVolume;
             const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
 
             const report = `
-📊 DAILY PROGRESS REPORT
+📊 FINAL DAILY REPORT
 
 📅 Date: ${currentDate}
-👨‍💼 Supervisor: ${currentSupervisor}
-📦 Total Volume: ${totalVolume.toFixed(2)} m³
-⏰ Total Manhours: ${totalManhours} hrs
-📈 Productivity: ${productivity.toFixed(2)} m³/hr
+👨‍💼 Supervisor: ${currentSupervisorName}
+
+👥 MANPOWER (${employees.length} employees):
+${employees.map((emp, i) => `${i+1}. ${emp.name} - ${emp.manhours}hrs (OT: ${emp.overtime})`).join('\n')}
+
+📦 DPR SUMMARY:
+Total Volume: ${totalVolume.toFixed(2)} m³
+Total Manhours: ${totalManhours} hrs
+Productivity: ${productivity.toFixed(2)} m³/hr
 
 ${productivity < 2.5 ? '⚠️ ये अच्छे प्रयास नहीं हैं' : '✅ Excellent'}
 
-Generated by DPR & Manpower Logger
+Generated by DPR & Manpower Logger v11
             `.trim();
 
-            // Check if Web Share API is supported
             if (navigator.share) {
                 navigator.share({
-                    title: 'Daily Progress Report',
+                    title: 'Final Daily Report',
                     text: report
                 }).catch(console.error);
             } else {
-                // Fallback: copy to clipboard
                 navigator.clipboard.writeText(report).then(() => {
-                    alert('Report copied to clipboard!');
+                    showNotification('📋 Final report copied to clipboard!', 'success');
                 }).catch(() => {
-                    // Final fallback: show in alert
                     alert(report);
                 });
             }
         }
 
-        // Google Sheets integration function - Fixed version
-        function sendToGoogleSheets(type, data) {
-            const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqVOZwNIu9aCDgt3uP_DrYCowLS6gnvtOeKYHQGhLgUk0tC8LPbXdYLEaEGOv7m0zs/exec';
+        // Save App State
+        function saveAppState() {
+            const state = {
+                currentSupervisorName,
+                currentDate,
+                employees,
+                dprEntries,
+                attendanceLocked,
+                dprCompleted,
+                totalErectionVolume,
+                totalDismantlingVolume,
+                totalManhours
+            };
             
-            let rowData;
-            let tabName;
+            localStorage.setItem('appState_' + currentDate, JSON.stringify(state));
+        }
+
+        // Load Saved State
+        function loadSavedState(state) {
+            currentSupervisorName = state.currentSupervisorName;
+            currentDate = state.currentDate;
+            employees = state.employees || [];
+            dprEntries = state.dprEntries || [];
+            attendanceLocked = state.attendanceLocked || false;
+            dprCompleted = state.dprCompleted || false;
+            totalErectionVolume = state.totalErectionVolume || 0;
+            totalDismantlingVolume = state.totalDismantlingVolume || 0;
+            totalManhours = state.totalManhours || 0;
+        }
+
+        // Send Data to External Systems
+        function sendDataToSystems() {
+            const GOOGLE_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqVOZwNIu9aCDgt3uP_DrYCowLS6gnvtOeKYHQGhLgUk0tC8LPbXdYLEaEGOv7m0zs/exec';
             
-            if (type === 'DPR') {
-                tabName = 'DPR';
-                rowData = [
-                    data.date,
-                    data.supervisor,
-                    data.workType,
-                    data.length,
-                    data.width,
-                    data.height,
-                    data.quantity
-                ];
-            } else if (type === 'Manpower') {
-                tabName = 'MANPOWER';
-                rowData = [
-                    data.date,
-                    data.supervisor,
-                    data.employeeName,
-                    data.overtime
-                ];
-            }
-            
-            console.log(`📤 Sending ${type} data to ${tabName}:`, rowData);
-            
-            // Create form data with individual parameters
-            const formData = new FormData();
-            formData.append('tab', tabName);
-            formData.append('date', rowData[0]);
-            formData.append('supervisor', rowData[1]);
-            
-            if (type === 'DPR') {
-                formData.append('workType', rowData[2]);
-                formData.append('length', rowData[3]);
-                formData.append('width', rowData[4]);
-                formData.append('height', rowData[5]);
-                formData.append('quantity', rowData[6]);
-            } else {
-                formData.append('employeeName', rowData[2]);
-                formData.append('overtime', rowData[3]);
-            }
-            
-            fetch(SCRIPT_URL, {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => response.text())
-            .then(result => {
-                console.log('✅ Response from Google Sheets:', result);
+            // Send DPR data
+            dprEntries.forEach(entry => {
+                const formData = new FormData();
+                formData.append('tab', 'DPR');
+                formData.append('date', currentDate);
+                formData.append('supervisor', currentSupervisorName);
+                formData.append('workType', entry.workType);
+                formData.append('length', entry.length);
+                formData.append('width', entry.width);
+                formData.append('height', entry.height);
+                formData.append('quantity', entry.quantity);
+                formData.append('volume', entry.volume);
                 
-                // Show success notification
-                const successMsg = document.createElement('div');
-                successMsg.className = 'fixed top-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                successMsg.textContent = `${type} data sent to Google Sheets!`;
-                document.body.appendChild(successMsg);
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                }).catch(console.error);
+            });
+            
+            // Send Manpower data
+            employees.forEach(employee => {
+                const formData = new FormData();
+                formData.append('tab', 'MANPOWER');
+                formData.append('date', currentDate);
+                formData.append('supervisor', currentSupervisorName);
+                formData.append('employeeName', employee.name);
+                formData.append('overtime', employee.overtime);
+                formData.append('totalManhours', employee.manhours);
                 
-                setTimeout(() => {
-                    if (document.body.contains(successMsg)) {
-                        document.body.removeChild(successMsg);
-                    }
-                }, 3000);
-            })
-            .catch(error => {
-                console.error('❌ Error sending data:', error);
-                
-                // Show error notification
-                const errorMsg = document.createElement('div');
-                errorMsg.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
-                errorMsg.textContent = `Failed to send ${type} data`;
-                document.body.appendChild(errorMsg);
-                
-                setTimeout(() => {
-                    if (document.body.contains(errorMsg)) {
-                        document.body.removeChild(errorMsg);
-                    }
-                }, 3000);
+                fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                }).catch(console.error);
             });
         }
+
+        // Export Functions (CSV and Excel)
+        function exportToCSV() {
+            const csvData = [];
+            
+            // Add header
+            csvData.push(['=== DAILY REPORT ===']);
+            csvData.push(['Date', currentDate]);
+            csvData.push(['Supervisor', currentSupervisorName]);
+            csvData.push(['']);
+            
+            // Add DPR data
+            csvData.push(['=== DPR DATA ===']);
+            csvData.push(['WORK TYPE', 'LENGTH', 'WIDTH', 'HEIGHT', 'QTY', 'VOLUME']);
+            dprEntries.forEach(entry => {
+                csvData.push([entry.workType, entry.length, entry.width, entry.height, entry.quantity, entry.volume]);
+            });
+            
+            csvData.push(['']);
+            
+            // Add Manpower data
+            csvData.push(['=== MANPOWER DATA ===']);
+            csvData.push(['EMPLOYEE', 'OVERTIME', 'TOTAL HOURS']);
+            employees.forEach(employee => {
+                csvData.push([employee.name, employee.overtime, employee.manhours]);
+            });
+            
+            // Add summary
+            const totalVolume = totalErectionVolume + totalDismantlingVolume;
+            const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
+            
+            csvData.push(['']);
+            csvData.push(['=== SUMMARY ===']);
+            csvData.push(['Total Volume (m³)', totalVolume.toFixed(2)]);
+            csvData.push(['Total Manhours', totalManhours]);
+            csvData.push(['Productivity (m³/hr)', productivity.toFixed(2)]);
+            
+            // Convert to CSV and download
+            const csvString = csvData.map(row => row.join(',')).join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DPR_Report_${currentDate}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('📊 CSV file downloaded!', 'success');
+        }
+
+        function exportToExcelHTML() {
+            const totalVolume = totalErectionVolume + totalDismantlingVolume;
+            const productivity = totalManhours > 0 ? (totalVolume / totalManhours) : 0;
+            
+            let htmlContent = `
+                <html>
+                <head>
+                    <meta charset="utf-8">
+                    <title>Daily Report - ${currentDate}</title>
+                    <style>
+                        table { border-collapse: collapse; width: 100%; margin: 20px 0; }
+                        th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+                        th { background-color: #4472C4; color: white; font-weight: bold; }
+                        .header { background-color: #70AD47; color: white; font-weight: bold; }
+                        .summary { background-color: #FFC000; font-weight: bold; }
+                    </style>
+                </head>
+                <body>
+                    <h1>Daily Report - ${currentDate}</h1>
+                    <h2>Supervisor: ${currentSupervisorName}</h2>
+                    
+                    <table>
+                        <tr class="header"><td colspan="6">DPR DATA</td></tr>
+                        <tr><th>WORK TYPE</th><th>LENGTH</th><th>WIDTH</th><th>HEIGHT</th><th>QTY</th><th>VOLUME</th></tr>
+            `;
+            
+            dprEntries.forEach(entry => {
+                htmlContent += `<tr><td>${entry.workType}</td><td>${entry.length}</td><td>${entry.width}</td><td>${entry.height}</td><td>${entry.quantity}</td><td>${entry.volume}</td></tr>`;
+            });
+            
+            htmlContent += `
+                    </table>
+                    
+                    <table>
+                        <tr class="header"><td colspan="3">MANPOWER DATA</td></tr>
+                        <tr><th>EMPLOYEE</th><th>OVERTIME</th><th>TOTAL HOURS</th></tr>
+            `;
+            
+            employees.forEach(employee => {
+                htmlContent += `<tr><td>${employee.name}</td><td>${employee.overtime}</td><td>${employee.manhours}</td></tr>`;
+            });
+            
+            htmlContent += `
+                    </table>
+                    
+                    <table>
+                        <tr class="summary"><td colspan="2">SUMMARY</td></tr>
+                        <tr><td>Total Volume (m³)</td><td>${totalVolume.toFixed(2)}</td></tr>
+                        <tr><td>Total Manhours</td><td>${totalManhours}</td></tr>
+                        <tr><td>Productivity (m³/hr)</td><td>${productivity.toFixed(2)}</td></tr>
+                        <tr><td>Performance</td><td>${productivity < 2.5 ? 'Needs Improvement' : 'Excellent'}</td></tr>
+                    </table>
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([htmlContent], { type: 'application/vnd.ms-excel' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `DPR_Report_${currentDate}.xls`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('📊 Excel file downloaded!', 'success');
+        }
+
+        // Helper function for notifications
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 px-4 py-2 rounded-lg shadow-lg z-50 ${
+                type === 'success' ? 'bg-green-500 text-white' :
+                type === 'error' ? 'bg-red-500 text-white' :
+                type === 'warning' ? 'bg-yellow-500 text-black' :
+                'bg-blue-500 text-white'
+            }`;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                if (document.body.contains(notification)) {
+                    document.body.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Allow Enter key for PIN login
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('supervisorPIN').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    validatePIN();
+                }
+            });
+            
+            document.getElementById('employeeName').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    addEmployee();
+                }
+            });
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9652ab0017219bc1',t:'MTc1MzUyMDAyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'965a2a8cf3aa9a8a',t:'MTc1MzU5ODY0NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
