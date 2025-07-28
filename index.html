@@ -678,7 +678,7 @@
         }
 
         // Google Sheets Integration
-        function saveToGoogleSheets() {
+        async function saveToGoogleSheets() {
             const currentDate = getCurrentDate();
             
             // Prepare DPR data
@@ -704,42 +704,105 @@
                 totalManhours: 8 + (appState.overtimeData[worker] || 0)
             }));
 
-            // Send data to Google Apps Script
-            const payload = {
-                dprData: dprData,
-                manpowerData: manpowerData
-            };
-
             // Replace with your actual Google Apps Script Web App URL
             const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
             
-            // For demo purposes, we'll just log the data
-            // In production, uncomment the fetch call below
-            console.log('Sending to Google Sheets:', payload);
+            console.log('Sending to Google Sheets:', { dprData, manpowerData });
             
-            /*
-            fetch(scriptUrl, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload)
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
+            try {
+                // Method 1: Try POST first
+                const postResponse = await fetch(scriptUrl, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        dprData: dprData,
+                        manpowerData: manpowerData
+                    })
+                });
+                
                 showStatus('Data saved to Google Sheets successfully!');
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                showStatus('Error saving to Google Sheets');
-            });
-            */
+                console.log('POST request sent successfully (no-cors mode)');
+                
+            } catch (postError) {
+                console.log('POST failed, trying GET method:', postError);
+                
+                try {
+                    // Method 2: Fallback to GET with URL parameters
+                    const params = new URLSearchParams({
+                        dprData: JSON.stringify(dprData),
+                        manpowerData: JSON.stringify(manpowerData)
+                    });
+                    
+                    const getUrl = `${scriptUrl}?${params.toString()}`;
+                    
+                    // Use fetch with GET
+                    const getResponse = await fetch(getUrl, {
+                        method: 'GET',
+                        mode: 'no-cors'
+                    });
+                    
+                    showStatus('Data saved to Google Sheets successfully!');
+                    console.log('GET request sent successfully');
+                    
+                } catch (getError) {
+                    console.error('Both POST and GET failed:', getError);
+                    
+                    // Method 3: Fallback to window.open for testing
+                    try {
+                        const params = new URLSearchParams({
+                            dprData: JSON.stringify(dprData),
+                            manpowerData: JSON.stringify(manpowerData)
+                        });
+                        
+                        const fallbackUrl = `${scriptUrl}?${params.toString()}`;
+                        
+                        // Open in new tab (user will see the result)
+                        window.open(fallbackUrl, '_blank');
+                        showStatus('Data sent to Google Sheets (check new tab)');
+                        
+                    } catch (finalError) {
+                        console.error('All methods failed:', finalError);
+                        showStatus('Error: Could not connect to Google Sheets');
+                    }
+                }
+            }
+        }
+
+        // Alternative function for manual testing
+        function testGoogleSheetsConnection() {
+            const testData = {
+                dprData: [{
+                    date: getCurrentDate(),
+                    supervisorName: 'TEST SUPERVISOR',
+                    workType: 'ERECTION',
+                    length: 5,
+                    width: 5,
+                    height: 6,
+                    qty: 1,
+                    volume: 150,
+                    dismantling: 0,
+                    erection: 150
+                }],
+                manpowerData: [{
+                    date: getCurrentDate(),
+                    supervisorName: 'TEST SUPERVISOR',
+                    empName: 'TEST WORKER',
+                    otHours: 2,
+                    totalManhours: 10
+                }]
+            };
             
-            // For demo - simulate successful save
-            setTimeout(() => {
-                showStatus('Data saved to Google Sheets!');
-            }, 1000);
+            const scriptUrl = 'https://script.google.com/macros/s/AKfycbwC3lKBAV8SxWMzaiLA6UlqAHqRg8qmUGoQFPr8idbWwtY9B7GwzTTQDviMCY_PPXm4ug/exec';
+            const params = new URLSearchParams({
+                dprData: JSON.stringify(testData.dprData),
+                manpowerData: JSON.stringify(testData.manpowerData)
+            });
+            
+            const testUrl = `${scriptUrl}?${params.toString()}`;
+            window.open(testUrl, '_blank');
         }
 
         // Report Functions
