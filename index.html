@@ -4,414 +4,222 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Scaffolding Data Collection</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .card-transition {
+            transition: all 0.3s ease-in-out;
         }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 10px;
+        .hidden-card {
+            transform: translateX(100%);
+            opacity: 0;
         }
-
-        .container {
-            max-width: 600px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-            overflow: hidden;
-            min-height: calc(100vh - 20px);
-        }
-
-        .header {
-            background: linear-gradient(45deg, #2c3e50, #34495e);
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-
-        .header .subtitle {
-            opacity: 0.8;
-            font-size: 0.9rem;
-        }
-
-        .card {
-            display: none;
-            padding: 30px;
-            animation: slideIn 0.3s ease-out;
-        }
-
-        .card.active {
-            display: block;
-        }
-
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateX(20px); }
-            to { opacity: 1; transform: translateX(0); }
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #2c3e50;
-            font-size: 0.9rem;
-        }
-
-        select, input[type="text"], input[type="number"] {
-            width: 100%;
-            padding: 15px;
-            border: 2px solid #e0e6ed;
-            border-radius: 10px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-            background: #f8f9fa;
-        }
-
-        select:focus, input:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            border-radius: 10px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-top: 10px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(45deg, #56ab2f, #a8e6cf);
-            color: white;
-        }
-
-        .btn-warning {
-            background: linear-gradient(45deg, #f093fb, #f5576c);
-            color: white;
-        }
-
-        .btn-danger {
-            background: linear-gradient(45deg, #ff416c, #ff4b2b);
-            color: white;
-        }
-
-        .worker-list {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            max-height: 200px;
-            overflow-y: auto;
-        }
-
-        .worker-item {
-            background: white;
-            padding: 10px;
-            margin: 5px 0;
-            border-radius: 8px;
-            border-left: 4px solid #667eea;
-            font-weight: 500;
-        }
-
-        .data-entry-item {
-            background: #f1f3f4;
-            padding: 15px;
-            margin: 10px 0;
-            border-radius: 10px;
-            border-left: 4px solid #56ab2f;
-        }
-
-        .calculation-box {
-            background: linear-gradient(45deg, #667eea, #764ba2);
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            margin: 20px 0;
-            text-align: center;
-        }
-
-        .calculation-box h3 {
-            margin-bottom: 10px;
-        }
-
-        .calculation-value {
-            font-size: 1.5rem;
-            font-weight: bold;
-        }
-
-        .row {
-            display: flex;
-            gap: 10px;
-        }
-
-        .col {
-            flex: 1;
-        }
-
-        .status-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: #56ab2f;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            z-index: 1000;
-            display: none;
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        .supervisor-locked {
-            background: #e8f5e8;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            text-align: center;
-            border: 2px solid #56ab2f;
-        }
-
-        .error-message {
-            background: #ffe6e6;
-            color: #d63031;
-            padding: 10px;
-            border-radius: 8px;
-            margin: 10px 0;
-            text-align: center;
-            border: 1px solid #ff7675;
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                margin: 0;
-                border-radius: 0;
-                min-height: 100vh;
-            }
-            
-            .card {
-                padding: 20px;
-            }
-            
-            .row {
-                flex-direction: column;
-                gap: 0;
-            }
+        .visible-card {
+            transform: translateX(0);
+            opacity: 1;
         }
     </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Scaffolding Data Collection</h1>
-            <p class="subtitle">Mobile Data Entry System</p>
+<body class="bg-gradient-to-br from-blue-900 to-blue-700 min-h-screen">
+    <!-- Login Card -->
+    <div id="loginCard" class="card-transition visible-card">
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-2xl p-6">
+                <div class="text-center mb-6">
+                    <h1 class="text-2xl font-bold text-gray-800 mb-2">Scaffolding Data Collection</h1>
+                    <div class="w-16 h-1 bg-blue-600 mx-auto rounded"></div>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Select Supervisor</label>
+                    <select id="supervisorSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="">Choose Supervisor</option>
+                        <option value="MAHENDRA KUMAR">MAHENDRA KUMAR</option>
+                        <option value="PINTU SAH">PINTU SAH</option>
+                        <option value="HARKIRAT SINGH">HARKIRAT SINGH</option>
+                        <option value="SUNIL CHAUHAN">SUNIL CHAUHAN</option>
+                        <option value="NSUP1">NSUP1</option>
+                        <option value="NSUP2">NSUP2</option>
+                        <option value="NSUP3">NSUP3</option>
+                        <option value="NSUP4">NSUP4</option>
+                    </select>
+                </div>
+                
+                <div class="mb-6">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Enter PIN</label>
+                    <input type="password" id="pinInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter PIN (e.g., MAHE13)">
+                </div>
+                
+                <button onclick="login()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    LOGIN
+                </button>
+                
+                <div id="loginError" class="mt-4 text-red-600 text-sm text-center hidden"></div>
+            </div>
         </div>
+    </div>
 
-        <div class="status-indicator" id="statusIndicator">Data Saved Successfully!</div>
-
-        <!-- Login Card -->
-        <div class="card active" id="loginCard">
-            <h2 style="text-align: center; margin-bottom: 30px; color: #2c3e50;">Supervisor Login</h2>
-            
-            <div class="form-group">
-                <label for="supervisorSelect">Select Supervisor</label>
-                <select id="supervisorSelect">
-                    <option value="">-- Select Supervisor --</option>
-                    <option value="MAHENDRA KUMAR">MAHENDRA KUMAR</option>
-                    <option value="PINTU SAH">PINTU SAH</option>
-                    <option value="HARKIRAT SINGH">HARKIRAT SINGH</option>
-                    <option value="SUNIL CHAUHAN">SUNIL CHAUHAN</option>
-                    <option value="NSUP1">NSUP1</option>
-                    <option value="NSUP2">NSUP2</option>
-                    <option value="NSUP3">NSUP3</option>
-                    <option value="NSUP4">NSUP4</option>
-                </select>
+    <!-- Attendance Card -->
+    <div id="attendanceCard" class="card-transition hidden-card absolute top-0 left-0 w-full">
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-2xl p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Attendance Entry</h2>
+                    <p class="text-sm text-gray-600">Supervisor: <span id="supervisorName" class="font-semibold text-blue-600"></span></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Worker Name</label>
+                    <input type="text" id="workerNameInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Enter worker name">
+                </div>
+                
+                <button onclick="addWorker()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mb-4 transition duration-200">
+                    Add Worker
+                </button>
+                
+                <div id="workersList" class="mb-4 max-h-40 overflow-y-auto">
+                    <h3 class="text-sm font-bold text-gray-700 mb-2">Added Workers:</h3>
+                    <div id="workersContainer" class="space-y-1"></div>
+                </div>
+                
+                <button onclick="submitAttendance()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    Submit Attendance
+                </button>
             </div>
-
-            <div class="form-group">
-                <label for="pinInput">Enter PIN</label>
-                <input type="text" id="pinInput" placeholder="Example: AAAA13, BBBB13, NNNN13" style="text-transform: uppercase;">
-            </div>
-
-            <div id="loginError" class="error-message hidden">Invalid PIN for selected supervisor!</div>
-
-            <button class="btn btn-primary" onclick="login()">LOGIN</button>
         </div>
+    </div>
 
-        <!-- Attendance Card -->
-        <div class="card" id="attendanceCard">
-            <div class="supervisor-locked">
-                <h3>Logged in as: <span id="loggedSupervisor"></span></h3>
-            </div>
-
-            <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Attendance Entry</h2>
-
-            <div class="form-group">
-                <label for="workerName">Worker Name</label>
-                <input type="text" id="workerName" placeholder="Enter worker name">
-            </div>
-
-            <button class="btn btn-primary" onclick="addWorker()">Add Worker</button>
-
-            <div class="worker-list">
-                <h4>Today's Workers:</h4>
-                <div id="workersList"></div>
-            </div>
-
-            <button class="btn btn-success" onclick="submitAttendance()">Submit Attendance & Continue</button>
-        </div>
-
-        <!-- Data Entry Card -->
-        <div class="card" id="dataEntryCard">
-            <div class="supervisor-locked">
-                <h3>Supervisor: <span id="dataSupervisor"></span></h3>
-            </div>
-
-            <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Work Data Entry</h2>
-
-            <div class="form-group">
-                <label for="workType">Work Type</label>
-                <select id="workType">
-                    <option value="">-- Select Work Type --</option>
-                    <option value="ERECTION">ERECTION</option>
-                    <option value="DISMANTLING">DISMANTLING</option>
-                </select>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label for="length">Length</label>
-                        <input type="number" id="length" step="0.1">
+    <!-- Work Data Card -->
+    <div id="workDataCard" class="card-transition hidden-card absolute top-0 left-0 w-full">
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-2xl p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Work Data Entry</h2>
+                    <p class="text-sm text-gray-600">Supervisor: <span id="workSupervisorName" class="font-semibold text-blue-600"></span></p>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="block text-gray-700 text-sm font-bold mb-2">Work Type</label>
+                    <select id="workTypeSelect" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500">
+                        <option value="">Select Work Type</option>
+                        <option value="ERECTION">ERECTION</option>
+                        <option value="DISMANTLING">DISMANTLING</option>
+                    </select>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Length</label>
+                        <input type="number" id="lengthInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Length">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Width</label>
+                        <input type="number" id="widthInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Width">
                     </div>
                 </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label for="width">Width</label>
-                        <input type="number" id="width" step="0.1">
+                
+                <div class="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Height</label>
+                        <input type="number" id="heightInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Height">
+                    </div>
+                    <div>
+                        <label class="block text-gray-700 text-sm font-bold mb-2">Quantity</label>
+                        <input type="number" id="quantityInput" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-blue-500" placeholder="Quantity">
                     </div>
                 </div>
-            </div>
-
-            <div class="row">
-                <div class="col">
-                    <div class="form-group">
-                        <label for="height">Height</label>
-                        <input type="number" id="height" step="0.1">
-                    </div>
+                
+                <div class="mb-4">
+                    <p class="text-sm text-gray-700">Volume: <span id="calculatedVolume" class="font-bold text-blue-600">0</span></p>
                 </div>
-                <div class="col">
-                    <div class="form-group">
-                        <label for="quantity">Quantity</label>
-                        <input type="number" id="quantity" min="1">
-                    </div>
+                
+                <button onclick="addWorkEntry()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mb-4 transition duration-200">
+                    Add Entry
+                </button>
+                
+                <div id="workEntriesList" class="mb-4 max-h-40 overflow-y-auto">
+                    <h3 class="text-sm font-bold text-gray-700 mb-2">Work Entries:</h3>
+                    <div id="workEntriesContainer" class="space-y-1"></div>
                 </div>
+                
+                <button onclick="proceedToOvertime()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    Proceed to Overtime
+                </button>
             </div>
-
-            <div class="calculation-box">
-                <h3>Volume Calculation</h3>
-                <div class="calculation-value" id="volumeDisplay">0 m³</div>
-            </div>
-
-            <button class="btn btn-primary" onclick="addDataEntry()">Add Entry</button>
-
-            <div id="dataEntriesList"></div>
-
-            <button class="btn btn-success" onclick="proceedToOvertime()">Continue to Overtime</button>
         </div>
+    </div>
 
-        <!-- Overtime Card -->
-        <div class="card" id="overtimeCard">
-            <div class="supervisor-locked">
-                <h3>Supervisor: <span id="overtimeSupervisor"></span></h3>
+    <!-- Overtime Card -->
+    <div id="overtimeCard" class="card-transition hidden-card absolute top-0 left-0 w-full">
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-2xl p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Overtime Entry</h2>
+                    <p class="text-sm text-gray-600">Supervisor: <span id="overtimeSupervisorName" class="font-semibold text-blue-600"></span></p>
+                </div>
+                
+                <div id="overtimeWorkersList" class="mb-4 max-h-60 overflow-y-auto">
+                    <h3 class="text-sm font-bold text-gray-700 mb-2">Workers Overtime:</h3>
+                    <div id="overtimeWorkersContainer" class="space-y-2"></div>
+                </div>
+                
+                <button onclick="proceedToProductivity()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                    Proceed to Productivity
+                </button>
             </div>
-
-            <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Overtime Entry</h2>
-
-            <div id="overtimeWorkersList"></div>
-
-            <button class="btn btn-success" onclick="proceedToProductivity()">Continue to Productivity</button>
         </div>
+    </div>
 
-        <!-- Productivity Card -->
-        <div class="card" id="productivityCard">
-            <div class="supervisor-locked">
-                <h3>Supervisor: <span id="productivitySupervisor"></span></h3>
+    <!-- Productivity Card -->
+    <div id="productivityCard" class="card-transition hidden-card absolute top-0 left-0 w-full">
+        <div class="container mx-auto px-4 py-8">
+            <div class="max-w-md mx-auto bg-white rounded-xl shadow-2xl p-6">
+                <div class="text-center mb-6">
+                    <h2 class="text-xl font-bold text-gray-800">Productivity Report</h2>
+                    <p class="text-sm text-gray-600">Supervisor: <span id="productivitySupervisorName" class="font-semibold text-blue-600"></span></p>
+                </div>
+                
+                <div class="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Total Erection:</span>
+                        <span id="totalErection" class="font-bold text-green-600">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Total Dismantling:</span>
+                        <span id="totalDismantling" class="font-bold text-red-600">0</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-gray-700">Total Manhours:</span>
+                        <span id="totalManhours" class="font-bold text-blue-600">0</span>
+                    </div>
+                    <hr class="my-2">
+                    <div class="flex justify-between">
+                        <span class="text-gray-700 font-bold">Productivity:</span>
+                        <span id="productivityValue" class="font-bold text-purple-600">0</span>
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="shareReport()" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                        Share Report
+                    </button>
+                    <button onclick="resetApp()" class="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-4 rounded-lg transition duration-200">
+                        Reset
+                    </button>
+                </div>
             </div>
-
-            <h2 style="text-align: center; margin-bottom: 20px; color: #2c3e50;">Productivity Report</h2>
-
-            <div class="calculation-box">
-                <h3>Total Erection</h3>
-                <div class="calculation-value" id="totalErection">0 m³</div>
-            </div>
-
-            <div class="calculation-box">
-                <h3>Total Dismantling</h3>
-                <div class="calculation-value" id="totalDismantling">0 m³</div>
-            </div>
-
-            <div class="calculation-box">
-                <h3>Total Manhours</h3>
-                <div class="calculation-value" id="totalManhours">0 hrs</div>
-            </div>
-
-            <div class="calculation-box">
-                <h3>Productivity</h3>
-                <div class="calculation-value" id="productivityValue">0</div>
-            </div>
-
-            <button class="btn btn-success" onclick="shareReport()">Share Report</button>
-            <button class="btn btn-danger" onclick="resetApp()">Reset & Logout</button>
         </div>
     </div>
 
     <script>
-        // Application State
-        let appState = {
-            currentSupervisor: '',
-            workers: [],
-            dataEntries: [],
-            overtimeData: {},
-            isAttendanceLocked: false
-        };
+        // Global variables
+        let currentSupervisor = '';
+        let workers = [];
+        let workEntries = [];
+        let overtimeData = {};
+        let sessionData = {};
 
-        // PIN Configuration
-        const supervisorPins = {
+        // PIN mapping
+        const pinMapping = {
             'MAHENDRA KUMAR': 'MAHE13',
             'PINTU SAH': 'PINT13',
             'HARKIRAT SINGH': 'HARK13',
@@ -422,135 +230,138 @@
             'NSUP4': 'NSU413'
         };
 
-        // Utility Functions
-        function showCard(cardId) {
-            document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-            document.getElementById(cardId).classList.add('active');
+        // Auto-calculate volume
+        function calculateVolume() {
+            const length = parseFloat(document.getElementById('lengthInput').value) || 0;
+            const width = parseFloat(document.getElementById('widthInput').value) || 0;
+            const height = parseFloat(document.getElementById('heightInput').value) || 0;
+            const quantity = parseFloat(document.getElementById('quantityInput').value) || 0;
+            
+            const volume = length * width * height * quantity;
+            document.getElementById('calculatedVolume').textContent = volume.toFixed(2);
         }
 
-        function showStatus(message) {
-            const indicator = document.getElementById('statusIndicator');
-            indicator.textContent = message;
-            indicator.style.display = 'block';
-            setTimeout(() => {
-                indicator.style.display = 'none';
-            }, 3000);
-        }
+        // Add event listeners for auto calculation
+        document.addEventListener('DOMContentLoaded', function() {
+            ['lengthInput', 'widthInput', 'heightInput', 'quantityInput'].forEach(id => {
+                document.getElementById(id).addEventListener('input', calculateVolume);
+            });
+        });
 
-        function getCurrentDate() {
-            return new Date().toISOString().split('T')[0];
-        }
-
-        // Login Functionality
         function login() {
             const supervisor = document.getElementById('supervisorSelect').value;
             const pin = document.getElementById('pinInput').value.toUpperCase();
             const errorDiv = document.getElementById('loginError');
 
             if (!supervisor || !pin) {
-                errorDiv.textContent = 'Please select supervisor and enter PIN';
-                errorDiv.classList.remove('hidden');
+                showError('Please select supervisor and enter PIN');
                 return;
             }
 
-            if (supervisorPins[supervisor] !== pin) {
-                errorDiv.textContent = 'Invalid PIN for selected supervisor!';
-                errorDiv.classList.remove('hidden');
+            if (pinMapping[supervisor] !== pin) {
+                showError('Invalid PIN for selected supervisor');
                 return;
             }
 
-            appState.currentSupervisor = supervisor;
-            errorDiv.classList.add('hidden');
+            currentSupervisor = supervisor;
             
-            // Check if supervisor already has data today
-            if (appState.isAttendanceLocked) {
-                showDataEntryCard();
-            } else {
-                showAttendanceCard();
+            // Check if supervisor has existing session
+            const existingSession = localStorage.getItem(`session_${supervisor}`);
+            if (existingSession) {
+                sessionData = JSON.parse(existingSession);
+                workers = sessionData.workers || [];
+                workEntries = sessionData.workEntries || [];
+                overtimeData = sessionData.overtimeData || {};
+                
+                // Skip to work data card if attendance already submitted
+                if (sessionData.attendanceSubmitted && workers.length > 0) {
+                    currentSupervisor = supervisor;
+                    showCard('workDataCard');
+                    document.getElementById('workSupervisorName').textContent = supervisor;
+                    displayWorkEntries();
+                    return;
+                }
             }
-        }
 
-        function showAttendanceCard() {
-            document.getElementById('loggedSupervisor').textContent = appState.currentSupervisor;
             showCard('attendanceCard');
+            document.getElementById('supervisorName').textContent = supervisor;
         }
 
-        function showDataEntryCard() {
-            document.getElementById('dataSupervisor').textContent = appState.currentSupervisor;
-            showCard('dataEntryCard');
+        function showError(message) {
+            const errorDiv = document.getElementById('loginError');
+            errorDiv.textContent = message;
+            errorDiv.classList.remove('hidden');
+            setTimeout(() => errorDiv.classList.add('hidden'), 3000);
         }
 
-        // Attendance Functions
+        function showCard(cardId) {
+            const cards = ['loginCard', 'attendanceCard', 'workDataCard', 'overtimeCard', 'productivityCard'];
+            cards.forEach(id => {
+                const card = document.getElementById(id);
+                if (id === cardId) {
+                    card.classList.remove('hidden-card');
+                    card.classList.add('visible-card');
+                } else {
+                    card.classList.add('hidden-card');
+                    card.classList.remove('visible-card');
+                }
+            });
+        }
+
         function addWorker() {
-            const workerName = document.getElementById('workerName').value.trim();
-            
-            if (!workerName) {
-                alert('Please enter worker name');
-                return;
-            }
+            const workerName = document.getElementById('workerNameInput').value.trim();
+            if (!workerName) return;
 
-            if (appState.workers.includes(workerName)) {
-                alert('Worker already added');
-                return;
+            if (!workers.includes(workerName)) {
+                workers.push(workerName);
+                displayWorkers();
+                document.getElementById('workerNameInput').value = '';
+                document.getElementById('workerNameInput').focus();
             }
-
-            appState.workers.push(workerName);
-            updateWorkersList();
-            
-            // Clear and hide input after adding
-            document.getElementById('workerName').value = '';
-            document.getElementById('workerName').style.display = 'none';
-            
-            setTimeout(() => {
-                document.getElementById('workerName').style.display = 'block';
-                document.getElementById('workerName').focus();
-            }, 500);
         }
 
-        function updateWorkersList() {
-            const workersList = document.getElementById('workersList');
-            workersList.innerHTML = appState.workers.map(worker => 
-                `<div class="worker-item">${worker}</div>`
+        function displayWorkers() {
+            const container = document.getElementById('workersContainer');
+            container.innerHTML = workers.map(worker => 
+                `<div class="bg-blue-50 px-3 py-1 rounded text-sm">${worker}</div>`
             ).join('');
         }
 
         function submitAttendance() {
-            if (appState.workers.length === 0) {
+            if (workers.length === 0) {
                 alert('Please add at least one worker');
                 return;
             }
 
-            appState.isAttendanceLocked = true;
-            showStatus('Attendance saved successfully!');
-            showDataEntryCard();
+            // Save session data to cloud (localStorage acts as cloud storage)
+            sessionData.workers = workers;
+            sessionData.supervisor = currentSupervisor;
+            sessionData.attendanceSubmitted = true;
+            localStorage.setItem(`session_${currentSupervisor}`, JSON.stringify(sessionData));
+
+            // Send attendance data to cloud
+            sendAttendanceData();
+
+            // Show success message and logout
+            alert('Attendance submitted successfully! Logging out...');
+            
+            // Reset current session variables but keep data in localStorage
+            currentSupervisor = '';
+            
+            // Clear login form
+            document.getElementById('supervisorSelect').value = '';
+            document.getElementById('pinInput').value = '';
+            
+            // Return to login card
+            showCard('loginCard');
         }
 
-        // Data Entry Functions
-        function calculateVolume() {
-            const length = parseFloat(document.getElementById('length').value) || 0;
-            const width = parseFloat(document.getElementById('width').value) || 0;
-            const height = parseFloat(document.getElementById('height').value) || 0;
-            const quantity = parseInt(document.getElementById('quantity').value) || 0;
-            
-            const volume = length * width * height * quantity;
-            document.getElementById('volumeDisplay').textContent = volume.toFixed(2) + ' m³';
-            
-            return volume;
-        }
-
-        // Add event listeners for real-time calculation
-        document.addEventListener('DOMContentLoaded', function() {
-            ['length', 'width', 'height', 'quantity'].forEach(id => {
-                document.getElementById(id).addEventListener('input', calculateVolume);
-            });
-        });
-
-        function addDataEntry() {
-            const workType = document.getElementById('workType').value;
-            const length = parseFloat(document.getElementById('length').value);
-            const width = parseFloat(document.getElementById('width').value);
-            const height = parseFloat(document.getElementById('height').value);
-            const quantity = parseInt(document.getElementById('quantity').value);
+        function addWorkEntry() {
+            const workType = document.getElementById('workTypeSelect').value;
+            const length = parseFloat(document.getElementById('lengthInput').value);
+            const width = parseFloat(document.getElementById('widthInput').value);
+            const height = parseFloat(document.getElementById('heightInput').value);
+            const quantity = parseFloat(document.getElementById('quantityInput').value);
 
             if (!workType || !length || !width || !height || !quantity) {
                 alert('Please fill all fields');
@@ -558,308 +369,238 @@
             }
 
             const volume = length * width * height * quantity;
-            
             const entry = {
                 workType,
                 length,
                 width,
                 height,
                 quantity,
-                volume
+                volume,
+                date: new Date().toISOString().split('T')[0]
             };
 
-            appState.dataEntries.push(entry);
-            updateDataEntriesList();
-            clearDataForm();
-            
-            // Hide quantity field temporarily
-            document.getElementById('quantity').style.display = 'none';
-            setTimeout(() => {
-                document.getElementById('quantity').style.display = 'block';
-            }, 500);
+            workEntries.push(entry);
+            displayWorkEntries();
+            clearWorkForm();
+
+            // Save to session
+            sessionData.workEntries = workEntries;
+            localStorage.setItem(`session_${currentSupervisor}`, JSON.stringify(sessionData));
+
+            // Send to Google Sheets
+            sendDPRData(entry);
         }
 
-        function updateDataEntriesList() {
-            const list = document.getElementById('dataEntriesList');
-            list.innerHTML = appState.dataEntries.map((entry, index) => `
-                <div class="data-entry-item">
+        function displayWorkEntries() {
+            const container = document.getElementById('workEntriesContainer');
+            container.innerHTML = workEntries.map((entry, index) => 
+                `<div class="bg-gray-50 px-3 py-2 rounded text-xs">
                     <strong>${entry.workType}</strong><br>
-                    Dimensions: ${entry.length} x ${entry.width} x ${entry.height}<br>
-                    Quantity: ${entry.quantity}, Volume: ${entry.volume.toFixed(2)} m³
-                </div>
-            `).join('');
+                    ${entry.length}×${entry.width}×${entry.height} × ${entry.quantity} = ${entry.volume}
+                </div>`
+            ).join('');
         }
 
-        function clearDataForm() {
-            ['workType', 'length', 'width', 'height', 'quantity'].forEach(id => {
+        function clearWorkForm() {
+            ['workTypeSelect', 'lengthInput', 'widthInput', 'heightInput', 'quantityInput'].forEach(id => {
                 document.getElementById(id).value = '';
             });
-            document.getElementById('volumeDisplay').textContent = '0 m³';
+            document.getElementById('calculatedVolume').textContent = '0';
         }
 
         function proceedToOvertime() {
-            if (appState.dataEntries.length === 0) {
-                alert('Please add at least one data entry');
-                return;
-            }
-
-            document.getElementById('overtimeSupervisor').textContent = appState.currentSupervisor;
-            generateOvertimeForm();
             showCard('overtimeCard');
+            document.getElementById('overtimeSupervisorName').textContent = currentSupervisor;
+            displayOvertimeWorkers();
         }
 
-        // Overtime Functions
-        function generateOvertimeForm() {
-            const container = document.getElementById('overtimeWorkersList');
-            container.innerHTML = appState.workers.map(worker => `
-                <div class="form-group">
-                    <label for="overtime_${worker.replace(/\s+/g, '_')}">${worker} - Overtime Hours</label>
-                    <input type="number" id="overtime_${worker.replace(/\s+/g, '_')}" 
-                           min="0" max="16" step="0.5" value="0" 
-                           onchange="updateOvertimeData('${worker}', this.value)">
-                    <div style="margin-top: 5px; font-size: 0.9rem; color: #666;">
-                        Total Hours: <span id="total_${worker.replace(/\s+/g, '_')}">8</span>
+        function displayOvertimeWorkers() {
+            const container = document.getElementById('overtimeWorkersContainer');
+            container.innerHTML = workers.map(worker => 
+                `<div class="flex items-center justify-between bg-gray-50 px-3 py-2 rounded">
+                    <span class="text-sm font-medium">${worker}</span>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-xs">OT Hours:</span>
+                        <input type="number" id="ot_${worker.replace(/\s+/g, '_')}" 
+                               class="w-16 px-2 py-1 border rounded text-sm" 
+                               value="${overtimeData[worker] || 0}" 
+                               onchange="updateOvertime('${worker}', this.value)">
+                        <span class="text-xs">Total: ${8 + (overtimeData[worker] || 0)}h</span>
                     </div>
-                </div>
-            `).join('');
-
-            // Initialize overtime data
-            appState.workers.forEach(worker => {
-                appState.overtimeData[worker] = 0;
-            });
+                </div>`
+            ).join('');
         }
 
-        function updateOvertimeData(worker, overtimeHours) {
-            const overtime = parseFloat(overtimeHours) || 0;
-            appState.overtimeData[worker] = overtime;
-            
-            const totalHours = 8 + overtime;
-            document.getElementById(`total_${worker.replace(/\s+/g, '_')}`).textContent = totalHours;
+        function updateOvertime(worker, hours) {
+            overtimeData[worker] = parseFloat(hours) || 0;
+            sessionData.overtimeData = overtimeData;
+            localStorage.setItem(`session_${currentSupervisor}`, JSON.stringify(sessionData));
+            displayOvertimeWorkers();
         }
 
         function proceedToProductivity() {
-            document.getElementById('productivitySupervisor').textContent = appState.currentSupervisor;
             calculateProductivity();
             showCard('productivityCard');
+            document.getElementById('productivitySupervisorName').textContent = currentSupervisor;
         }
 
-        // Productivity Functions
         function calculateProductivity() {
-            let totalErection = 0;
-            let totalDismantling = 0;
-            let totalManhours = 0;
+            const totalErection = workEntries
+                .filter(entry => entry.workType === 'ERECTION')
+                .reduce((sum, entry) => sum + entry.volume, 0);
+            
+            const totalDismantling = workEntries
+                .filter(entry => entry.workType === 'DISMANTLING')
+                .reduce((sum, entry) => sum + entry.volume, 0);
+            
+            const totalManhours = workers.reduce((sum, worker) => 
+                sum + 8 + (overtimeData[worker] || 0), 0);
+            
+            const productivity = totalManhours > 0 ? 
+                (totalErection + (totalDismantling / 2)) / totalManhours : 0;
 
-            // Calculate totals from data entries
-            appState.dataEntries.forEach(entry => {
-                if (entry.workType === 'ERECTION') {
-                    totalErection += entry.volume;
-                } else if (entry.workType === 'DISMANTLING') {
-                    totalDismantling += entry.volume;
-                }
-            });
-
-            // Calculate total manhours
-            appState.workers.forEach(worker => {
-                const overtime = appState.overtimeData[worker] || 0;
-                totalManhours += 8 + overtime;
-            });
-
-            // Calculate productivity: (Total Erection + (Total Dismantling / 2)) / Total Manhours
-            const productivity = totalManhours > 0 ? (totalErection + (totalDismantling / 2)) / totalManhours : 0;
-
-            // Update display
-            document.getElementById('totalErection').textContent = totalErection.toFixed(2) + ' m³';
-            document.getElementById('totalDismantling').textContent = totalDismantling.toFixed(2) + ' m³';
-            document.getElementById('totalManhours').textContent = totalManhours.toFixed(1) + ' hrs';
+            document.getElementById('totalErection').textContent = totalErection.toFixed(2);
+            document.getElementById('totalDismantling').textContent = totalDismantling.toFixed(2);
+            document.getElementById('totalManhours').textContent = totalManhours.toFixed(2);
             document.getElementById('productivityValue').textContent = productivity.toFixed(3);
 
-            // Save to Google Sheets
-            saveToGoogleSheets();
-        }
-
-        // Google Sheets Integration
-   async function saveToGoogleSheets() {
-    const currentDate = getCurrentDate();
-
-    const dprData = appState.dataEntries.map(entry => ({
-        date: currentDate,
-        supervisorName: appState.currentSupervisor,
-        workType: entry.workType,
-        length: entry.length,
-        width: entry.width,
-        height: entry.height,
-        qty: entry.quantity,
-        volume: entry.volume,
-        dismantling: entry.workType === 'DISMANTLING' ? entry.volume : 0,
-        erection: entry.workType === 'ERECTION' ? entry.volume : 0
-    }));
-
-    const manpowerData = appState.workers.map(worker => ({
-        date: currentDate,
-        supervisorName: appState.currentSupervisor,
-        empName: worker,
-        otHours: appState.overtimeData[worker] || 0,
-        totalManhours: 8 + (appState.overtimeData[worker] || 0)
-    }));
-
-    const params = new URLSearchParams({
-        dprData: JSON.stringify(dprData),
-        manpowerData: JSON.stringify(manpowerData)
-    });
-
-    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwC3lKBAV8SxWMzaiLA6UlqAHqRg8qmUGoQFPr8idbWwtY9B7GwzTTQDviMCY_PPXm4ug/exec';
-
-    const finalUrl = `${scriptUrl}?${params.toString()}`;
-
-    // 🚀 Opens in new tab for visibility — reliable for GET method
-    window.open(finalUrl, '_blank');
-    showStatus('Data sent to Google Sheets (check new tab)');
-}
-                console.log('POST request sent successfully (no-cors mode)');
-                
-            } catch (postError) {
-                console.log('POST failed, trying GET method:', postError);
-                
-                try {
-                    // Method 2: Fallback to GET with URL parameters
-                    const params = new URLSearchParams({
-                        dprData: JSON.stringify(dprData),
-                        manpowerData: JSON.stringify(manpowerData)
-                    });
-                    
-                    const getUrl = `${scriptUrl}?${params.toString()}`;
-                    
-                    // Use fetch with GET
-                    const getResponse = await fetch(getUrl, {
-                        method: 'GET',
-                        mode: 'no-cors'
-                    });
-                    
-                    showStatus('Data saved to Google Sheets successfully!');
-                    console.log('GET request sent successfully');
-                    
-                } catch (getError) {
-                    console.error('Both POST and GET failed:', getError);
-                    
-                    // Method 3: Fallback to window.open for testing
-                    try {
-                        const params = new URLSearchParams({
-                            dprData: JSON.stringify(dprData),
-                            manpowerData: JSON.stringify(manpowerData)
-                        });
-                        
-                        const fallbackUrl = `${scriptUrl}?${params.toString()}`;
-                        
-                        // Open in new tab (user will see the result)
-                        window.open(fallbackUrl, '_blank');
-                        showStatus('Data sent to Google Sheets (check new tab)');
-                        
-                    } catch (finalError) {
-                        console.error('All methods failed:', finalError);
-                        showStatus('Error: Could not connect to Google Sheets');
-                    }
-                }
-            }
-        }
-
-        // Alternative function for manual testing
-        function testGoogleSheetsConnection() {
-            const testData = {
-                dprData: [{
-                    date: getCurrentDate(),
-                    supervisorName: 'TEST SUPERVISOR',
-                    workType: 'ERECTION',
-                    length: 5,
-                    width: 5,
-                    height: 6,
-                    qty: 1,
-                    volume: 150,
-                    dismantling: 0,
-                    erection: 150
-                }],
-                manpowerData: [{
-                    date: getCurrentDate(),
-                    supervisorName: 'TEST SUPERVISOR',
-                    empName: 'TEST WORKER',
-                    otHours: 2,
-                    totalManhours: 10
-                }]
-            };
-            
-            const scriptUrl = 'https://script.google.com/macros/s/AKfycbwC3lKBAV8SxWMzaiLA6UlqAHqRg8qmUGoQFPr8idbWwtY9B7GwzTTQDviMCY_PPXm4ug/exec';
-            const params = new URLSearchParams({
-                dprData: JSON.stringify(testData.dprData),
-                manpowerData: JSON.stringify(testData.manpowerData)
+            // Send manpower data to Google Sheets
+            workers.forEach(worker => {
+                sendManpowerData({
+                    date: new Date().toISOString().split('T')[0],
+                    supervisor: currentSupervisor,
+                    empName: worker,
+                    otHours: overtimeData[worker] || 0,
+                    totalManhours: 8 + (overtimeData[worker] || 0)
+                });
             });
-            
-            const testUrl = `${scriptUrl}?${params.toString()}`;
-            window.open(testUrl, '_blank');
         }
 
-        // Report Functions
         function shareReport() {
             const totalErection = document.getElementById('totalErection').textContent;
             const totalDismantling = document.getElementById('totalDismantling').textContent;
             const totalManhours = document.getElementById('totalManhours').textContent;
             const productivity = document.getElementById('productivityValue').textContent;
             
-            const workersList = appState.workers.map(worker => {
-                const overtime = appState.overtimeData[worker] || 0;
-                return `${worker}: ${overtime > 0 ? overtime + ' hrs OT' : 'No OT'}`;
-            }).join('\n');
+            const workersWithOT = workers.map(worker => 
+                `${worker}: ${overtimeData[worker] || 0}h OT`
+            ).join('\n');
 
-            const reportText = `🏗️ SCAFFOLDING DAILY REPORT
-📅 Date: ${getCurrentDate()}
-👨‍💼 Supervisor: ${appState.currentSupervisor}
+            const report = `📊 SCAFFOLDING DAILY REPORT
+            
+Supervisor: ${currentSupervisor}
+Date: ${new Date().toLocaleDateString()}
 
-📊 VOLUME SUMMARY:
-🔧 Total Erection: ${totalErection}
-🔨 Total Dismantling: ${totalDismantling}
-⏰ Total Manhours: ${totalManhours}
-📈 Productivity: ${productivity}
+📈 PRODUCTIVITY: ${productivity}
 
-👷‍♂️ WORKERS & OVERTIME:
-${workersList}
+📊 WORK SUMMARY:
+• Total Erection: ${totalErection}
+• Total Dismantling: ${totalDismantling}
+• Total Manhours: ${totalManhours}
+
+👷 WORKERS & OVERTIME:
+${workersWithOT}
 
 Generated by Scaffolding Data Collection App`;
 
-            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(reportText)}`;
+            const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(report)}`;
             window.open(whatsappUrl, '_blank');
         }
 
         function resetApp() {
-            if (confirm('Are you sure you want to reset all data and logout?')) {
-                appState = {
-                    currentSupervisor: '',
-                    workers: [],
-                    dataEntries: [],
-                    overtimeData: {},
-                    isAttendanceLocked: false
-                };
+            if (confirm('Are you sure you want to reset all data? This action cannot be undone.')) {
+                // Clear session data
+                localStorage.removeItem(`session_${currentSupervisor}`);
                 
-                // Reset all forms
-                document.querySelectorAll('input, select').forEach(input => {
-                    input.value = '';
-                    input.style.display = 'block';
-                });
+                // Reset all variables
+                currentSupervisor = '';
+                workers = [];
+                workEntries = [];
+                overtimeData = {};
+                sessionData = {};
                 
-                // Clear all lists
-                document.getElementById('workersList').innerHTML = '';
-                document.getElementById('dataEntriesList').innerHTML = '';
-                document.getElementById('overtimeWorkersList').innerHTML = '';
+                // Clear all forms
+                document.getElementById('supervisorSelect').value = '';
+                document.getElementById('pinInput').value = '';
+                document.getElementById('workerNameInput').value = '';
+                clearWorkForm();
                 
-                // Reset calculations
-                document.getElementById('volumeDisplay').textContent = '0 m³';
-                
+                // Return to login
                 showCard('loginCard');
-                showStatus('App reset successfully!');
             }
         }
 
-        // Initialize app
-        document.addEventListener('DOMContentLoaded', function() {
-            showCard('loginCard');
+        // Google Sheets integration functions
+        function sendAttendanceData() {
+            const attendanceData = {
+                date: new Date().toISOString().split('T')[0],
+                supervisorName: currentSupervisor,
+                workers: workers.join(', '),
+                totalWorkers: workers.length
+            };
+
+            // Replace with your Google Apps Script Web App URL for attendance
+            const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_FOR_ATTENDANCE';
+            
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(attendanceData)
+            }).catch(error => console.log('Attendance data sent (no-cors mode)'));
+        }
+
+        function sendDPRData(entry) {
+            const data = {
+                date: entry.date,
+                supervisorName: currentSupervisor,
+                workType: entry.workType,
+                length: entry.length,
+                width: entry.width,
+                height: entry.height,
+                qty: entry.quantity,
+                volume: entry.volume,
+                dismantling: entry.workType === 'DISMANTLING' ? entry.volume : '',
+                erection: entry.workType === 'ERECTION' ? entry.volume : ''
+            };
+
+            // Replace with your Google Apps Script Web App URL
+            const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_FOR_DPR';
+            
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).catch(error => console.log('DPR data sent (no-cors mode)'));
+        }
+
+        function sendManpowerData(data) {
+            // Replace with your Google Apps Script Web App URL
+            const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_URL_FOR_MANPOWER';
+            
+            fetch(scriptUrl, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).catch(error => console.log('Manpower data sent (no-cors mode)'));
+        }
+
+        // Enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                const activeCard = document.querySelector('.visible-card');
+                if (activeCard.id === 'loginCard') login();
+                else if (activeCard.id === 'attendanceCard') addWorker();
+            }
         });
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'96639aa0879a553e',t:'MTc1MzY5NzYwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
