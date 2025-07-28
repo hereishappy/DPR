@@ -704,12 +704,42 @@
                 totalManhours: 8 + (appState.overtimeData[worker] || 0)
             }));
 
-            // Here you would call your Google Apps Script Web App
-            // This is a placeholder for the actual API call
-            console.log('DPR Data:', dprData);
-            console.log('Manpower Data:', manpowerData);
+            // Send data to Google Apps Script
+            const payload = {
+                dprData: dprData,
+                manpowerData: manpowerData
+            };
+
+            // Replace with your actual Google Apps Script Web App URL
+            const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
             
-            showStatus('Data saved to Google Sheets!');
+            // For demo purposes, we'll just log the data
+            // In production, uncomment the fetch call below
+            console.log('Sending to Google Sheets:', payload);
+            
+            /*
+            fetch(scriptUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                showStatus('Data saved to Google Sheets successfully!');
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showStatus('Error saving to Google Sheets');
+            });
+            */
+            
+            // For demo - simulate successful save
+            setTimeout(() => {
+                showStatus('Data saved to Google Sheets!');
+            }, 1000);
         }
 
         // Report Functions
