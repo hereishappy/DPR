@@ -678,36 +678,43 @@
         }
 
         // Google Sheets Integration
-        async function saveToGoogleSheets() {
-            const currentDate = getCurrentDate();
-            
-            // Prepare DPR data
-            const dprData = appState.dataEntries.map(entry => ({
-                date: currentDate,
-                supervisorName: appState.currentSupervisor,
-                workType: entry.workType,
-                length: entry.length,
-                width: entry.width,
-                height: entry.height,
-                qty: entry.quantity,
-                volume: entry.volume,
-                dismantling: entry.workType === 'DISMANTLING' ? entry.volume : 0,
-                erection: entry.workType === 'ERECTION' ? entry.volume : 0
-            }));
+    async function saveToGoogleSheets() {
+    const currentDate = getCurrentDate();
+    
+    const dprData = appState.dataEntries.map(entry => ({
+        date: currentDate,
+        supervisorName: appState.currentSupervisor,
+        workType: entry.workType,
+        length: entry.length,
+        width: entry.width,
+        height: entry.height,
+        qty: entry.quantity,
+        volume: entry.volume,
+        dismantling: entry.workType === 'DISMANTLING' ? entry.volume : 0,
+        erection: entry.workType === 'ERECTION' ? entry.volume : 0
+    }));
 
-            // Prepare Manpower data
-            const manpowerData = appState.workers.map(worker => ({
-                date: currentDate,
-                supervisorName: appState.currentSupervisor,
-                empName: worker,
-                otHours: appState.overtimeData[worker] || 0,
-                totalManhours: 8 + (appState.overtimeData[worker] || 0)
-            }));
+    const manpowerData = appState.workers.map(worker => ({
+        date: currentDate,
+        supervisorName: appState.currentSupervisor,
+        empName: worker,
+        otHours: appState.overtimeData[worker] || 0,
+        totalManhours: 8 + (appState.overtimeData[worker] || 0)
+    }));
 
-            // Replace with your actual Google Apps Script Web App URL
-            const scriptUrl = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
-            
-            console.log('Sending to Google Sheets:', { dprData, manpowerData });
+    const params = new URLSearchParams({
+        dprData: JSON.stringify(dprData),
+        manpowerData: JSON.stringify(manpowerData)
+    });
+
+    const scriptUrl = 'https://script.google.com/macros/s/AKfycbwC3lKBAV8SxWMzaiLA6UlqAHqRg8qmUGoQFPr8idbWwtY9B7GwzTTQDviMCY_PPXm4ug/exec';
+
+    const finalUrl = `${scriptUrl}?${params.toString()}`;
+    
+    // 🔥 This opens the request visibly so you can confirm success
+    window.open(finalUrl, '_blank');
+    showStatus('Data sent to Google Sheets (check new tab)');
+}
             
             try {
                 // Method 1: Try POST first
