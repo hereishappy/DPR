@@ -678,9 +678,9 @@
         }
 
         // Google Sheets Integration
-    async function saveToGoogleSheets() {
+   async function saveToGoogleSheets() {
     const currentDate = getCurrentDate();
-    
+
     const dprData = appState.dataEntries.map(entry => ({
         date: currentDate,
         supervisorName: appState.currentSupervisor,
@@ -710,27 +710,11 @@
     const scriptUrl = 'https://script.google.com/macros/s/AKfycbwC3lKBAV8SxWMzaiLA6UlqAHqRg8qmUGoQFPr8idbWwtY9B7GwzTTQDviMCY_PPXm4ug/exec';
 
     const finalUrl = `${scriptUrl}?${params.toString()}`;
-    
-    // 🔥 This opens the request visibly so you can confirm success
+
+    // 🚀 Opens in new tab for visibility — reliable for GET method
     window.open(finalUrl, '_blank');
     showStatus('Data sent to Google Sheets (check new tab)');
 }
-            
-            try {
-                // Method 1: Try POST first
-                const postResponse = await fetch(scriptUrl, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        dprData: dprData,
-                        manpowerData: manpowerData
-                    })
-                });
-                
-                showStatus('Data saved to Google Sheets successfully!');
                 console.log('POST request sent successfully (no-cors mode)');
                 
             } catch (postError) {
